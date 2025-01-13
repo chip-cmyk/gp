@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.VrCarrierMapper">
+    
+    <resultMap type="VrCarrier" id="VrCarrierResult">
+        <result property="carrierId"    column="carrier_id"    />
+        <result property="carrierName"    column="carrier_name"    />
+        <result property="carrierType"    column="carrier_type"    />
+        <result property="status"    column="status"    />
+        <result property="specifications"    column="specifications"    />
+        <result property="exhibitZoneId"    column="exhibit_zone_id"    />
+    </resultMap>
+
+    <sql id="selectVrCarrierVo">
+        select carrier_id, carrier_name, carrier_type, status, specifications, exhibit_zone_id from vr_carrier
+    </sql>
+
+    <select id="selectVrCarrierList" parameterType="VrCarrier" resultMap="VrCarrierResult">
+        <include refid="selectVrCarrierVo"/>
+        <where>  
+            <if test="carrierName != null  and carrierName != ''"> and carrier_name like concat('%', #{carrierName}, '%')</if>
+            <if test="carrierType != null "> and carrier_type = #{carrierType}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="specifications != null  and specifications != ''"> and specifications = #{specifications}</if>
+            <if test="exhibitZoneId != null "> and exhibit_zone_id = #{exhibitZoneId}</if>
+        </where>
+    </select>
+    
+    <select id="selectVrCarrierByCarrierId" parameterType="Long" resultMap="VrCarrierResult">
+        <include refid="selectVrCarrierVo"/>
+        where carrier_id = #{carrierId}
+    </select>
+
+    <insert id="insertVrCarrier" parameterType="VrCarrier">
+        insert into vr_carrier
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="carrierId != null">carrier_id,</if>
+            <if test="carrierName != null and carrierName != ''">carrier_name,</if>
+            <if test="carrierType != null">carrier_type,</if>
+            <if test="status != null">status,</if>
+            <if test="specifications != null">specifications,</if>
+            <if test="exhibitZoneId != null">exhibit_zone_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="carrierId != null">#{carrierId},</if>
+            <if test="carrierName != null and carrierName != ''">#{carrierName},</if>
+            <if test="carrierType != null">#{carrierType},</if>
+            <if test="status != null">#{status},</if>
+            <if test="specifications != null">#{specifications},</if>
+            <if test="exhibitZoneId != null">#{exhibitZoneId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVrCarrier" parameterType="VrCarrier">
+        update vr_carrier
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="carrierName != null and carrierName != ''">carrier_name = #{carrierName},</if>
+            <if test="carrierType != null">carrier_type = #{carrierType},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="specifications != null">specifications = #{specifications},</if>
+            <if test="exhibitZoneId != null">exhibit_zone_id = #{exhibitZoneId},</if>
+        </trim>
+        where carrier_id = #{carrierId}
+    </update>
+
+    <delete id="deleteVrCarrierByCarrierId" parameterType="Long">
+        delete from vr_carrier where carrier_id = #{carrierId}
+    </delete>
+
+    <delete id="deleteVrCarrierByCarrierIds" parameterType="String">
+        delete from vr_carrier where carrier_id in 
+        <foreach item="carrierId" collection="array" open="(" separator="," close=")">
+            #{carrierId}
+        </foreach>
+    </delete>
+</mapper>

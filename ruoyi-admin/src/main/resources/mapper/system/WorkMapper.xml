@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.WorkMapper">
+    
+    <resultMap type="Work" id="WorkResult">
+        <result property="workId"    column="work_id"    />
+        <result property="title"    column="title"    />
+        <result property="authors"    column="authors"    />
+        <result property="instructor"    column="instructor"    />
+        <result property="awardInfo"    column="award_info"    />
+        <result property="description"    column="description"    />
+    </resultMap>
+
+    <sql id="selectWorkVo">
+        select work_id, title, authors, instructor, award_info, description from work
+    </sql>
+
+    <select id="selectWorkList" parameterType="Work" resultMap="WorkResult">
+        <include refid="selectWorkVo"/>
+        <where>  
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="authors != null  and authors != ''"> and authors = #{authors}</if>
+            <if test="instructor != null  and instructor != ''"> and instructor = #{instructor}</if>
+            <if test="awardInfo != null  and awardInfo != ''"> and award_info = #{awardInfo}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+        </where>
+    </select>
+    
+    <select id="selectWorkByWorkId" parameterType="Long" resultMap="WorkResult">
+        <include refid="selectWorkVo"/>
+        where work_id = #{workId}
+    </select>
+
+    <insert id="insertWork" parameterType="Work">
+        insert into work
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="workId != null">work_id,</if>
+            <if test="title != null and title != ''">title,</if>
+            <if test="authors != null and authors != ''">authors,</if>
+            <if test="instructor != null">instructor,</if>
+            <if test="awardInfo != null">award_info,</if>
+            <if test="description != null">description,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="workId != null">#{workId},</if>
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="authors != null and authors != ''">#{authors},</if>
+            <if test="instructor != null">#{instructor},</if>
+            <if test="awardInfo != null">#{awardInfo},</if>
+            <if test="description != null">#{description},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWork" parameterType="Work">
+        update work
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="authors != null and authors != ''">authors = #{authors},</if>
+            <if test="instructor != null">instructor = #{instructor},</if>
+            <if test="awardInfo != null">award_info = #{awardInfo},</if>
+            <if test="description != null">description = #{description},</if>
+        </trim>
+        where work_id = #{workId}
+    </update>
+
+    <delete id="deleteWorkByWorkId" parameterType="Long">
+        delete from work where work_id = #{workId}
+    </delete>
+
+    <delete id="deleteWorkByWorkIds" parameterType="String">
+        delete from work where work_id in 
+        <foreach item="workId" collection="array" open="(" separator="," close=")">
+            #{workId}
+        </foreach>
+    </delete>
+</mapper>

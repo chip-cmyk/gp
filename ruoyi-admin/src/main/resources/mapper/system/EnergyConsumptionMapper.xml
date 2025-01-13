@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.EnergyConsumptionMapper">
+    
+    <resultMap type="EnergyConsumption" id="EnergyConsumptionResult">
+        <result property="energyId"    column="energy_id"    />
+        <result property="energyAmount"    column="energy_amount"    />
+        <result property="unit"    column="unit"    />
+        <result property="energyType"    column="energy_type"    />
+        <result property="year"    column="year"    />
+        <result property="month"    column="month"    />
+        <result property="factoryId"    column="factory_id"    />
+    </resultMap>
+
+    <sql id="selectEnergyConsumptionVo">
+        select energy_id, energy_amount, unit, energy_type, year, month, factory_id from energy_consumption
+    </sql>
+
+    <select id="selectEnergyConsumptionList" parameterType="EnergyConsumption" resultMap="EnergyConsumptionResult">
+        <include refid="selectEnergyConsumptionVo"/>
+        <where>  
+            <if test="energyAmount != null "> and energy_amount = #{energyAmount}</if>
+            <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
+            <if test="energyType != null  and energyType != ''"> and energy_type = #{energyType}</if>
+            <if test="year != null "> and year = #{year}</if>
+            <if test="month != null "> and month = #{month}</if>
+            <if test="factoryId != null "> and factory_id = #{factoryId}</if>
+        </where>
+    </select>
+    
+    <select id="selectEnergyConsumptionByEnergyId" parameterType="Long" resultMap="EnergyConsumptionResult">
+        <include refid="selectEnergyConsumptionVo"/>
+        where energy_id = #{energyId}
+    </select>
+
+    <insert id="insertEnergyConsumption" parameterType="EnergyConsumption">
+        insert into energy_consumption
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="energyId != null">energy_id,</if>
+            <if test="energyAmount != null">energy_amount,</if>
+            <if test="unit != null and unit != ''">unit,</if>
+            <if test="energyType != null">energy_type,</if>
+            <if test="year != null">year,</if>
+            <if test="month != null">month,</if>
+            <if test="factoryId != null">factory_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="energyId != null">#{energyId},</if>
+            <if test="energyAmount != null">#{energyAmount},</if>
+            <if test="unit != null and unit != ''">#{unit},</if>
+            <if test="energyType != null">#{energyType},</if>
+            <if test="year != null">#{year},</if>
+            <if test="month != null">#{month},</if>
+            <if test="factoryId != null">#{factoryId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEnergyConsumption" parameterType="EnergyConsumption">
+        update energy_consumption
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="energyAmount != null">energy_amount = #{energyAmount},</if>
+            <if test="unit != null and unit != ''">unit = #{unit},</if>
+            <if test="energyType != null">energy_type = #{energyType},</if>
+            <if test="year != null">year = #{year},</if>
+            <if test="month != null">month = #{month},</if>
+            <if test="factoryId != null">factory_id = #{factoryId},</if>
+        </trim>
+        where energy_id = #{energyId}
+    </update>
+
+    <delete id="deleteEnergyConsumptionByEnergyId" parameterType="Long">
+        delete from energy_consumption where energy_id = #{energyId}
+    </delete>
+
+    <delete id="deleteEnergyConsumptionByEnergyIds" parameterType="String">
+        delete from energy_consumption where energy_id in 
+        <foreach item="energyId" collection="array" open="(" separator="," close=")">
+            #{energyId}
+        </foreach>
+    </delete>
+</mapper>
