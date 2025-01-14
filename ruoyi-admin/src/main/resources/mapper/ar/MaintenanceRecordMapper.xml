@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.ar.mapper.MaintenanceRecordMapper">
+    
+    <resultMap type="MaintenanceRecord" id="MaintenanceRecordResult">
+        <result property="recordId"    column="record_id"    />
+        <result property="maintenanceLog"    column="maintenance_log"    />
+        <result property="date"    column="date"    />
+        <result property="maintainerName"    column="maintainer_name"    />
+        <result property="equipmentId"    column="equipment_id"    />
+    </resultMap>
+
+    <sql id="selectMaintenanceRecordVo">
+        select record_id, maintenance_log, date, maintainer_name, equipment_id from maintenance_record
+    </sql>
+
+    <select id="selectMaintenanceRecordList" parameterType="MaintenanceRecord" resultMap="MaintenanceRecordResult">
+        <include refid="selectMaintenanceRecordVo"/>
+        <where>  
+            <if test="maintenanceLog != null  and maintenanceLog != ''"> and maintenance_log = #{maintenanceLog}</if>
+            <if test="date != null "> and date = #{date}</if>
+            <if test="maintainerName != null  and maintainerName != ''"> and maintainer_name like concat('%', #{maintainerName}, '%')</if>
+            <if test="equipmentId != null "> and equipment_id = #{equipmentId}</if>
+        </where>
+    </select>
+    
+    <select id="selectMaintenanceRecordByRecordId" parameterType="Long" resultMap="MaintenanceRecordResult">
+        <include refid="selectMaintenanceRecordVo"/>
+        where record_id = #{recordId}
+    </select>
+
+    <insert id="insertMaintenanceRecord" parameterType="MaintenanceRecord">
+        insert into maintenance_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">record_id,</if>
+            <if test="maintenanceLog != null and maintenanceLog != ''">maintenance_log,</if>
+            <if test="date != null">date,</if>
+            <if test="maintainerName != null and maintainerName != ''">maintainer_name,</if>
+            <if test="equipmentId != null">equipment_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">#{recordId},</if>
+            <if test="maintenanceLog != null and maintenanceLog != ''">#{maintenanceLog},</if>
+            <if test="date != null">#{date},</if>
+            <if test="maintainerName != null and maintainerName != ''">#{maintainerName},</if>
+            <if test="equipmentId != null">#{equipmentId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMaintenanceRecord" parameterType="MaintenanceRecord">
+        update maintenance_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="maintenanceLog != null and maintenanceLog != ''">maintenance_log = #{maintenanceLog},</if>
+            <if test="date != null">date = #{date},</if>
+            <if test="maintainerName != null and maintainerName != ''">maintainer_name = #{maintainerName},</if>
+            <if test="equipmentId != null">equipment_id = #{equipmentId},</if>
+        </trim>
+        where record_id = #{recordId}
+    </update>
+
+    <delete id="deleteMaintenanceRecordByRecordId" parameterType="Long">
+        delete from maintenance_record where record_id = #{recordId}
+    </delete>
+
+    <delete id="deleteMaintenanceRecordByRecordIds" parameterType="String">
+        delete from maintenance_record where record_id in 
+        <foreach item="recordId" collection="array" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </delete>
+</mapper>

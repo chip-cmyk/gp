@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.ar.mapper.MaterialMapper">
+    
+    <resultMap type="Material" id="MaterialResult">
+        <result property="materialId"    column="material_id"    />
+        <result property="materialName"    column="material_name"    />
+        <result property="materialModel"    column="material_model"    />
+        <result property="materialDescription"    column="material_description"    />
+        <result property="stockAmount"    column="stock_amount"    />
+        <result property="warehouseZoneId"    column="warehouse_zone_id"    />
+    </resultMap>
+
+    <sql id="selectMaterialVo">
+        select material_id, material_name, material_model, material_description, stock_amount, warehouse_zone_id from material
+    </sql>
+
+    <select id="selectMaterialList" parameterType="Material" resultMap="MaterialResult">
+        <include refid="selectMaterialVo"/>
+        <where>  
+            <if test="materialName != null  and materialName != ''"> and material_name like concat('%', #{materialName}, '%')</if>
+            <if test="materialModel != null  and materialModel != ''"> and material_model = #{materialModel}</if>
+            <if test="warehouseZoneId != null "> and warehouse_zone_id = #{warehouseZoneId}</if>
+        </where>
+    </select>
+    
+    <select id="selectMaterialByMaterialId" parameterType="Long" resultMap="MaterialResult">
+        <include refid="selectMaterialVo"/>
+        where material_id = #{materialId}
+    </select>
+
+    <insert id="insertMaterial" parameterType="Material">
+        insert into material
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="materialId != null">material_id,</if>
+            <if test="materialName != null and materialName != ''">material_name,</if>
+            <if test="materialModel != null and materialModel != ''">material_model,</if>
+            <if test="materialDescription != null and materialDescription != ''">material_description,</if>
+            <if test="stockAmount != null">stock_amount,</if>
+            <if test="warehouseZoneId != null">warehouse_zone_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="materialId != null">#{materialId},</if>
+            <if test="materialName != null and materialName != ''">#{materialName},</if>
+            <if test="materialModel != null and materialModel != ''">#{materialModel},</if>
+            <if test="materialDescription != null and materialDescription != ''">#{materialDescription},</if>
+            <if test="stockAmount != null">#{stockAmount},</if>
+            <if test="warehouseZoneId != null">#{warehouseZoneId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMaterial" parameterType="Material">
+        update material
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="materialName != null and materialName != ''">material_name = #{materialName},</if>
+            <if test="materialModel != null and materialModel != ''">material_model = #{materialModel},</if>
+            <if test="materialDescription != null and materialDescription != ''">material_description = #{materialDescription},</if>
+            <if test="stockAmount != null">stock_amount = #{stockAmount},</if>
+            <if test="warehouseZoneId != null">warehouse_zone_id = #{warehouseZoneId},</if>
+        </trim>
+        where material_id = #{materialId}
+    </update>
+
+    <delete id="deleteMaterialByMaterialId" parameterType="Long">
+        delete from material where material_id = #{materialId}
+    </delete>
+
+    <delete id="deleteMaterialByMaterialIds" parameterType="String">
+        delete from material where material_id in 
+        <foreach item="materialId" collection="array" open="(" separator="," close=")">
+            #{materialId}
+        </foreach>
+    </delete>
+</mapper>

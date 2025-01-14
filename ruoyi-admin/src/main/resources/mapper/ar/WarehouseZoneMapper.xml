@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.ar.mapper.WarehouseZoneMapper">
+    
+    <resultMap type="WarehouseZone" id="WarehouseZoneResult">
+        <result property="zoneId"    column="zone_id"    />
+        <result property="name"    column="name"    />
+        <result property="description"    column="description"    />
+        <result property="factoryId"    column="factory_id"    />
+    </resultMap>
+
+    <sql id="selectWarehouseZoneVo">
+        select zone_id, name, description, factory_id from warehouse_zone
+    </sql>
+
+    <select id="selectWarehouseZoneList" parameterType="WarehouseZone" resultMap="WarehouseZoneResult">
+        <include refid="selectWarehouseZoneVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="factoryId != null "> and factory_id = #{factoryId}</if>
+        </where>
+    </select>
+    
+    <select id="selectWarehouseZoneByZoneId" parameterType="Long" resultMap="WarehouseZoneResult">
+        <include refid="selectWarehouseZoneVo"/>
+        where zone_id = #{zoneId}
+    </select>
+
+    <insert id="insertWarehouseZone" parameterType="WarehouseZone">
+        insert into warehouse_zone
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="zoneId != null">zone_id,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="description != null and description != ''">description,</if>
+            <if test="factoryId != null">factory_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="zoneId != null">#{zoneId},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="description != null and description != ''">#{description},</if>
+            <if test="factoryId != null">#{factoryId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWarehouseZone" parameterType="WarehouseZone">
+        update warehouse_zone
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            <if test="factoryId != null">factory_id = #{factoryId},</if>
+        </trim>
+        where zone_id = #{zoneId}
+    </update>
+
+    <delete id="deleteWarehouseZoneByZoneId" parameterType="Long">
+        delete from warehouse_zone where zone_id = #{zoneId}
+    </delete>
+
+    <delete id="deleteWarehouseZoneByZoneIds" parameterType="String">
+        delete from warehouse_zone where zone_id in 
+        <foreach item="zoneId" collection="array" open="(" separator="," close=")">
+            #{zoneId}
+        </foreach>
+    </delete>
+</mapper>
