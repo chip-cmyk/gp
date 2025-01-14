@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="展厅编号" prop="showroomName">
+      <el-form-item label="展厅名称" prop="showroomName">
         <el-input
           v-model="queryParams.showroomName"
-          placeholder="请输入展厅编号"
+          placeholder="请输入展厅名称"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -64,7 +64,7 @@
     <el-table v-loading="loading" :data="showroomList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="展厅编号" align="center" prop="showroomId" />
-      <el-table-column label="展厅编号" align="center" prop="showroomName" />
+      <el-table-column label="展厅名称" align="center" prop="showroomName" />
       <el-table-column label="简介" align="center" prop="description" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -97,8 +97,8 @@
     <!-- 添加或修改VR展厅对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="展厅编号" prop="showroomName">
-          <el-input v-model="form.showroomName" placeholder="请输入展厅编号" />
+        <el-form-item label="展厅名称" prop="showroomName">
+          <el-input v-model="form.showroomName" placeholder="请输入展厅名称" />
         </el-form-item>
         <el-form-item label="简介" prop="description">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
@@ -148,7 +148,7 @@ export default {
       // 表单校验
       rules: {
         showroomName: [
-          { required: true, message: "展厅编号不能为空", trigger: "blur" }
+          { required: true, message: "展厅名称不能为空", trigger: "blur" }
         ],
         description: [
           { required: true, message: "简介不能为空", trigger: "blur" }

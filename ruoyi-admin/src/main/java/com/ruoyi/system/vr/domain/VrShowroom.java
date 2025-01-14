@@ -18,8 +18,8 @@ public class VrShowroom extends BaseEntity
     /** 展厅编号 */
     private Long showroomId;
 
-    /** 展厅编号 */
-    @Excel(name = "展厅编号")
+    /** 展厅名称 */
+    @Excel(name = "展厅名称")
     private String showroomName;
 
     /** 简介 */
