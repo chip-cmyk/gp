@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.ar.mapper.ProductMapper">
+    
+    <resultMap type="Product" id="ProductResult">
+        <result property="productId"    column="product_id"    />
+        <result property="productName"    column="product_name"    />
+        <result property="productModel"    column="product_model"    />
+        <result property="productDescription"    column="product_description"    />
+        <result property="stockAmount"    column="stock_amount"    />
+        <result property="warehouseZoneId"    column="warehouse_zone_id"    />
+    </resultMap>
+
+    <sql id="selectProductVo">
+        select product_id, product_name, product_model, product_description, stock_amount, warehouse_zone_id from product
+    </sql>
+
+    <select id="selectProductList" parameterType="Product" resultMap="ProductResult">
+        <include refid="selectProductVo"/>
+        <where>  
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+            <if test="productModel != null  and productModel != ''"> and product_model = #{productModel}</if>
+            <if test="warehouseZoneId != null "> and warehouse_zone_id = #{warehouseZoneId}</if>
+        </where>
+    </select>
+    
+    <select id="selectProductByProductId" parameterType="Long" resultMap="ProductResult">
+        <include refid="selectProductVo"/>
+        where product_id = #{productId}
+    </select>
+
+    <insert id="insertProduct" parameterType="Product">
+        insert into product
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productId != null">product_id,</if>
+            <if test="productName != null and productName != ''">product_name,</if>
+            <if test="productModel != null and productModel != ''">product_model,</if>
+            <if test="productDescription != null and productDescription != ''">product_description,</if>
+            <if test="stockAmount != null">stock_amount,</if>
+            <if test="warehouseZoneId != null">warehouse_zone_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productId != null">#{productId},</if>
+            <if test="productName != null and productName != ''">#{productName},</if>
+            <if test="productModel != null and productModel != ''">#{productModel},</if>
+            <if test="productDescription != null and productDescription != ''">#{productDescription},</if>
+            <if test="stockAmount != null">#{stockAmount},</if>
+            <if test="warehouseZoneId != null">#{warehouseZoneId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProduct" parameterType="Product">
+        update product
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="productName != null and productName != ''">product_name = #{productName},</if>
+            <if test="productModel != null and productModel != ''">product_model = #{productModel},</if>
+            <if test="productDescription != null and productDescription != ''">product_description = #{productDescription},</if>
+            <if test="stockAmount != null">stock_amount = #{stockAmount},</if>
+            <if test="warehouseZoneId != null">warehouse_zone_id = #{warehouseZoneId},</if>
+        </trim>
+        where product_id = #{productId}
+    </update>
+
+    <delete id="deleteProductByProductId" parameterType="Long">
+        delete from product where product_id = #{productId}
+    </delete>
+
+    <delete id="deleteProductByProductIds" parameterType="String">
+        delete from product where product_id in 
+        <foreach item="productId" collection="array" open="(" separator="," close=")">
+            #{productId}
+        </foreach>
+    </delete>
+</mapper>

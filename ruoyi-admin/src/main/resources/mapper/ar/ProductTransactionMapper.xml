@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.ar.mapper.ProductTransactionMapper">
+    
+    <resultMap type="ProductTransaction" id="ProductTransactionResult">
+        <result property="transactionId"    column="transaction_id"    />
+        <result property="transactionType"    column="transaction_type"    />
+        <result property="operatorName"    column="operator_name"    />
+        <result property="warehouseAdminName"    column="warehouse_admin_name"    />
+    </resultMap>
+
+    <sql id="selectProductTransactionVo">
+        select transaction_id, transaction_type, operator_name, warehouse_admin_name from product_transaction
+    </sql>
+
+    <select id="selectProductTransactionList" parameterType="ProductTransaction" resultMap="ProductTransactionResult">
+        <include refid="selectProductTransactionVo"/>
+        <where>  
+            <if test="transactionType != null "> and transaction_type = #{transactionType}</if>
+            <if test="operatorName != null  and operatorName != ''"> and operator_name like concat('%', #{operatorName}, '%')</if>
+            <if test="warehouseAdminName != null  and warehouseAdminName != ''"> and warehouse_admin_name like concat('%', #{warehouseAdminName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectProductTransactionByTransactionId" parameterType="Long" resultMap="ProductTransactionResult">
+        <include refid="selectProductTransactionVo"/>
+        where transaction_id = #{transactionId}
+    </select>
+
+    <insert id="insertProductTransaction" parameterType="ProductTransaction">
+        insert into product_transaction
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="transactionId != null">transaction_id,</if>
+            <if test="transactionType != null">transaction_type,</if>
+            <if test="operatorName != null and operatorName != ''">operator_name,</if>
+            <if test="warehouseAdminName != null and warehouseAdminName != ''">warehouse_admin_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="transactionId != null">#{transactionId},</if>
+            <if test="transactionType != null">#{transactionType},</if>
+            <if test="operatorName != null and operatorName != ''">#{operatorName},</if>
+            <if test="warehouseAdminName != null and warehouseAdminName != ''">#{warehouseAdminName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProductTransaction" parameterType="ProductTransaction">
+        update product_transaction
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="transactionType != null">transaction_type = #{transactionType},</if>
+            <if test="operatorName != null and operatorName != ''">operator_name = #{operatorName},</if>
+            <if test="warehouseAdminName != null and warehouseAdminName != ''">warehouse_admin_name = #{warehouseAdminName},</if>
+        </trim>
+        where transaction_id = #{transactionId}
+    </update>
+
+    <delete id="deleteProductTransactionByTransactionId" parameterType="Long">
+        delete from product_transaction where transaction_id = #{transactionId}
+    </delete>
+
+    <delete id="deleteProductTransactionByTransactionIds" parameterType="String">
+        delete from product_transaction where transaction_id in 
+        <foreach item="transactionId" collection="array" open="(" separator="," close=")">
+            #{transactionId}
+        </foreach>
+    </delete>
+</mapper>
