@@ -1,9 +1,25 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="日期">
+      <el-form-item label="数量" prop="quantity">
+        <el-input
+          v-model="queryParams.quantity"
+          placeholder="请输入数量"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="计量单位" prop="unit">
+        <el-input
+          v-model="queryParams.unit"
+          placeholder="请输入计量单位"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="生产日期">
         <el-date-picker
-          v-model="daterangeDate"
+          v-model="daterangeProductionDate"
           style="width: 240px"
           value-format="yyyy-MM-dd"
           type="daterange"
@@ -12,18 +28,10 @@
           end-placeholder="结束日期"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="维护负责人" prop="maintainerName">
+      <el-form-item label="产品编号" prop="productId">
         <el-input
-          v-model="queryParams.maintainerName"
-          placeholder="请输入维护负责人"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="设备编号" prop="equipmentId">
-        <el-input
-          v-model="queryParams.equipmentId"
-          placeholder="请输入设备编号"
+          v-model="queryParams.productId"
+          placeholder="请输入产品编号"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -42,7 +50,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['ar:maintenance:add']"
+          v-hasPermi="['ar:productBatch:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -53,7 +61,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['ar:maintenance:edit']"
+          v-hasPermi="['ar:productBatch:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -64,7 +72,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['ar:maintenance:remove']"
+          v-hasPermi="['ar:productBatch:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -74,23 +82,23 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['ar:maintenance:export']"
+          v-hasPermi="['ar:productBatch:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="maintenanceList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="productBatchList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="运维记录编号" align="center" prop="recordId" />
-      <el-table-column label="运维日记" align="center" prop="maintenanceLog" />
-      <el-table-column label="日期" align="center" prop="date" width="180">
+      <el-table-column label="批号" align="center" prop="batchId" />
+      <el-table-column label="数量" align="center" prop="quantity" />
+      <el-table-column label="计量单位" align="center" prop="unit" />
+      <el-table-column label="生产日期" align="center" prop="productionDate" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.date, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.productionDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="维护负责人" align="center" prop="maintainerName" />
-      <el-table-column label="设备编号" align="center" prop="equipmentId" />
+      <el-table-column label="产品编号" align="center" prop="productId" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -98,14 +106,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['ar:maintenance:edit']"
+            v-hasPermi="['ar:productBatch:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['ar:maintenance:remove']"
+            v-hasPermi="['ar:productBatch:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -119,25 +127,25 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改运维记录对话框 -->
+    <!-- 添加或修改生产批次对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="运维日记" prop="maintenanceLog">
-          <el-input v-model="form.maintenanceLog" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="数量" prop="quantity">
+          <el-input v-model="form.quantity" placeholder="请输入数量" />
         </el-form-item>
-        <el-form-item label="日期" prop="date">
+        <el-form-item label="计量单位" prop="unit">
+          <el-input v-model="form.unit" placeholder="请输入计量单位" />
+        </el-form-item>
+        <el-form-item label="生产日期" prop="productionDate">
           <el-date-picker clearable
-            v-model="form.date"
+            v-model="form.productionDate"
             type="date"
             value-format="yyyy-MM-dd"
-            placeholder="请选择日期">
+            placeholder="请选择生产日期">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="维护负责人" prop="maintainerName">
-          <el-input v-model="form.maintainerName" placeholder="请输入维护负责人" />
-        </el-form-item>
-        <el-form-item label="设备编号" prop="equipmentId">
-          <el-input v-model="form.equipmentId" placeholder="请输入设备编号" />
+        <el-form-item label="产品编号" prop="productId">
+          <el-input v-model="form.productId" placeholder="请输入产品编号" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -149,10 +157,10 @@
 </template>
 
 <script>
-import { listMaintenance, getMaintenance, delMaintenance, addMaintenance, updateMaintenance } from "@/api/ar/maintenance";
+import { listProductBatch, getProductBatch, delProductBatch, addProductBatch, updateProductBatch } from "@/api/ar/productBatch";
 
 export default {
-  name: "Maintenance",
+  name: "ProductBatch",
   data() {
     return {
       // 遮罩层
@@ -167,38 +175,38 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 运维记录表格数据
-      maintenanceList: [],
+      // 生产批次表格数据
+      productBatchList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
-      // 设备编号时间范围
-      daterangeDate: [],
+      // 产品编号时间范围
+      daterangeProductionDate: [],
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        maintenanceLog: null,
-        date: null,
-        maintainerName: null,
-        equipmentId: null
+        quantity: null,
+        unit: null,
+        productionDate: null,
+        productId: null
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        maintenanceLog: [
-          { required: true, message: "运维日记不能为空", trigger: "blur" }
+        quantity: [
+          { required: true, message: "数量不能为空", trigger: "blur" }
         ],
-        date: [
-          { required: true, message: "日期不能为空", trigger: "blur" }
+        unit: [
+          { required: true, message: "计量单位不能为空", trigger: "blur" }
         ],
-        maintainerName: [
-          { required: true, message: "维护负责人不能为空", trigger: "blur" }
+        productionDate: [
+          { required: true, message: "生产日期不能为空", trigger: "blur" }
         ],
-        equipmentId: [
-          { required: true, message: "设备编号不能为空", trigger: "blur" }
+        productId: [
+          { required: true, message: "产品编号不能为空", trigger: "blur" }
         ]
       }
     };
@@ -207,16 +215,16 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询运维记录列表 */
+    /** 查询生产批次列表 */
     getList() {
       this.loading = true;
       this.queryParams.params = {};
-      if (null != this.daterangeDate && '' != this.daterangeDate) {
-        this.queryParams.params["beginDate"] = this.daterangeDate[0];
-        this.queryParams.params["endDate"] = this.daterangeDate[1];
+      if (null != this.daterangeProductionDate && '' != this.daterangeProductionDate) {
+        this.queryParams.params["beginProductionDate"] = this.daterangeProductionDate[0];
+        this.queryParams.params["endProductionDate"] = this.daterangeProductionDate[1];
       }
-      listMaintenance(this.queryParams).then(response => {
-        this.maintenanceList = response.rows;
+      listProductBatch(this.queryParams).then(response => {
+        this.productBatchList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -229,11 +237,11 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        recordId: null,
-        maintenanceLog: null,
-        date: null,
-        maintainerName: null,
-        equipmentId: null
+        batchId: null,
+        quantity: null,
+        unit: null,
+        productionDate: null,
+        productId: null
       };
       this.resetForm("form");
     },
@@ -244,13 +252,13 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.daterangeDate = [];
+      this.daterangeProductionDate = [];
       this.resetForm("queryForm");
       this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.recordId)
+      this.ids = selection.map(item => item.batchId)
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
@@ -258,30 +266,30 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加运维记录";
+      this.title = "添加生产批次";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const recordId = row.recordId || this.ids
-      getMaintenance(recordId).then(response => {
+      const batchId = row.batchId || this.ids
+      getProductBatch(batchId).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改运维记录";
+        this.title = "修改生产批次";
       });
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.recordId != null) {
-            updateMaintenance(this.form).then(response => {
+          if (this.form.batchId != null) {
+            updateProductBatch(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addMaintenance(this.form).then(response => {
+            addProductBatch(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -292,9 +300,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const recordIds = row.recordId || this.ids;
-      this.$modal.confirm('是否确认删除运维记录编号为"' + recordIds + '"的数据项？').then(function() {
-        return delMaintenance(recordIds);
+      const batchIds = row.batchId || this.ids;
+      this.$modal.confirm('是否确认删除生产批次编号为"' + batchIds + '"的数据项？').then(function() {
+        return delProductBatch(batchIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -302,9 +310,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('ar/maintenance/export', {
+      this.download('ar/productBatch/export', {
         ...this.queryParams
-      }, `maintenance_${new Date().getTime()}.xlsx`)
+      }, `productBatch_${new Date().getTime()}.xlsx`)
     }
   }
 };

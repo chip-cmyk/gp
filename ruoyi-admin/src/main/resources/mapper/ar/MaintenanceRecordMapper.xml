@@ -20,7 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectMaintenanceRecordVo"/>
         <where>  
             <if test="maintenanceLog != null  and maintenanceLog != ''"> and maintenance_log = #{maintenanceLog}</if>
-            <if test="date != null "> and date = #{date}</if>
+            <if test="params.beginDate != null and params.beginDate != '' and params.endDate != null and params.endDate != ''"> and date between #{params.beginDate} and #{params.endDate}</if>
             <if test="maintainerName != null  and maintainerName != ''"> and maintainer_name like concat('%', #{maintainerName}, '%')</if>
             <if test="equipmentId != null "> and equipment_id = #{equipmentId}</if>
         </where>

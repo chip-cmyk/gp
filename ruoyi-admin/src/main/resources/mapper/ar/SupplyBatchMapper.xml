@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.ar.mapper.SupplyBatchMapper">
+    
+    <resultMap type="SupplyBatch" id="SupplyBatchResult">
+        <result property="batchId"    column="batch_id"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="unit"    column="unit"    />
+        <result property="productionDate"    column="production_date"    />
+        <result property="shelfLife"    column="shelf_life"    />
+        <result property="manufacturer"    column="manufacturer"    />
+        <result property="materialId"    column="material_id"    />
+    </resultMap>
+
+    <sql id="selectSupplyBatchVo">
+        select batch_id, quantity, unit, production_date, shelf_life, manufacturer, material_id from supply_batch
+    </sql>
+
+    <select id="selectSupplyBatchList" parameterType="SupplyBatch" resultMap="SupplyBatchResult">
+        <include refid="selectSupplyBatchVo"/>
+        <where>  
+            <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
+            <if test="params.beginProductionDate != null and params.beginProductionDate != '' and params.endProductionDate != null and params.endProductionDate != ''"> and production_date between #{params.beginProductionDate} and #{params.endProductionDate}</if>
+            <if test="manufacturer != null  and manufacturer != ''"> and manufacturer = #{manufacturer}</if>
+            <if test="materialId != null "> and material_id = #{materialId}</if>
+        </where>
+    </select>
+    
+    <select id="selectSupplyBatchByBatchId" parameterType="Long" resultMap="SupplyBatchResult">
+        <include refid="selectSupplyBatchVo"/>
+        where batch_id = #{batchId}
+    </select>
+
+    <insert id="insertSupplyBatch" parameterType="SupplyBatch">
+        insert into supply_batch
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="batchId != null">batch_id,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="unit != null and unit != ''">unit,</if>
+            <if test="productionDate != null">production_date,</if>
+            <if test="shelfLife != null">shelf_life,</if>
+            <if test="manufacturer != null and manufacturer != ''">manufacturer,</if>
+            <if test="materialId != null">material_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="batchId != null">#{batchId},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="unit != null and unit != ''">#{unit},</if>
+            <if test="productionDate != null">#{productionDate},</if>
+            <if test="shelfLife != null">#{shelfLife},</if>
+            <if test="manufacturer != null and manufacturer != ''">#{manufacturer},</if>
+            <if test="materialId != null">#{materialId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSupplyBatch" parameterType="SupplyBatch">
+        update supply_batch
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="unit != null and unit != ''">unit = #{unit},</if>
+            <if test="productionDate != null">production_date = #{productionDate},</if>
+            <if test="shelfLife != null">shelf_life = #{shelfLife},</if>
+            <if test="manufacturer != null and manufacturer != ''">manufacturer = #{manufacturer},</if>
+            <if test="materialId != null">material_id = #{materialId},</if>
+        </trim>
+        where batch_id = #{batchId}
+    </update>
+
+    <delete id="deleteSupplyBatchByBatchId" parameterType="Long">
+        delete from supply_batch where batch_id = #{batchId}
+    </delete>
+
+    <delete id="deleteSupplyBatchByBatchIds" parameterType="String">
+        delete from supply_batch where batch_id in 
+        <foreach item="batchId" collection="array" open="(" separator="," close=")">
+            #{batchId}
+        </foreach>
+    </delete>
+</mapper>
