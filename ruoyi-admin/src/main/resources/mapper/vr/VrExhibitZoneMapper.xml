@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.vr.mapper.VrExhibitZoneMapper">
+    
+    <resultMap type="VrExhibitZone" id="VrExhibitZoneResult">
+        <result property="exhibitZoneId"    column="exhibit_zone_id"    />
+        <result property="exhibitZoneName"    column="exhibit_zone_name"    />
+        <result property="description"    column="description"    />
+        <result property="showroomId"    column="showroom_id"    />
+    </resultMap>
+
+    <sql id="selectVrExhibitZoneVo">
+        select exhibit_zone_id, exhibit_zone_name, description, showroom_id from vr_exhibit_zone
+    </sql>
+
+    <select id="selectVrExhibitZoneList" parameterType="VrExhibitZone" resultMap="VrExhibitZoneResult">
+        <include refid="selectVrExhibitZoneVo"/>
+        <where>  
+            <if test="exhibitZoneName != null  and exhibitZoneName != ''"> and exhibit_zone_name like concat('%', #{exhibitZoneName}, '%')</if>
+            <if test="showroomId != null "> and showroom_id = #{showroomId}</if>
+        </where>
+    </select>
+    
+    <select id="selectVrExhibitZoneByExhibitZoneId" parameterType="Long" resultMap="VrExhibitZoneResult">
+        <include refid="selectVrExhibitZoneVo"/>
+        where exhibit_zone_id = #{exhibitZoneId}
+    </select>
+
+    <insert id="insertVrExhibitZone" parameterType="VrExhibitZone">
+        insert into vr_exhibit_zone
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="exhibitZoneId != null">exhibit_zone_id,</if>
+            <if test="exhibitZoneName != null and exhibitZoneName != ''">exhibit_zone_name,</if>
+            <if test="description != null and description != ''">description,</if>
+            <if test="showroomId != null">showroom_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="exhibitZoneId != null">#{exhibitZoneId},</if>
+            <if test="exhibitZoneName != null and exhibitZoneName != ''">#{exhibitZoneName},</if>
+            <if test="description != null and description != ''">#{description},</if>
+            <if test="showroomId != null">#{showroomId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVrExhibitZone" parameterType="VrExhibitZone">
+        update vr_exhibit_zone
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="exhibitZoneName != null and exhibitZoneName != ''">exhibit_zone_name = #{exhibitZoneName},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            <if test="showroomId != null">showroom_id = #{showroomId},</if>
+        </trim>
+        where exhibit_zone_id = #{exhibitZoneId}
+    </update>
+
+    <delete id="deleteVrExhibitZoneByExhibitZoneId" parameterType="Long">
+        delete from vr_exhibit_zone where exhibit_zone_id = #{exhibitZoneId}
+    </delete>
+
+    <delete id="deleteVrExhibitZoneByExhibitZoneIds" parameterType="String">
+        delete from vr_exhibit_zone where exhibit_zone_id in 
+        <foreach item="exhibitZoneId" collection="array" open="(" separator="," close=")">
+            #{exhibitZoneId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.vr.mapper.VrShowroomMapper">
+    
+    <resultMap type="VrShowroom" id="VrShowroomResult">
+        <result property="showroomId"    column="showroom_id"    />
+        <result property="showroomName"    column="showroom_name"    />
+        <result property="description"    column="description"    />
+    </resultMap>
+
+    <sql id="selectVrShowroomVo">
+        select showroom_id, showroom_name, description from vr_showroom
+    </sql>
+
+    <select id="selectVrShowroomList" parameterType="VrShowroom" resultMap="VrShowroomResult">
+        <include refid="selectVrShowroomVo"/>
+        <where>  
+            <if test="showroomName != null  and showroomName != ''"> and showroom_name like concat('%', #{showroomName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectVrShowroomByShowroomId" parameterType="Long" resultMap="VrShowroomResult">
+        <include refid="selectVrShowroomVo"/>
+        where showroom_id = #{showroomId}
+    </select>
+
+    <insert id="insertVrShowroom" parameterType="VrShowroom">
+        insert into vr_showroom
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="showroomId != null">showroom_id,</if>
+            <if test="showroomName != null and showroomName != ''">showroom_name,</if>
+            <if test="description != null and description != ''">description,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="showroomId != null">#{showroomId},</if>
+            <if test="showroomName != null and showroomName != ''">#{showroomName},</if>
+            <if test="description != null and description != ''">#{description},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVrShowroom" parameterType="VrShowroom">
+        update vr_showroom
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="showroomName != null and showroomName != ''">showroom_name = #{showroomName},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+        </trim>
+        where showroom_id = #{showroomId}
+    </update>
+
+    <delete id="deleteVrShowroomByShowroomId" parameterType="Long">
+        delete from vr_showroom where showroom_id = #{showroomId}
+    </delete>
+
+    <delete id="deleteVrShowroomByShowroomIds" parameterType="String">
+        delete from vr_showroom where showroom_id in 
+        <foreach item="showroomId" collection="array" open="(" separator="," close=")">
+            #{showroomId}
+        </foreach>
+    </delete>
+</mapper>
