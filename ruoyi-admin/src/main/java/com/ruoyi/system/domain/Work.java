@@ -9,7 +9,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 作品对象 work
  * 
  * @author lazy
- * @date 2025-01-13
+ * @date 2025-01-17
  */
 public class Work extends BaseEntity
 {

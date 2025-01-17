@@ -25,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 作品Controller
  * 
  * @author lazy
- * @date 2025-01-13
+ * @date 2025-01-17
  */
 @RestController
 @RequestMapping("/system/work")

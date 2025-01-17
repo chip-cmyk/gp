@@ -7,7 +7,7 @@ import com.ruoyi.system.domain.Work;
  * 作品Mapper接口
  * 
  * @author lazy
- * @date 2025-01-13
+ * @date 2025-01-17
  */
 public interface WorkMapper 
 {
