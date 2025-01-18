@@ -1,6 +1,13 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      size="small"
+      :inline="true"
+      v-show="showSearch"
+      label-width=""
+    >
       <el-form-item label="数量" prop="quantity">
         <el-input
           v-model="queryParams.quantity"
@@ -37,8 +44,16 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          size="mini"
+          @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -51,7 +66,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['ar:productBatch:add']"
-        >新增</el-button>
+          >新增</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -62,7 +78,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['ar:productBatch:edit']"
-        >修改</el-button>
+          >修改</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -73,7 +90,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['ar:productBatch:remove']"
-        >删除</el-button>
+          >删除</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -83,23 +101,40 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['ar:productBatch:export']"
-        >导出</el-button>
+          >导出</el-button
+        >
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar
+        :showSearch.sync="showSearch"
+        @queryTable="getList"
+      ></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="productBatchList" @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="loading"
+      :data="productBatchList"
+      @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="批号" align="center" prop="batchId" />
       <el-table-column label="数量" align="center" prop="quantity" />
       <el-table-column label="计量单位" align="center" prop="unit" />
-      <el-table-column label="生产日期" align="center" prop="productionDate" width="180">
+      <el-table-column
+        label="生产日期"
+        align="center"
+        prop="productionDate"
+        width="180"
+      >
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.productionDate, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.productionDate, "{y}-{m}-{d}") }}</span>
         </template>
       </el-table-column>
       <el-table-column label="产品编号" align="center" prop="productId" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -107,20 +142,22 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['ar:productBatch:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['ar:productBatch:remove']"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -137,11 +174,13 @@
           <el-input v-model="form.unit" placeholder="请输入计量单位" />
         </el-form-item>
         <el-form-item label="生产日期" prop="productionDate">
-          <el-date-picker clearable
+          <el-date-picker
+            clearable
             v-model="form.productionDate"
             type="date"
             value-format="yyyy-MM-dd"
-            placeholder="请选择生产日期">
+            placeholder="请选择生产日期"
+          >
           </el-date-picker>
         </el-form-item>
         <el-form-item label="产品编号" prop="productId">
@@ -157,7 +196,13 @@
 </template>
 
 <script>
-import { listProductBatch, getProductBatch, delProductBatch, addProductBatch, updateProductBatch } from "@/api/ar/productBatch";
+import {
+  listProductBatch,
+  getProductBatch,
+  delProductBatch,
+  addProductBatch,
+  updateProductBatch,
+} from "@/api/ar/productBatch";
 
 export default {
   name: "ProductBatch",
@@ -190,25 +235,25 @@ export default {
         quantity: null,
         unit: null,
         productionDate: null,
-        productId: null
+        productId: null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
         quantity: [
-          { required: true, message: "数量不能为空", trigger: "blur" }
+          { required: true, message: "数量不能为空", trigger: "blur" },
         ],
         unit: [
-          { required: true, message: "计量单位不能为空", trigger: "blur" }
+          { required: true, message: "计量单位不能为空", trigger: "blur" },
         ],
         productionDate: [
-          { required: true, message: "生产日期不能为空", trigger: "blur" }
+          { required: true, message: "生产日期不能为空", trigger: "blur" },
         ],
         productId: [
-          { required: true, message: "产品编号不能为空", trigger: "blur" }
-        ]
-      }
+          { required: true, message: "产品编号不能为空", trigger: "blur" },
+        ],
+      },
     };
   },
   created() {
@@ -219,11 +264,16 @@ export default {
     getList() {
       this.loading = true;
       this.queryParams.params = {};
-      if (null != this.daterangeProductionDate && '' != this.daterangeProductionDate) {
-        this.queryParams.params["beginProductionDate"] = this.daterangeProductionDate[0];
-        this.queryParams.params["endProductionDate"] = this.daterangeProductionDate[1];
+      if (
+        null != this.daterangeProductionDate &&
+        "" != this.daterangeProductionDate
+      ) {
+        this.queryParams.params["beginProductionDate"] =
+          this.daterangeProductionDate[0];
+        this.queryParams.params["endProductionDate"] =
+          this.daterangeProductionDate[1];
       }
-      listProductBatch(this.queryParams).then(response => {
+      listProductBatch(this.queryParams).then((response) => {
         this.productBatchList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -241,7 +291,7 @@ export default {
         quantity: null,
         unit: null,
         productionDate: null,
-        productId: null
+        productId: null,
       };
       this.resetForm("form");
     },
@@ -258,9 +308,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.batchId)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.batchId);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -271,8 +321,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const batchId = row.batchId || this.ids
-      getProductBatch(batchId).then(response => {
+      const batchId = row.batchId || this.ids;
+      getProductBatch(batchId).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改生产批次";
@@ -280,16 +330,16 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.batchId != null) {
-            updateProductBatch(this.form).then(response => {
+            updateProductBatch(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addProductBatch(this.form).then(response => {
+            addProductBatch(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -301,19 +351,27 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const batchIds = row.batchId || this.ids;
-      this.$modal.confirm('是否确认删除生产批次编号为"' + batchIds + '"的数据项？').then(function() {
-        return delProductBatch(batchIds);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm('是否确认删除生产批次编号为"' + batchIds + '"的数据项？')
+        .then(function () {
+          return delProductBatch(batchIds);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('ar/productBatch/export', {
-        ...this.queryParams
-      }, `productBatch_${new Date().getTime()}.xlsx`)
-    }
-  }
+      this.download(
+        "ar/productBatch/export",
+        {
+          ...this.queryParams,
+        },
+        `productBatch_${new Date().getTime()}.xlsx`
+      );
+    },
+  },
 };
 </script>
