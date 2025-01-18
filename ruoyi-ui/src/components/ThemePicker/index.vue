@@ -122,6 +122,14 @@ export default {
       // }!important; }`;
       // document.head.appendChild(hoverStyle);
 
+      // const loadingStyle = document.querySelector(
+      //   "#loader-wrapper .loader-section"
+      // );
+      // // alert(loadingStyle);
+      // if (loadingStyle) {
+      //   loadingStyle.style.backgroundColor = val;
+      // }
+
       this.updateSideHoverStyle(val);
 
       this.$emit("change", val);
@@ -204,7 +212,7 @@ export default {
           hoverStyle.setAttribute("id", "hover-style");
           document.head.appendChild(hoverStyle);
         }
-        hoverStyle.innerHTML = `.el-menu-item:hover,.el-submenu__title:hover,.el-submenu.el-menu-item:hover { background-color: ${
+        hoverStyle.innerHTML = `.el-menu-item:hover,.el-submenu__title:hover,.el-submenu.el-menu-item:hover,.el-menu-item.is-active,.el-submenu__title.is-active,.el-submenu.el-menu-item.is-active { background-color: ${
           val + "1A"
         }!important; }`;
       } else {
