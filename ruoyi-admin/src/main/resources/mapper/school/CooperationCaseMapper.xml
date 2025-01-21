@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.school.mapper.CooperationCaseMapper">
+    
+    <resultMap type="CooperationCase" id="CooperationCaseResult">
+        <result property="caseId"    column="case_id"    />
+        <result property="caseName"    column="case_name"    />
+        <result property="cooperationUnit"    column="cooperation_unit"    />
+        <result property="description"    column="description"    />
+    </resultMap>
+
+    <sql id="selectCooperationCaseVo">
+        select case_id, case_name, cooperation_unit, description from cooperation_case
+    </sql>
+
+    <select id="selectCooperationCaseList" parameterType="CooperationCase" resultMap="CooperationCaseResult">
+        <include refid="selectCooperationCaseVo"/>
+        <where>  
+            <if test="caseName != null  and caseName != ''"> and case_name like concat('%', #{caseName}, '%')</if>
+            <if test="cooperationUnit != null  and cooperationUnit != ''"> and cooperation_unit like concat('%', #{cooperationUnit}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectCooperationCaseByCaseId" parameterType="Long" resultMap="CooperationCaseResult">
+        <include refid="selectCooperationCaseVo"/>
+        where case_id = #{caseId}
+    </select>
+
+    <insert id="insertCooperationCase" parameterType="CooperationCase">
+        insert into cooperation_case
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="caseId != null">case_id,</if>
+            <if test="caseName != null">case_name,</if>
+            <if test="cooperationUnit != null">cooperation_unit,</if>
+            <if test="description != null">description,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="caseId != null">#{caseId},</if>
+            <if test="caseName != null">#{caseName},</if>
+            <if test="cooperationUnit != null">#{cooperationUnit},</if>
+            <if test="description != null">#{description},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCooperationCase" parameterType="CooperationCase">
+        update cooperation_case
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="caseName != null">case_name = #{caseName},</if>
+            <if test="cooperationUnit != null">cooperation_unit = #{cooperationUnit},</if>
+            <if test="description != null">description = #{description},</if>
+        </trim>
+        where case_id = #{caseId}
+    </update>
+
+    <delete id="deleteCooperationCaseByCaseId" parameterType="Long">
+        delete from cooperation_case where case_id = #{caseId}
+    </delete>
+
+    <delete id="deleteCooperationCaseByCaseIds" parameterType="String">
+        delete from cooperation_case where case_id in 
+        <foreach item="caseId" collection="array" open="(" separator="," close=")">
+            #{caseId}
+        </foreach>
+    </delete>
+</mapper>

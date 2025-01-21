@@ -2,18 +2,19 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.system.ar.mapper.ProductionBatchMapper">
+<mapper namespace="com.ruoyi.ar.mapper.ProductionBatchMapper">
     
     <resultMap type="ProductionBatch" id="ProductionBatchResult">
         <result property="batchId"    column="batch_id"    />
         <result property="quantity"    column="quantity"    />
         <result property="unit"    column="unit"    />
         <result property="productionDate"    column="production_date"    />
+        <result property="shelfLife"    column="shelf_life"    />
         <result property="productId"    column="product_id"    />
     </resultMap>
 
     <sql id="selectProductionBatchVo">
-        select batch_id, quantity, unit, production_date, product_id from production_batch
+        select batch_id, quantity, unit, production_date, shelf_life, product_id from production_batch
     </sql>
 
     <select id="selectProductionBatchList" parameterType="ProductionBatch" resultMap="ProductionBatchResult">
@@ -21,7 +22,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="quantity != null "> and quantity = #{quantity}</if>
             <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
-            <if test="params.beginProductionDate != null and params.beginProductionDate != '' and params.endProductionDate != null and params.endProductionDate != ''"> and production_date between #{params.beginProductionDate} and #{params.endProductionDate}</if>
+            <if test="productionDate != null "> and production_date = #{productionDate}</if>
+            <if test="shelfLife != null "> and shelf_life = #{shelfLife}</if>
             <if test="productId != null "> and product_id = #{productId}</if>
         </where>
     </select>
@@ -31,20 +33,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where batch_id = #{batchId}
     </select>
 
-    <insert id="insertProductionBatch" parameterType="ProductionBatch">
+    <insert id="insertProductionBatch" parameterType="ProductionBatch" useGeneratedKeys="true" keyProperty="batchId">
         insert into production_batch
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="batchId != null">batch_id,</if>
             <if test="quantity != null">quantity,</if>
             <if test="unit != null and unit != ''">unit,</if>
             <if test="productionDate != null">production_date,</if>
+            <if test="shelfLife != null">shelf_life,</if>
             <if test="productId != null">product_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="batchId != null">#{batchId},</if>
             <if test="quantity != null">#{quantity},</if>
             <if test="unit != null and unit != ''">#{unit},</if>
             <if test="productionDate != null">#{productionDate},</if>
+            <if test="shelfLife != null">#{shelfLife},</if>
             <if test="productId != null">#{productId},</if>
          </trim>
     </insert>
@@ -55,6 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="quantity != null">quantity = #{quantity},</if>
             <if test="unit != null and unit != ''">unit = #{unit},</if>
             <if test="productionDate != null">production_date = #{productionDate},</if>
+            <if test="shelfLife != null">shelf_life = #{shelfLife},</if>
             <if test="productId != null">product_id = #{productId},</if>
         </trim>
         where batch_id = #{batchId}

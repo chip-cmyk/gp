@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.ar.mapper.ProductTransactionDetailMapper">
+    
+    <resultMap type="ProductTransactionDetail" id="ProductTransactionDetailResult">
+        <result property="productId"    column="product_id"    />
+        <result property="transactionId"    column="transaction_id"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="transactionDate"    column="transaction_date"    />
+    </resultMap>
+
+    <sql id="selectProductTransactionDetailVo">
+        select product_id, transaction_id, quantity, transaction_date from product_transaction_detail
+    </sql>
+
+    <select id="selectProductTransactionDetailList" parameterType="ProductTransactionDetail" resultMap="ProductTransactionDetailResult">
+        <include refid="selectProductTransactionDetailVo"/>
+        <where>  
+            <if test="productId != null "> and product_id = #{productId}</if>
+            <if test="transactionId != null "> and transaction_id = #{transactionId}</if>
+            <if test="transactionDate != null "> and transaction_date = #{transactionDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectProductTransactionDetailByProductId" parameterType="Long" resultMap="ProductTransactionDetailResult">
+        <include refid="selectProductTransactionDetailVo"/>
+        where product_id = #{productId}
+    </select>
+
+    <insert id="insertProductTransactionDetail" parameterType="ProductTransactionDetail">
+        insert into product_transaction_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productId != null">product_id,</if>
+            <if test="transactionId != null">transaction_id,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="transactionDate != null">transaction_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productId != null">#{productId},</if>
+            <if test="transactionId != null">#{transactionId},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="transactionDate != null">#{transactionDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProductTransactionDetail" parameterType="ProductTransactionDetail">
+        update product_transaction_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="transactionId != null">transaction_id = #{transactionId},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="transactionDate != null">transaction_date = #{transactionDate},</if>
+        </trim>
+        where product_id = #{productId}
+    </update>
+
+    <delete id="deleteProductTransactionDetailByProductId" parameterType="Long">
+        delete from product_transaction_detail where product_id = #{productId}
+    </delete>
+
+    <delete id="deleteProductTransactionDetailByProductIds" parameterType="String">
+        delete from product_transaction_detail where product_id in 
+        <foreach item="productId" collection="array" open="(" separator="," close=")">
+            #{productId}
+        </foreach>
+    </delete>
+</mapper>

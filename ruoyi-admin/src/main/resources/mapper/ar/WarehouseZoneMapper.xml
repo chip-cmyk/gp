@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.system.ar.mapper.WarehouseZoneMapper">
+<mapper namespace="com.ruoyi.ar.mapper.WarehouseZoneMapper">
     
     <resultMap type="WarehouseZone" id="WarehouseZoneResult">
         <result property="zoneId"    column="zone_id"    />

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.ar.mapper.MaterialTransactionDetailMapper">
+    
+    <resultMap type="MaterialTransactionDetail" id="MaterialTransactionDetailResult">
+        <result property="materialId"    column="material_id"    />
+        <result property="transactionId"    column="transaction_id"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="transactionDate"    column="transaction_date"    />
+    </resultMap>
+
+    <sql id="selectMaterialTransactionDetailVo">
+        select material_id, transaction_id, quantity, transaction_date from material_transaction_detail
+    </sql>
+
+    <select id="selectMaterialTransactionDetailList" parameterType="MaterialTransactionDetail" resultMap="MaterialTransactionDetailResult">
+        <include refid="selectMaterialTransactionDetailVo"/>
+        <where>  
+            <if test="materialId != null "> and material_id = #{materialId}</if>
+            <if test="transactionId != null "> and transaction_id = #{transactionId}</if>
+            <if test="quantity != null "> and quantity = #{quantity}</if>
+            <if test="transactionDate != null "> and transaction_date = #{transactionDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectMaterialTransactionDetailByMaterialId" parameterType="Long" resultMap="MaterialTransactionDetailResult">
+        <include refid="selectMaterialTransactionDetailVo"/>
+        where material_id = #{materialId}
+    </select>
+
+    <insert id="insertMaterialTransactionDetail" parameterType="MaterialTransactionDetail">
+        insert into material_transaction_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="materialId != null">material_id,</if>
+            <if test="transactionId != null">transaction_id,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="transactionDate != null">transaction_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="materialId != null">#{materialId},</if>
+            <if test="transactionId != null">#{transactionId},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="transactionDate != null">#{transactionDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMaterialTransactionDetail" parameterType="MaterialTransactionDetail">
+        update material_transaction_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="transactionId != null">transaction_id = #{transactionId},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="transactionDate != null">transaction_date = #{transactionDate},</if>
+        </trim>
+        where material_id = #{materialId}
+    </update>
+
+    <delete id="deleteMaterialTransactionDetailByMaterialId" parameterType="Long">
+        delete from material_transaction_detail where material_id = #{materialId}
+    </delete>
+
+    <delete id="deleteMaterialTransactionDetailByMaterialIds" parameterType="String">
+        delete from material_transaction_detail where material_id in 
+        <foreach item="materialId" collection="array" open="(" separator="," close=")">
+            #{materialId}
+        </foreach>
+    </delete>
+</mapper>

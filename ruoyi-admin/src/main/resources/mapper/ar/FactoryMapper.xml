@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.ar.mapper.FactoryMapper">
+    
+    <resultMap type="Factory" id="FactoryResult">
+        <result property="factoryId"    column="factory_id"    />
+        <result property="name"    column="name"    />
+        <result property="description"    column="description"    />
+        <result property="contactPerson"    column="contact_person"    />
+        <result property="contactPhone"    column="contact_phone"    />
+        <result property="address"    column="address"    />
+    </resultMap>
+
+    <sql id="selectFactoryVo">
+        select factory_id, name, description, contact_person, contact_phone, address from factory
+    </sql>
+
+    <select id="selectFactoryList" parameterType="Factory" resultMap="FactoryResult">
+        <include refid="selectFactoryVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="contactPerson != null  and contactPerson != ''"> and contact_person = #{contactPerson}</if>
+            <if test="contactPhone != null  and contactPhone != ''"> and contact_phone = #{contactPhone}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+        </where>
+    </select>
+    
+    <select id="selectFactoryByFactoryId" parameterType="Long" resultMap="FactoryResult">
+        <include refid="selectFactoryVo"/>
+        where factory_id = #{factoryId}
+    </select>
+
+    <insert id="insertFactory" parameterType="Factory">
+        insert into factory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="factoryId != null">factory_id,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="description != null">description,</if>
+            <if test="contactPerson != null and contactPerson != ''">contact_person,</if>
+            <if test="contactPhone != null and contactPhone != ''">contact_phone,</if>
+            <if test="address != null and address != ''">address,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="factoryId != null">#{factoryId},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="description != null">#{description},</if>
+            <if test="contactPerson != null and contactPerson != ''">#{contactPerson},</if>
+            <if test="contactPhone != null and contactPhone != ''">#{contactPhone},</if>
+            <if test="address != null and address != ''">#{address},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFactory" parameterType="Factory">
+        update factory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="contactPerson != null and contactPerson != ''">contact_person = #{contactPerson},</if>
+            <if test="contactPhone != null and contactPhone != ''">contact_phone = #{contactPhone},</if>
+            <if test="address != null and address != ''">address = #{address},</if>
+        </trim>
+        where factory_id = #{factoryId}
+    </update>
+
+    <delete id="deleteFactoryByFactoryId" parameterType="Long">
+        delete from factory where factory_id = #{factoryId}
+    </delete>
+
+    <delete id="deleteFactoryByFactoryIds" parameterType="String">
+        delete from factory where factory_id in 
+        <foreach item="factoryId" collection="array" open="(" separator="," close=")">
+            #{factoryId}
+        </foreach>
+    </delete>
+</mapper>

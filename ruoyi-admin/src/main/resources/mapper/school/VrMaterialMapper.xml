@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.school.mapper.VrMaterialMapper">
+    
+    <resultMap type="VrMaterial" id="VrMaterialResult">
+        <result property="vrMaterialId"    column="vr_material_id"    />
+        <result property="name"    column="name"    />
+        <result property="category"    column="category"    />
+        <result property="fileUrl"    column="file_url"    />
+        <result property="description"    column="description"    />
+        <result property="sceneId"    column="scene_id"    />
+    </resultMap>
+
+    <sql id="selectVrMaterialVo">
+        select vr_material_id, name, category, file_url, description, scene_id from vr_material
+    </sql>
+
+    <select id="selectVrMaterialList" parameterType="VrMaterial" resultMap="VrMaterialResult">
+        <include refid="selectVrMaterialVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="category != null  and category != ''"> and category = #{category}</if>
+            <if test="fileUrl != null  and fileUrl != ''"> and file_url = #{fileUrl}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="sceneId != null "> and scene_id = #{sceneId}</if>
+        </where>
+    </select>
+    
+    <select id="selectVrMaterialByVrMaterialId" parameterType="Long" resultMap="VrMaterialResult">
+        <include refid="selectVrMaterialVo"/>
+        where vr_material_id = #{vrMaterialId}
+    </select>
+
+    <insert id="insertVrMaterial" parameterType="VrMaterial" useGeneratedKeys="true" keyProperty="vrMaterialId">
+        insert into vr_material
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="category != null and category != ''">category,</if>
+            <if test="fileUrl != null and fileUrl != ''">file_url,</if>
+            <if test="description != null">description,</if>
+            <if test="sceneId != null">scene_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="category != null and category != ''">#{category},</if>
+            <if test="fileUrl != null and fileUrl != ''">#{fileUrl},</if>
+            <if test="description != null">#{description},</if>
+            <if test="sceneId != null">#{sceneId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVrMaterial" parameterType="VrMaterial">
+        update vr_material
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="category != null and category != ''">category = #{category},</if>
+            <if test="fileUrl != null and fileUrl != ''">file_url = #{fileUrl},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="sceneId != null">scene_id = #{sceneId},</if>
+        </trim>
+        where vr_material_id = #{vrMaterialId}
+    </update>
+
+    <delete id="deleteVrMaterialByVrMaterialId" parameterType="Long">
+        delete from vr_material where vr_material_id = #{vrMaterialId}
+    </delete>
+
+    <delete id="deleteVrMaterialByVrMaterialIds" parameterType="String">
+        delete from vr_material where vr_material_id in 
+        <foreach item="vrMaterialId" collection="array" open="(" separator="," close=")">
+            #{vrMaterialId}
+        </foreach>
+    </delete>
+</mapper>

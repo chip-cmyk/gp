@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.vr.mapper.VrContentMapper">
+    
+    <resultMap type="VrContent" id="VrContentResult">
+        <result property="vrContentId"    column="vr_content_id"    />
+        <result property="name"    column="name"    />
+        <result property="category"    column="category"    />
+        <result property="fileUrl"    column="file_url"    />
+        <result property="description"    column="description"    />
+        <result property="usageStatus"    column="usage_status"    />
+        <result property="carrierId"    column="carrier_id"    />
+        <result property="workId"    column="work_id"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="updatedAt"    column="updated_at"    />
+    </resultMap>
+
+    <sql id="selectVrContentVo">
+        select vr_content_id, name, category, file_url, description, usage_status, carrier_id, work_id, created_at, updated_at from vr_content
+    </sql>
+
+    <select id="selectVrContentList" parameterType="VrContent" resultMap="VrContentResult">
+        <include refid="selectVrContentVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="category != null  and category != ''"> and category = #{category}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="usageStatus != null  and usageStatus != ''"> and usage_status = #{usageStatus}</if>
+            <if test="carrierId != null "> and carrier_id = #{carrierId}</if>
+            <if test="workId != null "> and work_id = #{workId}</if>
+        </where>
+    </select>
+    
+    <select id="selectVrContentByVrContentId" parameterType="Long" resultMap="VrContentResult">
+        <include refid="selectVrContentVo"/>
+        where vr_content_id = #{vrContentId}
+    </select>
+
+    <insert id="insertVrContent" parameterType="VrContent" useGeneratedKeys="true" keyProperty="vrContentId">
+        insert into vr_content
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="category != null and category != ''">category,</if>
+            <if test="fileUrl != null and fileUrl != ''">file_url,</if>
+            <if test="description != null">description,</if>
+            <if test="usageStatus != null">usage_status,</if>
+            <if test="carrierId != null">carrier_id,</if>
+            <if test="workId != null">work_id,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="updatedAt != null">updated_at,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="category != null and category != ''">#{category},</if>
+            <if test="fileUrl != null and fileUrl != ''">#{fileUrl},</if>
+            <if test="description != null">#{description},</if>
+            <if test="usageStatus != null">#{usageStatus},</if>
+            <if test="carrierId != null">#{carrierId},</if>
+            <if test="workId != null">#{workId},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="updatedAt != null">#{updatedAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVrContent" parameterType="VrContent">
+        update vr_content
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="category != null and category != ''">category = #{category},</if>
+            <if test="fileUrl != null and fileUrl != ''">file_url = #{fileUrl},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="usageStatus != null">usage_status = #{usageStatus},</if>
+            <if test="carrierId != null">carrier_id = #{carrierId},</if>
+            <if test="workId != null">work_id = #{workId},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="updatedAt != null">updated_at = #{updatedAt},</if>
+        </trim>
+        where vr_content_id = #{vrContentId}
+    </update>
+
+    <delete id="deleteVrContentByVrContentId" parameterType="Long">
+        delete from vr_content where vr_content_id = #{vrContentId}
+    </delete>
+
+    <delete id="deleteVrContentByVrContentIds" parameterType="String">
+        delete from vr_content where vr_content_id in 
+        <foreach item="vrContentId" collection="array" open="(" separator="," close=")">
+            #{vrContentId}
+        </foreach>
+    </delete>
+</mapper>

@@ -2,19 +2,20 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.system.ar.mapper.ArContentMapper">
+<mapper namespace="com.ruoyi.ar.mapper.ArContentMapper">
     
     <resultMap type="ArContent" id="ArContentResult">
-        <result property="contentId"    column="content_id"    />
+        <result property="arContentId"    column="ar_content_id"    />
         <result property="name"    column="name"    />
         <result property="category"    column="category"    />
-        <result property="url"    column="url"    />
+        <result property="fileUrl"    column="file_url"    />
         <result property="description"    column="description"    />
+        <result property="usageStatus"    column="usage_status"    />
         <result property="qrCodeId"    column="qr_code_id"    />
     </resultMap>
 
     <sql id="selectArContentVo">
-        select content_id, name, category, url, description, qr_code_id from ar_content
+        select ar_content_id, name, category, file_url, description, usage_status, qr_code_id from ar_content
     </sql>
 
     <select id="selectArContentList" parameterType="ArContent" resultMap="ArContentResult">
@@ -22,33 +23,32 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="category != null  and category != ''"> and category = #{category}</if>
-            <if test="url != null  and url != ''"> and url = #{url}</if>
-            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="usageStatus != null  and usageStatus != ''"> and usage_status = #{usageStatus}</if>
             <if test="qrCodeId != null "> and qr_code_id = #{qrCodeId}</if>
         </where>
     </select>
     
-    <select id="selectArContentByContentId" parameterType="Long" resultMap="ArContentResult">
+    <select id="selectArContentByArContentId" parameterType="Long" resultMap="ArContentResult">
         <include refid="selectArContentVo"/>
-        where content_id = #{contentId}
+        where ar_content_id = #{arContentId}
     </select>
 
-    <insert id="insertArContent" parameterType="ArContent">
+    <insert id="insertArContent" parameterType="ArContent" useGeneratedKeys="true" keyProperty="arContentId">
         insert into ar_content
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="contentId != null">content_id,</if>
             <if test="name != null and name != ''">name,</if>
             <if test="category != null and category != ''">category,</if>
-            <if test="url != null and url != ''">url,</if>
+            <if test="fileUrl != null and fileUrl != ''">file_url,</if>
             <if test="description != null">description,</if>
+            <if test="usageStatus != null">usage_status,</if>
             <if test="qrCodeId != null">qr_code_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="contentId != null">#{contentId},</if>
             <if test="name != null and name != ''">#{name},</if>
             <if test="category != null and category != ''">#{category},</if>
-            <if test="url != null and url != ''">#{url},</if>
+            <if test="fileUrl != null and fileUrl != ''">#{fileUrl},</if>
             <if test="description != null">#{description},</if>
+            <if test="usageStatus != null">#{usageStatus},</if>
             <if test="qrCodeId != null">#{qrCodeId},</if>
          </trim>
     </insert>
@@ -58,21 +58,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="name != null and name != ''">name = #{name},</if>
             <if test="category != null and category != ''">category = #{category},</if>
-            <if test="url != null and url != ''">url = #{url},</if>
+            <if test="fileUrl != null and fileUrl != ''">file_url = #{fileUrl},</if>
             <if test="description != null">description = #{description},</if>
+            <if test="usageStatus != null">usage_status = #{usageStatus},</if>
             <if test="qrCodeId != null">qr_code_id = #{qrCodeId},</if>
         </trim>
-        where content_id = #{contentId}
+        where ar_content_id = #{arContentId}
     </update>
 
-    <delete id="deleteArContentByContentId" parameterType="Long">
-        delete from ar_content where content_id = #{contentId}
+    <delete id="deleteArContentByArContentId" parameterType="Long">
+        delete from ar_content where ar_content_id = #{arContentId}
     </delete>
 
-    <delete id="deleteArContentByContentIds" parameterType="String">
-        delete from ar_content where content_id in 
-        <foreach item="contentId" collection="array" open="(" separator="," close=")">
-            #{contentId}
+    <delete id="deleteArContentByArContentIds" parameterType="String">
+        delete from ar_content where ar_content_id in 
+        <foreach item="arContentId" collection="array" open="(" separator="," close=")">
+            #{arContentId}
         </foreach>
     </delete>
 </mapper>

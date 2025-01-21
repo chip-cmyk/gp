@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.system.ar.mapper.ProductTransactionMapper">
+<mapper namespace="com.ruoyi.ar.mapper.ProductTransactionMapper">
     
     <resultMap type="ProductTransaction" id="ProductTransactionResult">
         <result property="transactionId"    column="transaction_id"    />

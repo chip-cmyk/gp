@@ -1,13 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      size="small"
-      :inline="true"
-      v-show="showSearch"
-      label-width=""
-    >
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="产品名称" prop="productName">
         <el-input
           v-model="queryParams.productName"
@@ -24,6 +17,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="库存量" prop="stockAmount">
+        <el-input
+          v-model="queryParams.stockAmount"
+          placeholder="请输入库存量"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="库区编号" prop="warehouseZoneId">
         <el-input
           v-model="queryParams.warehouseZoneId"
@@ -33,16 +34,8 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          size="mini"
-          @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
-          >重置</el-button
-        >
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -55,8 +48,7 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['ar:product:add']"
-          >新增</el-button
-        >
+        >新增</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -67,8 +59,7 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['ar:product:edit']"
-          >修改</el-button
-        >
+        >修改</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -79,8 +70,7 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['ar:product:remove']"
-          >删除</el-button
-        >
+        >删除</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -90,36 +80,20 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['ar:product:export']"
-          >导出</el-button
-        >
+        >导出</el-button>
       </el-col>
-      <right-toolbar
-        :showSearch.sync="showSearch"
-        @queryTable="getList"
-      ></right-toolbar>
+      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table
-      v-loading="loading"
-      :data="productList"
-      @selection-change="handleSelectionChange"
-    >
+    <el-table v-loading="loading" :data="productList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="产品编号" align="center" prop="productId" />
       <el-table-column label="产品名称" align="center" prop="productName" />
       <el-table-column label="产品型号" align="center" prop="productModel" />
-      <el-table-column
-        label="产品简介"
-        align="center"
-        prop="productDescription"
-      />
+      <el-table-column label="产品简介" align="center" prop="productDescription" />
       <el-table-column label="库存量" align="center" prop="stockAmount" />
       <el-table-column label="库区编号" align="center" prop="warehouseZoneId" />
-      <el-table-column
-        label="操作"
-        align="center"
-        class-name="small-padding fixed-width"
-      >
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -127,22 +101,20 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['ar:product:edit']"
-            >修改</el-button
-          >
+          >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['ar:product:remove']"
-            >删除</el-button
-          >
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-
+    
     <pagination
-      v-show="total > 0"
+      v-show="total>0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -159,20 +131,13 @@
           <el-input v-model="form.productModel" placeholder="请输入产品型号" />
         </el-form-item>
         <el-form-item label="产品简介" prop="productDescription">
-          <el-input
-            v-model="form.productDescription"
-            type="textarea"
-            placeholder="请输入内容"
-          />
+          <el-input v-model="form.productDescription" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="库存量" prop="stockAmount">
           <el-input v-model="form.stockAmount" placeholder="请输入库存量" />
         </el-form-item>
         <el-form-item label="库区编号" prop="warehouseZoneId">
-          <el-input
-            v-model="form.warehouseZoneId"
-            placeholder="请输入库区编号"
-          />
+          <el-input v-model="form.warehouseZoneId" placeholder="请输入库区编号" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -184,13 +149,7 @@
 </template>
 
 <script>
-import {
-  listProduct,
-  getProduct,
-  delProduct,
-  addProduct,
-  updateProduct,
-} from "@/api/ar/product";
+import { listProduct, getProduct, delProduct, addProduct, updateProduct } from "@/api/ar/product";
 
 export default {
   name: "Product",
@@ -220,28 +179,26 @@ export default {
         pageSize: 10,
         productName: null,
         productModel: null,
-        warehouseZoneId: null,
+        stockAmount: null,
+        warehouseZoneId: null
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
         productName: [
-          { required: true, message: "产品名称不能为空", trigger: "blur" },
+          { required: true, message: "产品名称不能为空", trigger: "blur" }
         ],
         productModel: [
-          { required: true, message: "产品型号不能为空", trigger: "blur" },
-        ],
-        productDescription: [
-          { required: true, message: "产品简介不能为空", trigger: "blur" },
+          { required: true, message: "产品型号不能为空", trigger: "blur" }
         ],
         stockAmount: [
-          { required: true, message: "库存量不能为空", trigger: "blur" },
+          { required: true, message: "库存量不能为空", trigger: "blur" }
         ],
         warehouseZoneId: [
-          { required: true, message: "库区编号不能为空", trigger: "blur" },
-        ],
-      },
+          { required: true, message: "库区编号不能为空", trigger: "blur" }
+        ]
+      }
     };
   },
   created() {
@@ -251,7 +208,7 @@ export default {
     /** 查询产品信息列表 */
     getList() {
       this.loading = true;
-      listProduct(this.queryParams).then((response) => {
+      listProduct(this.queryParams).then(response => {
         this.productList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -270,7 +227,7 @@ export default {
         productModel: null,
         productDescription: null,
         stockAmount: null,
-        warehouseZoneId: null,
+        warehouseZoneId: null
       };
       this.resetForm("form");
     },
@@ -286,9 +243,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map((item) => item.productId);
-      this.single = selection.length !== 1;
-      this.multiple = !selection.length;
+      this.ids = selection.map(item => item.productId)
+      this.single = selection.length!==1
+      this.multiple = !selection.length
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -299,8 +256,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const productId = row.productId || this.ids;
-      getProduct(productId).then((response) => {
+      const productId = row.productId || this.ids
+      getProduct(productId).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改产品信息";
@@ -308,16 +265,16 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate((valid) => {
+      this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.productId != null) {
-            updateProduct(this.form).then((response) => {
+            updateProduct(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addProduct(this.form).then((response) => {
+            addProduct(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -329,27 +286,19 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const productIds = row.productId || this.ids;
-      this.$modal
-        .confirm('是否确认删除产品信息编号为"' + productIds + '"的数据项？')
-        .then(function () {
-          return delProduct(productIds);
-        })
-        .then(() => {
-          this.getList();
-          this.$modal.msgSuccess("删除成功");
-        })
-        .catch(() => {});
+      this.$modal.confirm('是否确认删除产品信息编号为"' + productIds + '"的数据项？').then(function() {
+        return delProduct(productIds);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("删除成功");
+      }).catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download(
-        "ar/product/export",
-        {
-          ...this.queryParams,
-        },
-        `product_${new Date().getTime()}.xlsx`
-      );
-    },
-  },
+      this.download('ar/product/export', {
+        ...this.queryParams
+      }, `product_${new Date().getTime()}.xlsx`)
+    }
+  }
 };
 </script>

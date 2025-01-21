@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.system.ar.mapper.ProductMapper">
+<mapper namespace="com.ruoyi.ar.mapper.ProductMapper">
     
     <resultMap type="Product" id="ProductResult">
         <result property="productId"    column="product_id"    />
@@ -22,6 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
             <if test="productModel != null  and productModel != ''"> and product_model = #{productModel}</if>
+            <if test="stockAmount != null "> and stock_amount = #{stockAmount}</if>
             <if test="warehouseZoneId != null "> and warehouse_zone_id = #{warehouseZoneId}</if>
         </where>
     </select>
@@ -37,7 +38,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="productId != null">product_id,</if>
             <if test="productName != null and productName != ''">product_name,</if>
             <if test="productModel != null and productModel != ''">product_model,</if>
-            <if test="productDescription != null and productDescription != ''">product_description,</if>
+            <if test="productDescription != null">product_description,</if>
             <if test="stockAmount != null">stock_amount,</if>
             <if test="warehouseZoneId != null">warehouse_zone_id,</if>
          </trim>
@@ -45,7 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="productId != null">#{productId},</if>
             <if test="productName != null and productName != ''">#{productName},</if>
             <if test="productModel != null and productModel != ''">#{productModel},</if>
-            <if test="productDescription != null and productDescription != ''">#{productDescription},</if>
+            <if test="productDescription != null">#{productDescription},</if>
             <if test="stockAmount != null">#{stockAmount},</if>
             <if test="warehouseZoneId != null">#{warehouseZoneId},</if>
          </trim>
@@ -56,7 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="productName != null and productName != ''">product_name = #{productName},</if>
             <if test="productModel != null and productModel != ''">product_model = #{productModel},</if>
-            <if test="productDescription != null and productDescription != ''">product_description = #{productDescription},</if>
+            <if test="productDescription != null">product_description = #{productDescription},</if>
             <if test="stockAmount != null">stock_amount = #{stockAmount},</if>
             <if test="warehouseZoneId != null">warehouse_zone_id = #{warehouseZoneId},</if>
         </trim>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.school.mapper.VrSceneMapper">
+    
+    <resultMap type="VrScene" id="VrSceneResult">
+        <result property="sceneId"    column="scene_id"    />
+        <result property="sceneName"    column="scene_name"    />
+        <result property="fileUrl"    column="file_url"    />
+        <result property="description"    column="description"    />
+        <result property="caseId"    column="case_id"    />
+    </resultMap>
+
+    <sql id="selectVrSceneVo">
+        select scene_id, scene_name, file_url, description, case_id from vr_scene
+    </sql>
+
+    <select id="selectVrSceneList" parameterType="VrScene" resultMap="VrSceneResult">
+        <include refid="selectVrSceneVo"/>
+        <where>  
+            <if test="sceneName != null  and sceneName != ''"> and scene_name like concat('%', #{sceneName}, '%')</if>
+            <if test="fileUrl != null  and fileUrl != ''"> and file_url = #{fileUrl}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="caseId != null "> and case_id = #{caseId}</if>
+        </where>
+    </select>
+    
+    <select id="selectVrSceneBySceneId" parameterType="Long" resultMap="VrSceneResult">
+        <include refid="selectVrSceneVo"/>
+        where scene_id = #{sceneId}
+    </select>
+
+    <insert id="insertVrScene" parameterType="VrScene">
+        insert into vr_scene
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sceneId != null">scene_id,</if>
+            <if test="sceneName != null and sceneName != ''">scene_name,</if>
+            <if test="fileUrl != null and fileUrl != ''">file_url,</if>
+            <if test="description != null">description,</if>
+            <if test="caseId != null">case_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sceneId != null">#{sceneId},</if>
+            <if test="sceneName != null and sceneName != ''">#{sceneName},</if>
+            <if test="fileUrl != null and fileUrl != ''">#{fileUrl},</if>
+            <if test="description != null">#{description},</if>
+            <if test="caseId != null">#{caseId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVrScene" parameterType="VrScene">
+        update vr_scene
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sceneName != null and sceneName != ''">scene_name = #{sceneName},</if>
+            <if test="fileUrl != null and fileUrl != ''">file_url = #{fileUrl},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="caseId != null">case_id = #{caseId},</if>
+        </trim>
+        where scene_id = #{sceneId}
+    </update>
+
+    <delete id="deleteVrSceneBySceneId" parameterType="Long">
+        delete from vr_scene where scene_id = #{sceneId}
+    </delete>
+
+    <delete id="deleteVrSceneBySceneIds" parameterType="String">
+        delete from vr_scene where scene_id in 
+        <foreach item="sceneId" collection="array" open="(" separator="," close=")">
+            #{sceneId}
+        </foreach>
+    </delete>
+</mapper>

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.system.vr.mapper.VrExhibitZoneMapper">
+<mapper namespace="com.ruoyi.vr.mapper.VrExhibitZoneMapper">
     
     <resultMap type="VrExhibitZone" id="VrExhibitZoneResult">
         <result property="exhibitZoneId"    column="exhibit_zone_id"    />
