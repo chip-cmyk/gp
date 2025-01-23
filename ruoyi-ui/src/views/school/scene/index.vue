@@ -1,6 +1,13 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      size="small"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
       <el-form-item label="场景名称" prop="sceneName">
         <el-input
           v-model="queryParams.sceneName"
@@ -17,17 +24,35 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="案例编号" prop="caseId">
-        <el-input
+      <!-- 下拉框 -->
+      <el-form-item label="案例名称" prop="caseId">
+        <el-select
           v-model="queryParams.caseId"
-          placeholder="请输入案例编号"
+          placeholder="请选择案例名称"
+          filterable
           clearable
+          allow-create
           @keyup.enter.native="handleQuery"
-        />
+        >
+          <el-option
+            v-for="item in caseList"
+            :key="item.caseId"
+            :label="item.caseName"
+            :value="item.caseId"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          size="mini"
+          @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -40,7 +65,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['school:scene:add']"
-        >新增</el-button>
+          >新增</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -51,7 +77,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['school:scene:edit']"
-        >修改</el-button>
+          >修改</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -62,7 +89,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['school:scene:remove']"
-        >删除</el-button>
+          >删除</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -72,19 +100,37 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['school:scene:export']"
-        >导出</el-button>
+          >导出</el-button
+        >
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar
+        :showSearch.sync="showSearch"
+        @queryTable="getList"
+      ></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="sceneList" @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="loading"
+      :data="sceneList"
+      @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="场景编号" align="center" prop="sceneId" />
       <el-table-column label="场景名称" align="center" prop="sceneName" />
       <el-table-column label="文件URL" align="center" prop="fileUrl" />
       <el-table-column label="简介" align="center" prop="description" />
-      <el-table-column label="案例编号" align="center" prop="caseId" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <!-- id映射为名称 -->
+      <el-table-column label="案例名称" align="center" prop="caseId">
+        <template slot-scope="scope">
+          <span>{{ getCaseName(scope.row.caseId) }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -92,20 +138,22 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['school:scene:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['school:scene:remove']"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -122,10 +170,28 @@
           <el-input v-model="form.fileUrl" placeholder="请输入文件URL" />
         </el-form-item>
         <el-form-item label="简介" prop="description">
-          <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
+          <el-input
+            v-model="form.description"
+            type="textarea"
+            placeholder="请输入内容"
+          />
         </el-form-item>
-        <el-form-item label="案例编号" prop="caseId">
-          <el-input v-model="form.caseId" placeholder="请输入案例编号" />
+        <!-- 下拉框 -->
+        <el-form-item label="案例名称" prop="caseId">
+          <el-select
+            v-model="form.caseId"
+            placeholder="请选择案例名称"
+            filterable
+            clearable
+            allow-create
+          >
+            <el-option
+              v-for="item in caseList"
+              :key="item.caseId"
+              :label="item.caseName"
+              :value="item.caseId"
+            ></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -137,7 +203,15 @@
 </template>
 
 <script>
-import { listScene, getScene, delScene, addScene, updateScene } from "@/api/school/scene";
+import {
+  listScene,
+  getScene,
+  delScene,
+  addScene,
+  updateScene,
+} from "@/api/school/scene";
+import { listCase } from "@/api/school/case";
+import { get } from "sortablejs";
 
 export default {
   name: "Scene",
@@ -157,6 +231,8 @@ export default {
       total: 0,
       // VR场景表格数据
       sceneList: [],
+      // 合作案例数据
+      caseList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -168,36 +244,49 @@ export default {
         sceneName: null,
         fileUrl: null,
         description: null,
-        caseId: null
+        caseId: null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
         sceneName: [
-          { required: true, message: "场景名称不能为空", trigger: "blur" }
+          { required: true, message: "场景名称不能为空", trigger: "blur" },
         ],
         fileUrl: [
-          { required: true, message: "文件URL不能为空", trigger: "blur" }
+          { required: true, message: "文件URL不能为空", trigger: "blur" },
         ],
         caseId: [
-          { required: true, message: "案例编号不能为空", trigger: "blur" }
-        ]
-      }
+          { required: true, message: "案例编号不能为空", trigger: "blur" },
+        ],
+      },
     };
   },
   created() {
     this.getList();
+    this.getCaseList();
   },
   methods: {
     /** 查询VR场景列表 */
     getList() {
       this.loading = true;
-      listScene(this.queryParams).then(response => {
+      listScene(this.queryParams).then((response) => {
         this.sceneList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
+    },
+    // 取合作案例列表
+    getCaseList() {
+      listCase().then((response) => {
+        this.caseList = response.rows;
+      });
+    },
+
+    // 根据案例编号回显对应的案例名称
+    getCaseName(caseId) {
+      const index = this.caseList.findIndex((item) => item.caseId === caseId);
+      return this.caseList[index].caseName;
     },
     // 取消按钮
     cancel() {
@@ -211,7 +300,7 @@ export default {
         sceneName: null,
         fileUrl: null,
         description: null,
-        caseId: null
+        caseId: null,
       };
       this.resetForm("form");
     },
@@ -227,9 +316,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.sceneId)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.sceneId);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -240,8 +329,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const sceneId = row.sceneId || this.ids
-      getScene(sceneId).then(response => {
+      const sceneId = row.sceneId || this.ids;
+      getScene(sceneId).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改VR场景";
@@ -249,16 +338,16 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.sceneId != null) {
-            updateScene(this.form).then(response => {
+            updateScene(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addScene(this.form).then(response => {
+            addScene(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -270,19 +359,27 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const sceneIds = row.sceneId || this.ids;
-      this.$modal.confirm('是否确认删除VR场景编号为"' + sceneIds + '"的数据项？').then(function() {
-        return delScene(sceneIds);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm('是否确认删除VR场景编号为"' + sceneIds + '"的数据项？')
+        .then(function () {
+          return delScene(sceneIds);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('school/scene/export', {
-        ...this.queryParams
-      }, `scene_${new Date().getTime()}.xlsx`)
-    }
-  }
+      this.download(
+        "school/scene/export",
+        {
+          ...this.queryParams,
+        },
+        `scene_${new Date().getTime()}.xlsx`
+      );
+    },
+  },
 };
 </script>
