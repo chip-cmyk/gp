@@ -259,6 +259,9 @@ export default {
         caseId: [
           { required: true, message: "案例编号不能为空", trigger: "blur" },
         ],
+        description: [
+          { required: true, message: "简介不能为空", trigger: "blur" },
+        ],
       },
     };
   },

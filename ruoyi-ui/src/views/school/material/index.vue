@@ -247,6 +247,9 @@ export default {
         category: [
           { required: true, message: "类别不能为空", trigger: "blur" },
         ],
+        description: [
+          { required: true, message: "简介不能为空", trigger: "blur" },
+        ],
         fileUrl: [
           { required: true, message: "文件URL不能为空", trigger: "blur" },
         ],
