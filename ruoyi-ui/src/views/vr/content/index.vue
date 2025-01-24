@@ -21,12 +21,20 @@
           v-model="queryParams.category"
           placeholder="请选择类别"
           clearable
+          filterable
+          allow-create
         >
+          <!-- <el-option -->
+          <!-- v-for="dict in dict.type.vr_content_category" -->
+          <!-- :key="dict.value" -->
+          <!-- :label="dict.label" -->
+          <!-- :value="dict.value" -->
+          <!-- /> -->
           <el-option
-            v-for="dict in dict.type.vr_content_category"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
+            v-for="item in allCategoryList"
+            :key="item"
+            :label="item"
+            :value="item"
           />
         </el-select>
       </el-form-item>
@@ -136,12 +144,12 @@
       <el-table-column label="VR内容编号" align="center" prop="vrContentId" />
       <el-table-column label="名称" align="center" prop="name" />
       <el-table-column label="类别" align="center" prop="category">
-        <template slot-scope="scope">
-          <dict-tag
-            :options="dict.type.vr_content_category"
-            :value="scope.row.category"
-          />
-        </template>
+        <!-- <template slot-scope="scope"> -->
+        <!-- <dict-tag -->
+        <!-- :options="dict.type.vr_content_category" -->
+        <!-- :value="scope.row.category" -->
+        <!-- /> -->
+        <!-- </template> -->
       </el-table-column>
       <el-table-column label="文件URL" align="center" prop="fileUrl" />
       <el-table-column label="简介" align="center" prop="description" />
@@ -203,12 +211,18 @@
             clearable
             allow-create
           >
+            <!-- <el-option -->
+            <!-- v-for="dict in dict.type.vr_content_category" -->
+            <!-- :key="dict.value" -->
+            <!-- :label="dict.label" -->
+            <!-- :value="dict.value" -->
+            <!-- ></el-option> -->
             <el-option
-              v-for="dict in dict.type.vr_content_category"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            ></el-option>
+              v-for="item in allCategoryList"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="文件URL" prop="fileUrl">
@@ -308,10 +322,13 @@ export default {
           { required: true, message: "简介不能为空", trigger: "blur" },
         ],
       },
+      // 类别列表
+      allCategoryList: [],
     };
   },
   created() {
     this.getList();
+    this.getCategory();
   },
   methods: {
     /** 查询VR内容列表 */
@@ -385,12 +402,14 @@ export default {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+              this.getCategory();
             });
           } else {
             addContent(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+              this.getCategory();
             });
           }
         }
@@ -406,6 +425,7 @@ export default {
         })
         .then(() => {
           this.getList();
+          this.getCategory();
           this.$modal.msgSuccess("删除成功");
         })
         .catch(() => {});
@@ -419,6 +439,24 @@ export default {
         },
         `content_${new Date().getTime()}.xlsx`
       );
+    },
+    // 计算出类别列表（this.dict.type.vr_content_category加上this.contentList.category中的数据，然后去重）
+    getCategory() {
+      setTimeout(() => {
+        const categorySet = new Set();
+        this.dict.type.vr_content_category.forEach((item) => {
+          categorySet.add(item.value);
+        });
+        listContent({
+          pageNum: 1,
+          pageSize: 10000,
+        }).then((response) => {
+          response.rows.forEach((item) => {
+            categorySet.add(item.category);
+          });
+          this.allCategoryList = Array.from(categorySet);
+        });
+      }, 800);
     },
   },
 };
