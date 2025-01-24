@@ -36,14 +36,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="zoneId != null">zone_id,</if>
             <if test="name != null and name != ''">name,</if>
-            <if test="description != null">description,</if>
+            <if test="description != null and description != ''">description,</if>
             <if test="qrCodeId != null">qr_code_id,</if>
             <if test="factoryId != null">factory_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="zoneId != null">#{zoneId},</if>
             <if test="name != null and name != ''">#{name},</if>
-            <if test="description != null">#{description},</if>
+            <if test="description != null and description != ''">#{description},</if>
             <if test="qrCodeId != null">#{qrCodeId},</if>
             <if test="factoryId != null">#{factoryId},</if>
          </trim>
@@ -53,7 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update sandbox_zone
         <trim prefix="SET" suffixOverrides=",">
             <if test="name != null and name != ''">name = #{name},</if>
-            <if test="description != null">description = #{description},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
             <if test="qrCodeId != null">qr_code_id = #{qrCodeId},</if>
             <if test="factoryId != null">factory_id = #{factoryId},</if>
         </trim>

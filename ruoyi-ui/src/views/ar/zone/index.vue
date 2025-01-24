@@ -177,6 +177,9 @@ export default {
         name: [
           { required: true, message: "名称不能为空", trigger: "blur" }
         ],
+        description: [
+          { required: true, message: "简介不能为空", trigger: "blur" }
+        ],
         qrCodeId: [
           { required: true, message: "二维码编号不能为空", trigger: "blur" }
         ],
