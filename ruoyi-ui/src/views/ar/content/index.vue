@@ -1,6 +1,13 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      size="small"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
       <el-form-item label="名称" prop="name">
         <el-input
           v-model="queryParams.name"
@@ -10,15 +17,27 @@
         />
       </el-form-item>
       <el-form-item label="类别" prop="category">
-        <el-input
+        <el-select
           v-model="queryParams.category"
-          placeholder="请输入类别"
+          placeholder="请选择类别"
           clearable
-          @keyup.enter.native="handleQuery"
-        />
+          filterable
+          allow-create
+        >
+          <el-option
+            v-for="item in allCategoryList"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="使用情况" prop="usageStatus">
-        <el-select v-model="queryParams.usageStatus" placeholder="请选择使用情况" clearable>
+        <el-select
+          v-model="queryParams.usageStatus"
+          placeholder="请选择使用情况"
+          clearable
+        >
           <el-option
             v-for="dict in dict.type.use_status"
             :key="dict.value"
@@ -36,8 +55,16 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          size="mini"
+          @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -50,7 +77,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['ar:content:add']"
-        >新增</el-button>
+          >新增</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -61,7 +89,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['ar:content:edit']"
-        >修改</el-button>
+          >修改</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -72,7 +101,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['ar:content:remove']"
-        >删除</el-button>
+          >删除</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -82,12 +112,20 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['ar:content:export']"
-        >导出</el-button>
+          >导出</el-button
+        >
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar
+        :showSearch.sync="showSearch"
+        @queryTable="getList"
+      ></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="contentList" @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="loading"
+      :data="contentList"
+      @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="AR内容编号" align="center" prop="arContentId" />
       <el-table-column label="名称" align="center" prop="name" />
@@ -96,11 +134,18 @@
       <el-table-column label="简介" align="center" prop="description" />
       <el-table-column label="使用情况" align="center" prop="usageStatus">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.use_status" :value="scope.row.usageStatus"/>
+          <dict-tag
+            :options="dict.type.use_status"
+            :value="scope.row.usageStatus"
+          />
         </template>
       </el-table-column>
       <el-table-column label="二维码编号" align="center" prop="qrCodeId" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -108,20 +153,22 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['ar:content:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['ar:content:remove']"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -135,13 +182,34 @@
           <el-input v-model="form.name" placeholder="请输入名称" />
         </el-form-item>
         <el-form-item label="类别" prop="category">
-          <el-input v-model="form.category" placeholder="请输入类别" />
+          <el-select
+            v-model="form.category"
+            placeholder="请选择类别"
+            filterable
+            clearable
+            allow-create
+          >
+            <el-option
+              v-for="item in allCategoryList"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="文件URL" prop="fileUrl">
-          <el-input v-model="form.fileUrl" type="textarea" placeholder="请输入内容" />
+          <el-input
+            v-model="form.fileUrl"
+            type="textarea"
+            placeholder="请输入内容"
+          />
         </el-form-item>
         <el-form-item label="简介" prop="description">
-          <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
+          <el-input
+            v-model="form.description"
+            type="textarea"
+            placeholder="请输入内容"
+          />
         </el-form-item>
         <el-form-item label="使用情况" prop="usageStatus">
           <el-select v-model="form.usageStatus" placeholder="请选择使用情况">
@@ -166,11 +234,17 @@
 </template>
 
 <script>
-import { listContent, getContent, delContent, addContent, updateContent } from "@/api/ar/content";
+import {
+  listContent,
+  getContent,
+  delContent,
+  addContent,
+  updateContent,
+} from "@/api/ar/content";
 
 export default {
   name: "Content",
-  dicts: ['use_status'],
+  dicts: ["use_status", "ar_content_category"],
   data() {
     return {
       // 遮罩层
@@ -198,35 +272,36 @@ export default {
         name: null,
         category: null,
         usageStatus: null,
-        qrCodeId: null
+        qrCodeId: null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        name: [
-          { required: true, message: "名称不能为空", trigger: "blur" }
-        ],
+        name: [{ required: true, message: "名称不能为空", trigger: "blur" }],
         category: [
-          { required: true, message: "类别不能为空", trigger: "blur" }
+          { required: true, message: "类别不能为空", trigger: "blur" },
         ],
         fileUrl: [
-          { required: true, message: "文件URL不能为空", trigger: "blur" }
+          { required: true, message: "文件URL不能为空", trigger: "blur" },
         ],
         description: [
-          { required: true, message: "简介不能为空", trigger: "blur" }
+          { required: true, message: "简介不能为空", trigger: "blur" },
         ],
-      }
+      },
+      // 类别列表
+      allCategoryList: [],
     };
   },
   created() {
     this.getList();
+    this.getCategory();
   },
   methods: {
     /** 查询AR内容列表 */
     getList() {
       this.loading = true;
-      listContent(this.queryParams).then(response => {
+      listContent(this.queryParams).then((response) => {
         this.contentList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -246,7 +321,7 @@ export default {
         fileUrl: null,
         description: null,
         usageStatus: null,
-        qrCodeId: null
+        qrCodeId: null,
       };
       this.resetForm("form");
     },
@@ -262,9 +337,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.arContentId)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.arContentId);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -275,8 +350,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const arContentId = row.arContentId || this.ids
-      getContent(arContentId).then(response => {
+      const arContentId = row.arContentId || this.ids;
+      getContent(arContentId).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改AR内容";
@@ -284,19 +359,21 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.arContentId != null) {
-            updateContent(this.form).then(response => {
+            updateContent(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+              this.getCategory();
             });
           } else {
-            addContent(this.form).then(response => {
+            addContent(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+              this.getCategory();
             });
           }
         }
@@ -305,19 +382,44 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const arContentIds = row.arContentId || this.ids;
-      this.$modal.confirm('是否确认删除AR内容编号为"' + arContentIds + '"的数据项？').then(function() {
-        return delContent(arContentIds);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm('是否确认删除AR内容编号为"' + arContentIds + '"的数据项？')
+        .then(function () {
+          return delContent(arContentIds);
+        })
+        .then(() => {
+          this.getList();
+          this.getCategory();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('ar/content/export', {
-        ...this.queryParams
-      }, `content_${new Date().getTime()}.xlsx`)
-    }
-  }
+      this.download(
+        "ar/content/export",
+        {
+          ...this.queryParams,
+        },
+        `content_${new Date().getTime()}.xlsx`
+      );
+    },
+    // 计算出类别列表（this.dict.type.ar_content_category加上this.contentList.category中的数据，然后去重）
+    getCategory() {
+      // 延迟0.8秒才能取出this.dict.type.ar_content_category的值(ob_observer只能异步取值)
+      setTimeout(() => {
+        const categorySet = new Set();
+        this.dict.type.ar_content_category.forEach((item) => {
+          categorySet.add(item.value);
+        });
+        listContent(this.allQueryParams).then((response) => {
+          response.rows.forEach((item) => {
+            categorySet.add(item.category);
+          });
+          this.allCategoryList = Array.from(categorySet);
+        });
+      }, 800);
+    },
+  },
 };
 </script>
