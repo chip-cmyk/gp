@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.common;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -77,10 +78,13 @@ public class CommonController
     {
         try
         {
+            File f = new File("");
+            String basePath = f.getCanonicalPath();
             // 上传文件路径
             String filePath = RuoYiConfig.getUploadPath();
             // 上传并返回新文件名称
-            String fileName = FileUploadUtils.upload(filePath, file);
+            //String fileName = FileUploadUtils.upload(filePath, file);
+            String fileName = FileUploadUtils.upload(basePath+filePath, file);
             String url = serverConfig.getUrl() + fileName;
             AjaxResult ajax = AjaxResult.success();
             ajax.put("url", url);
@@ -113,7 +117,8 @@ public class CommonController
             {
                 // 上传并返回新文件名称
                 String fileName = FileUploadUtils.upload(filePath, file);
-                String url = serverConfig.getUrl() + fileName;
+                //String url = serverConfig.getUrl() + fileName;
+                String url = fileName;
                 urls.add(url);
                 fileNames.add(fileName);
                 newFileNames.add(FileUtils.getName(fileName));
