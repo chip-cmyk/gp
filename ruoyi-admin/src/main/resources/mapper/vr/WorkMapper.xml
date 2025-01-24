@@ -20,11 +20,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectWorkList" parameterType="Work" resultMap="WorkResult">
         <include refid="selectWorkVo"/>
         <where>  
-            <if test="title != null  and title != ''"> and title = #{title}</if>
-            <if test="authors != null  and authors != ''"> and authors = #{authors}</if>
-            <if test="instructor != null  and instructor != ''"> and instructor = #{instructor}</if>
-            <if test="awardInfo != null  and awardInfo != ''"> and award_info = #{awardInfo}</if>
-            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="params.beginTitle != null and params.beginTitle != '' and params.endTitle != null and params.endTitle != ''"> and title between #{params.beginTitle} and #{params.endTitle}</if>
+            <if test="params.beginAuthors != null and params.beginAuthors != '' and params.endAuthors != null and params.endAuthors != ''"> and authors between #{params.beginAuthors} and #{params.endAuthors}</if>
+            <if test="params.beginInstructor != null and params.beginInstructor != '' and params.endInstructor != null and params.endInstructor != ''"> and instructor between #{params.beginInstructor} and #{params.endInstructor}</if>
+            <if test="params.beginAwardInfo != null and params.beginAwardInfo != '' and params.endAwardInfo != null and params.endAwardInfo != ''"> and award_info between #{params.beginAwardInfo} and #{params.endAwardInfo}</if>
         </where>
     </select>
     
@@ -39,17 +38,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="workId != null">work_id,</if>
             <if test="title != null and title != ''">title,</if>
             <if test="authors != null and authors != ''">authors,</if>
-            <if test="instructor != null">instructor,</if>
-            <if test="awardInfo != null">award_info,</if>
-            <if test="description != null">description,</if>
+            <if test="instructor != null and instructor != ''">instructor,</if>
+            <if test="awardInfo != null and awardInfo != ''">award_info,</if>
+            <if test="description != null and description != ''">description,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="workId != null">#{workId},</if>
             <if test="title != null and title != ''">#{title},</if>
             <if test="authors != null and authors != ''">#{authors},</if>
-            <if test="instructor != null">#{instructor},</if>
-            <if test="awardInfo != null">#{awardInfo},</if>
-            <if test="description != null">#{description},</if>
+            <if test="instructor != null and instructor != ''">#{instructor},</if>
+            <if test="awardInfo != null and awardInfo != ''">#{awardInfo},</if>
+            <if test="description != null and description != ''">#{description},</if>
          </trim>
     </insert>
 
@@ -58,9 +57,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="title != null and title != ''">title = #{title},</if>
             <if test="authors != null and authors != ''">authors = #{authors},</if>
-            <if test="instructor != null">instructor = #{instructor},</if>
-            <if test="awardInfo != null">award_info = #{awardInfo},</if>
-            <if test="description != null">description = #{description},</if>
+            <if test="instructor != null and instructor != ''">instructor = #{instructor},</if>
+            <if test="awardInfo != null and awardInfo != ''">award_info = #{awardInfo},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
         </trim>
         where work_id = #{workId}
     </update>

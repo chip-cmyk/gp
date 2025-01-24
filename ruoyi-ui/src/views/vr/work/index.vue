@@ -165,7 +165,6 @@ export default {
         authors: null,
         instructor: null,
         awardInfo: null,
-        description: null
       },
       // 表单参数
       form: {},
@@ -177,6 +176,15 @@ export default {
         authors: [
           { required: true, message: "作者列表不能为空", trigger: "blur" }
         ],
+        instructor: [
+          { required: true, message: "指导教师不能为空", trigger: "blur" }
+        ],
+        awardInfo: [
+          { required: true, message: "获奖情况不能为空", trigger: "blur" }
+        ],
+        description: [
+          { required: true, message: "简介不能为空", trigger: "blur" }
+        ]
       }
     };
   },

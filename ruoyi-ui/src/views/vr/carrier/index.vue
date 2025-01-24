@@ -1,6 +1,13 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      size="small"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
       <el-form-item label="载体名称" prop="carrierName">
         <el-input
           v-model="queryParams.carrierName"
@@ -10,7 +17,11 @@
         />
       </el-form-item>
       <el-form-item label="载体类型" prop="carrierType">
-        <el-select v-model="queryParams.carrierType" placeholder="请选择载体类型" clearable>
+        <el-select
+          v-model="queryParams.carrierType"
+          placeholder="请选择载体类型"
+          clearable
+        >
           <el-option
             v-for="dict in dict.type.vr_carrier_type"
             :key="dict.value"
@@ -20,7 +31,11 @@
         </el-select>
       </el-form-item>
       <el-form-item label="载体状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择载体状态" clearable>
+        <el-select
+          v-model="queryParams.status"
+          placeholder="请选择载体状态"
+          clearable
+        >
           <el-option
             v-for="dict in dict.type.vr_carrier_status"
             :key="dict.value"
@@ -38,8 +53,16 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          size="mini"
+          @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -52,7 +75,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['vr:carrier:add']"
-        >新增</el-button>
+          >新增</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -63,7 +87,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['vr:carrier:edit']"
-        >修改</el-button>
+          >修改</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -74,7 +99,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['vr:carrier:remove']"
-        >删除</el-button>
+          >删除</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -84,28 +110,46 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['vr:carrier:export']"
-        >导出</el-button>
+          >导出</el-button
+        >
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar
+        :showSearch.sync="showSearch"
+        @queryTable="getList"
+      ></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="carrierList" @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="loading"
+      :data="carrierList"
+      @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="载体编号" align="center" prop="carrierId" />
       <el-table-column label="载体名称" align="center" prop="carrierName" />
       <el-table-column label="载体类型" align="center" prop="carrierType">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.vr_carrier_type" :value="scope.row.carrierType"/>
+          <dict-tag
+            :options="dict.type.vr_carrier_type"
+            :value="scope.row.carrierType"
+          />
         </template>
       </el-table-column>
       <el-table-column label="载体状态" align="center" prop="status">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.vr_carrier_status" :value="scope.row.status"/>
+          <dict-tag
+            :options="dict.type.vr_carrier_status"
+            :value="scope.row.status"
+          />
         </template>
       </el-table-column>
       <el-table-column label="规格" align="center" prop="specifications" />
       <el-table-column label="展区编号" align="center" prop="exhibitZoneId" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -113,20 +157,22 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['vr:carrier:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['vr:carrier:remove']"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -155,11 +201,16 @@
               v-for="dict in dict.type.vr_carrier_status"
               :key="dict.value"
               :label="dict.value"
-            >{{dict.label}}</el-radio>
+              >{{ dict.label }}</el-radio
+            >
           </el-radio-group>
         </el-form-item>
         <el-form-item label="规格" prop="specifications">
-          <el-input v-model="form.specifications" type="textarea" placeholder="请输入内容" />
+          <el-input
+            v-model="form.specifications"
+            type="textarea"
+            placeholder="请输入内容"
+          />
         </el-form-item>
         <el-form-item label="展区编号" prop="exhibitZoneId">
           <el-input v-model="form.exhibitZoneId" placeholder="请输入展区编号" />
@@ -174,11 +225,17 @@
 </template>
 
 <script>
-import { listCarrier, getCarrier, delCarrier, addCarrier, updateCarrier } from "@/api/vr/carrier";
+import {
+  listCarrier,
+  getCarrier,
+  delCarrier,
+  addCarrier,
+  updateCarrier,
+} from "@/api/vr/carrier";
 
 export default {
   name: "Carrier",
-  dicts: ['vr_carrier_type', 'vr_carrier_status'],
+  dicts: ["vr_carrier_type", "vr_carrier_status"],
   data() {
     return {
       // 遮罩层
@@ -207,19 +264,25 @@ export default {
         carrierType: null,
         status: null,
         specifications: null,
-        exhibitZoneId: null
+        exhibitZoneId: null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
         carrierName: [
-          { required: true, message: "载体名称不能为空", trigger: "blur" }
+          { required: true, message: "载体名称不能为空", trigger: "blur" },
+        ],
+        carrierType: [
+          { required: true, message: "载体类型不能为空", trigger: "change" },
+        ],
+        specifications: [
+          { required: true, message: "规格不能为空", trigger: "blur" },
         ],
         exhibitZoneId: [
-          { required: true, message: "展区编号不能为空", trigger: "blur" }
-        ]
-      }
+          { required: true, message: "展区编号不能为空", trigger: "blur" },
+        ],
+      },
     };
   },
   created() {
@@ -229,7 +292,7 @@ export default {
     /** 查询载体列表 */
     getList() {
       this.loading = true;
-      listCarrier(this.queryParams).then(response => {
+      listCarrier(this.queryParams).then((response) => {
         this.carrierList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -248,7 +311,7 @@ export default {
         carrierType: null,
         status: null,
         specifications: null,
-        exhibitZoneId: null
+        exhibitZoneId: null,
       };
       this.resetForm("form");
     },
@@ -264,9 +327,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.carrierId)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.carrierId);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -277,8 +340,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const carrierId = row.carrierId || this.ids
-      getCarrier(carrierId).then(response => {
+      const carrierId = row.carrierId || this.ids;
+      getCarrier(carrierId).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改载体";
@@ -286,16 +349,16 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.carrierId != null) {
-            updateCarrier(this.form).then(response => {
+            updateCarrier(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addCarrier(this.form).then(response => {
+            addCarrier(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -307,19 +370,27 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const carrierIds = row.carrierId || this.ids;
-      this.$modal.confirm('是否确认删除载体编号为"' + carrierIds + '"的数据项？').then(function() {
-        return delCarrier(carrierIds);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm('是否确认删除载体编号为"' + carrierIds + '"的数据项？')
+        .then(function () {
+          return delCarrier(carrierIds);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('vr/carrier/export', {
-        ...this.queryParams
-      }, `carrier_${new Date().getTime()}.xlsx`)
-    }
-  }
+      this.download(
+        "vr/carrier/export",
+        {
+          ...this.queryParams,
+        },
+        `carrier_${new Date().getTime()}.xlsx`
+      );
+    },
+  },
 };
 </script>
