@@ -6,18 +6,18 @@ import com.ruoyi.ar.domain.EnergyConsumption;
 /**
  * 能耗清单Service接口
  * 
- * @author lazy
- * @date 2025-01-20
+ * @author ruoyi
+ * @date 2025-01-24
  */
 public interface IEnergyConsumptionService 
 {
     /**
      * 查询能耗清单
      * 
-     * @param energyId 能耗清单主键
+     * @param id 能耗清单主键
      * @return 能耗清单
      */
-    public EnergyConsumption selectEnergyConsumptionByEnergyId(Long energyId);
+    public EnergyConsumption selectEnergyConsumptionById(Long id);
 
     /**
      * 查询能耗清单列表
@@ -46,16 +46,16 @@ public interface IEnergyConsumptionService
     /**
      * 批量删除能耗清单
      * 
-     * @param energyIds 需要删除的能耗清单主键集合
+     * @param ids 需要删除的能耗清单主键集合
      * @return 结果
      */
-    public int deleteEnergyConsumptionByEnergyIds(Long[] energyIds);
+    public int deleteEnergyConsumptionByIds(Long[] ids);
 
     /**
      * 删除能耗清单信息
      * 
-     * @param energyId 能耗清单主键
+     * @param id 能耗清单主键
      * @return 结果
      */
-    public int deleteEnergyConsumptionByEnergyId(Long energyId);
+    public int deleteEnergyConsumptionById(Long id);
 }

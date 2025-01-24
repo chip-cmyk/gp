@@ -154,14 +154,10 @@
         </template>
       </el-table-column>
       <el-table-column label="年度" align="center" prop="year" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.year, "{y}-{m}-{d}") }}</span>
-        </template>
+        <template slot-scope="scope"> {{ scope.row.year }}年 </template>
       </el-table-column>
       <el-table-column label="月份" align="center" prop="month" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.month, "{y}-{m}-{d}") }}</span>
-        </template>
+        <template slot-scope="scope"> {{ scope.row.month }}月 </template>
       </el-table-column>
       <el-table-column label="工厂编号" align="center" prop="factoryId" />
       <el-table-column
@@ -380,9 +376,7 @@ export default {
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate((valid) => {
-        console.log(this.form);
         if (valid) {
-          console.log(this.form);
           if (this.form.id != null) {
             updateConsumption(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");

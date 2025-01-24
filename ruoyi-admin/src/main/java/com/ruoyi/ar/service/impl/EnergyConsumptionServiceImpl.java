@@ -10,8 +10,8 @@ import com.ruoyi.ar.service.IEnergyConsumptionService;
 /**
  * 能耗清单Service业务层处理
  * 
- * @author lazy
- * @date 2025-01-20
+ * @author ruoyi
+ * @date 2025-01-24
  */
 @Service
 public class EnergyConsumptionServiceImpl implements IEnergyConsumptionService 
@@ -22,13 +22,13 @@ public class EnergyConsumptionServiceImpl implements IEnergyConsumptionService
     /**
      * 查询能耗清单
      * 
-     * @param energyId 能耗清单主键
+     * @param id 能耗清单主键
      * @return 能耗清单
      */
     @Override
-    public EnergyConsumption selectEnergyConsumptionByEnergyId(Long energyId)
+    public EnergyConsumption selectEnergyConsumptionById(Long id)
     {
-        return energyConsumptionMapper.selectEnergyConsumptionByEnergyId(energyId);
+        return energyConsumptionMapper.selectEnergyConsumptionById(id);
     }
 
     /**
@@ -70,24 +70,24 @@ public class EnergyConsumptionServiceImpl implements IEnergyConsumptionService
     /**
      * 批量删除能耗清单
      * 
-     * @param energyIds 需要删除的能耗清单主键
+     * @param ids 需要删除的能耗清单主键
      * @return 结果
      */
     @Override
-    public int deleteEnergyConsumptionByEnergyIds(Long[] energyIds)
+    public int deleteEnergyConsumptionByIds(Long[] ids)
     {
-        return energyConsumptionMapper.deleteEnergyConsumptionByEnergyIds(energyIds);
+        return energyConsumptionMapper.deleteEnergyConsumptionByIds(ids);
     }
 
     /**
      * 删除能耗清单信息
      * 
-     * @param energyId 能耗清单主键
+     * @param id 能耗清单主键
      * @return 结果
      */
     @Override
-    public int deleteEnergyConsumptionByEnergyId(Long energyId)
+    public int deleteEnergyConsumptionById(Long id)
     {
-        return energyConsumptionMapper.deleteEnergyConsumptionByEnergyId(energyId);
+        return energyConsumptionMapper.deleteEnergyConsumptionById(id);
     }
 }

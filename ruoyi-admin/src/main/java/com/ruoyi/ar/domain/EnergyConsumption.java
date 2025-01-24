@@ -9,19 +9,19 @@ import com.ruoyi.common.core.domain.BaseEntity;
 /**
  * 能耗清单对象 energy_consumption
  * 
- * @author lazy
- * @date 2025-01-20
+ * @author ruoyi
+ * @date 2025-01-24
  */
 public class EnergyConsumption extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
     /** 编号 */
-    private Long energyId;
+    private Long id;
 
     /** 能耗 */
     @Excel(name = "能耗")
-    private BigDecimal energyAmount;
+    private BigDecimal energyConsumed;
 
     /** 计量单位 */
     @Excel(name = "计量单位")
@@ -29,7 +29,7 @@ public class EnergyConsumption extends BaseEntity
 
     /** 类型 */
     @Excel(name = "类型")
-    private String energyType;
+    private String type;
 
     /** 年度 */
     @Excel(name = "年度")
@@ -41,25 +41,25 @@ public class EnergyConsumption extends BaseEntity
 
     /** 工厂编号 */
     @Excel(name = "工厂编号")
-    private Long factoryId;
+    private String factoryId;
 
-    public void setEnergyId(Long energyId) 
+    public void setId(Long id) 
     {
-        this.energyId = energyId;
+        this.id = id;
     }
 
-    public Long getEnergyId() 
+    public Long getId() 
     {
-        return energyId;
+        return id;
     }
-    public void setEnergyAmount(BigDecimal energyAmount) 
+    public void setEnergyConsumed(BigDecimal energyConsumed) 
     {
-        this.energyAmount = energyAmount;
+        this.energyConsumed = energyConsumed;
     }
 
-    public BigDecimal getEnergyAmount() 
+    public BigDecimal getEnergyConsumed() 
     {
-        return energyAmount;
+        return energyConsumed;
     }
     public void setUnit(String unit) 
     {
@@ -70,14 +70,14 @@ public class EnergyConsumption extends BaseEntity
     {
         return unit;
     }
-    public void setEnergyType(String energyType) 
+    public void setType(String type) 
     {
-        this.energyType = energyType;
+        this.type = type;
     }
 
-    public String getEnergyType() 
+    public String getType() 
     {
-        return energyType;
+        return type;
     }
     public void setYear(Long year) 
     {
@@ -97,12 +97,12 @@ public class EnergyConsumption extends BaseEntity
     {
         return month;
     }
-    public void setFactoryId(Long factoryId) 
+    public void setFactoryId(String factoryId) 
     {
         this.factoryId = factoryId;
     }
 
-    public Long getFactoryId() 
+    public String getFactoryId() 
     {
         return factoryId;
     }
@@ -110,10 +110,10 @@ public class EnergyConsumption extends BaseEntity
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("energyId", getEnergyId())
-            .append("energyAmount", getEnergyAmount())
+            .append("id", getId())
+            .append("energyConsumed", getEnergyConsumed())
             .append("unit", getUnit())
-            .append("energyType", getEnergyType())
+            .append("type", getType())
             .append("year", getYear())
             .append("month", getMonth())
             .append("factoryId", getFactoryId())

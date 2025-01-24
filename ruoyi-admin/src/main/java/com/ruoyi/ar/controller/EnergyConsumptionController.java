@@ -24,8 +24,8 @@ import com.ruoyi.common.core.page.TableDataInfo;
 /**
  * 能耗清单Controller
  * 
- * @author lazy
- * @date 2025-01-20
+ * @author ruoyi
+ * @date 2025-01-24
  */
 @RestController
 @RequestMapping("/ar/consumption")
@@ -63,10 +63,10 @@ public class EnergyConsumptionController extends BaseController
      * 获取能耗清单详细信息
      */
     @PreAuthorize("@ss.hasPermi('ar:consumption:query')")
-    @GetMapping(value = "/{energyId}")
-    public AjaxResult getInfo(@PathVariable("energyId") Long energyId)
+    @GetMapping(value = "/{id}")
+    public AjaxResult getInfo(@PathVariable("id") Long id)
     {
-        return success(energyConsumptionService.selectEnergyConsumptionByEnergyId(energyId));
+        return success(energyConsumptionService.selectEnergyConsumptionById(id));
     }
 
     /**
@@ -96,9 +96,9 @@ public class EnergyConsumptionController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('ar:consumption:remove')")
     @Log(title = "能耗清单", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{energyIds}")
-    public AjaxResult remove(@PathVariable Long[] energyIds)
+	@DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids)
     {
-        return toAjax(energyConsumptionService.deleteEnergyConsumptionByEnergyIds(energyIds));
+        return toAjax(energyConsumptionService.deleteEnergyConsumptionByIds(ids));
     }
 }

@@ -10,9 +10,9 @@ export function listConsumption(query) {
 }
 
 // 查询能耗清单详细
-export function getConsumption(energyId) {
+export function getConsumption(id) {
   return request({
-    url: '/ar/consumption/' + energyId,
+    url: '/ar/consumption/' + id,
     method: 'get'
   })
 }
@@ -36,9 +36,9 @@ export function updateConsumption(data) {
 }
 
 // 删除能耗清单
-export function delConsumption(energyId) {
+export function delConsumption(id) {
   return request({
-    url: '/ar/consumption/' + energyId,
+    url: '/ar/consumption/' + id,
     method: 'delete'
   })
 }
