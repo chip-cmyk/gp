@@ -117,8 +117,8 @@ public class CommonController
             {
                 // 上传并返回新文件名称
                 String fileName = FileUploadUtils.upload(filePath, file);
-                //String url = serverConfig.getUrl() + fileName;
-                String url = fileName;
+                String url = serverConfig.getUrl() + fileName;
+                //String url = fileName;
                 urls.add(url);
                 fileNames.add(fileName);
                 newFileNames.add(FileUtils.getName(fileName));
