@@ -9,6 +9,24 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="类别" prop="category">
+        <el-input
+          v-model="queryParams.category"
+          placeholder="请输入类别"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="使用情况" prop="usageStatus">
+        <el-select v-model="queryParams.usageStatus" placeholder="请选择使用情况" clearable>
+          <el-option
+            v-for="dict in dict.type.use_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="二维码编号" prop="qrCodeId">
         <el-input
           v-model="queryParams.qrCodeId"
@@ -76,7 +94,11 @@
       <el-table-column label="类别" align="center" prop="category" />
       <el-table-column label="文件URL" align="center" prop="fileUrl" />
       <el-table-column label="简介" align="center" prop="description" />
-      <el-table-column label="使用情况" align="center" prop="usageStatus" />
+      <el-table-column label="使用情况" align="center" prop="usageStatus">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.use_status" :value="scope.row.usageStatus"/>
+        </template>
+      </el-table-column>
       <el-table-column label="二维码编号" align="center" prop="qrCodeId" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -112,11 +134,24 @@
         <el-form-item label="名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入名称" />
         </el-form-item>
+        <el-form-item label="类别" prop="category">
+          <el-input v-model="form.category" placeholder="请输入类别" />
+        </el-form-item>
         <el-form-item label="文件URL" prop="fileUrl">
           <el-input v-model="form.fileUrl" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="简介" prop="description">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="使用情况" prop="usageStatus">
+          <el-select v-model="form.usageStatus" placeholder="请选择使用情况">
+            <el-option
+              v-for="dict in dict.type.use_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="二维码编号" prop="qrCodeId">
           <el-input v-model="form.qrCodeId" placeholder="请输入二维码编号" />
@@ -135,6 +170,7 @@ import { listContent, getContent, delContent, addContent, updateContent } from "
 
 export default {
   name: "Content",
+  dicts: ['use_status'],
   data() {
     return {
       // 遮罩层
@@ -176,6 +212,9 @@ export default {
         ],
         fileUrl: [
           { required: true, message: "文件URL不能为空", trigger: "blur" }
+        ],
+        description: [
+          { required: true, message: "简介不能为空", trigger: "blur" }
         ],
       }
     };

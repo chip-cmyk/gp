@@ -9,7 +9,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 设备对象 device
  * 
  * @author lazy
- * @date 2025-01-20
+ * @date 2025-01-22
  */
 public class Device extends BaseEntity
 {

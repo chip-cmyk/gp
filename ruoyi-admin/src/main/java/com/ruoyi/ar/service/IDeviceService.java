@@ -7,7 +7,7 @@ import com.ruoyi.ar.domain.Device;
  * 设备Service接口
  * 
  * @author lazy
- * @date 2025-01-20
+ * @date 2025-01-22
  */
 public interface IDeviceService 
 {

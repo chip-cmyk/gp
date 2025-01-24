@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="能耗" prop="energyAmount">
+      <el-form-item label="能耗" prop="energyConsumed">
         <el-input
-          v-model="queryParams.energyAmount"
+          v-model="queryParams.energyConsumed"
           placeholder="请输入能耗"
           clearable
           @keyup.enter.native="handleQuery"
@@ -17,8 +17,8 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="类型" prop="energyType">
-        <el-select v-model="queryParams.energyType" placeholder="请选择类型" clearable>
+      <el-form-item label="类型" prop="type">
+        <el-select v-model="queryParams.type" placeholder="请选择类型" clearable>
           <el-option
             v-for="dict in dict.type.ar_energy_type"
             :key="dict.value"
@@ -28,20 +28,20 @@
         </el-select>
       </el-form-item>
       <el-form-item label="年度" prop="year">
-        <el-input
+        <el-date-picker clearable
           v-model="queryParams.year"
-          placeholder="请输入年度"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="请选择年度">
+        </el-date-picker>
       </el-form-item>
       <el-form-item label="月份" prop="month">
-        <el-input
+        <el-date-picker clearable
           v-model="queryParams.month"
-          placeholder="请输入月份"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="请选择月份">
+        </el-date-picker>
       </el-form-item>
       <el-form-item label="工厂编号" prop="factoryId">
         <el-input
@@ -105,16 +105,24 @@
 
     <el-table v-loading="loading" :data="consumptionList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="编号" align="center" prop="energyId" />
-      <el-table-column label="能耗" align="center" prop="energyAmount" />
+      <el-table-column label="编号" align="center" prop="id" />
+      <el-table-column label="能耗" align="center" prop="energyConsumed" />
       <el-table-column label="计量单位" align="center" prop="unit" />
-      <el-table-column label="类型" align="center" prop="energyType">
+      <el-table-column label="类型" align="center" prop="type">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.ar_energy_type" :value="scope.row.energyType"/>
+          <dict-tag :options="dict.type.ar_energy_type" :value="scope.row.type"/>
         </template>
       </el-table-column>
-      <el-table-column label="年度" align="center" prop="year" />
-      <el-table-column label="月份" align="center" prop="month" />
+      <el-table-column label="年度" align="center" prop="year" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.year, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="月份" align="center" prop="month" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.month, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="工厂编号" align="center" prop="factoryId" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -147,14 +155,14 @@
     <!-- 添加或修改能耗清单对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="能耗" prop="energyAmount">
-          <el-input v-model="form.energyAmount" placeholder="请输入能耗" />
+        <el-form-item label="能耗" prop="energyConsumed">
+          <el-input v-model="form.energyConsumed" placeholder="请输入能耗" />
         </el-form-item>
         <el-form-item label="计量单位" prop="unit">
           <el-input v-model="form.unit" placeholder="请输入计量单位" />
         </el-form-item>
-        <el-form-item label="类型" prop="energyType">
-          <el-select v-model="form.energyType" placeholder="请选择类型">
+        <el-form-item label="类型" prop="type">
+          <el-select v-model="form.type" placeholder="请选择类型">
             <el-option
               v-for="dict in dict.type.ar_energy_type"
               :key="dict.value"
@@ -164,10 +172,20 @@
           </el-select>
         </el-form-item>
         <el-form-item label="年度" prop="year">
-          <el-input v-model="form.year" placeholder="请输入年度" />
+          <el-date-picker clearable
+            v-model="form.year"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="请选择年度">
+          </el-date-picker>
         </el-form-item>
         <el-form-item label="月份" prop="month">
-          <el-input v-model="form.month" placeholder="请输入月份" />
+          <el-date-picker clearable
+            v-model="form.month"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="请选择月份">
+          </el-date-picker>
         </el-form-item>
         <el-form-item label="工厂编号" prop="factoryId">
           <el-input v-model="form.factoryId" placeholder="请输入工厂编号" />
@@ -211,9 +229,9 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        energyAmount: null,
+        energyConsumed: null,
         unit: null,
-        energyType: null,
+        type: null,
         year: null,
         month: null,
         factoryId: null
@@ -222,11 +240,20 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        energyAmount: [
+        energyConsumed: [
           { required: true, message: "能耗不能为空", trigger: "blur" }
         ],
         unit: [
           { required: true, message: "计量单位不能为空", trigger: "blur" }
+        ],
+        type: [
+          { required: true, message: "类型不能为空", trigger: "change" }
+        ],
+        year: [
+          { required: true, message: "年度不能为空", trigger: "blur" }
+        ],
+        month: [
+          { required: true, message: "月份不能为空", trigger: "blur" }
         ],
         factoryId: [
           { required: true, message: "工厂编号不能为空", trigger: "blur" }
@@ -255,10 +282,10 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        energyId: null,
-        energyAmount: null,
+        id: null,
+        energyConsumed: null,
         unit: null,
-        energyType: null,
+        type: null,
         year: null,
         month: null,
         factoryId: null
@@ -277,7 +304,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.energyId)
+      this.ids = selection.map(item => item.id)
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
@@ -290,8 +317,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const energyId = row.energyId || this.ids
-      getConsumption(energyId).then(response => {
+      const id = row.id || this.ids
+      getConsumption(id).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改能耗清单";
@@ -301,7 +328,7 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.energyId != null) {
+          if (this.form.id != null) {
             updateConsumption(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
@@ -319,9 +346,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const energyIds = row.energyId || this.ids;
-      this.$modal.confirm('是否确认删除能耗清单编号为"' + energyIds + '"的数据项？').then(function() {
-        return delConsumption(energyIds);
+      const ids = row.id || this.ids;
+      this.$modal.confirm('是否确认删除能耗清单编号为"' + ids + '"的数据项？').then(function() {
+        return delConsumption(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");

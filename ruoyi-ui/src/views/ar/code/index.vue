@@ -1,6 +1,16 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="使用情况" prop="usageStatus">
+        <el-select v-model="queryParams.usageStatus" placeholder="请选择使用情况" clearable>
+          <el-option
+            v-for="dict in dict.type.use_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -56,8 +66,16 @@
     <el-table v-loading="loading" :data="codeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="二维码编号" align="center" prop="qrCodeId" />
-      <el-table-column label="二维码内容" align="center" prop="qrCode" />
-      <el-table-column label="使用情况" align="center" prop="usageStatus" />
+      <el-table-column label="二维码内容" align="center" prop="qrCode" width="100">
+        <template slot-scope="scope">
+          <image-preview :src="scope.row.qrCode" :width="50" :height="50"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="使用情况" align="center" prop="usageStatus">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.use_status" :value="scope.row.usageStatus"/>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -90,7 +108,16 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="二维码内容" prop="qrCode">
-          <el-input v-model="form.qrCode" placeholder="请输入二维码内容" />
+          <image-upload v-model="form.qrCode"/>
+        </el-form-item>
+        <el-form-item label="使用情况" prop="usageStatus">
+          <el-radio-group v-model="form.usageStatus">
+            <el-radio
+              v-for="dict in dict.type.use_status"
+              :key="dict.value"
+              :label="dict.value"
+            >{{dict.label}}</el-radio>
+          </el-radio-group>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -106,6 +133,7 @@ import { listCode, getCode, delCode, addCode, updateCode } from "@/api/ar/code";
 
 export default {
   name: "Code",
+  dicts: ['use_status'],
   data() {
     return {
       // 遮罩层

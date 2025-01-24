@@ -9,6 +9,16 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="设备状态" prop="status">
+        <el-select v-model="queryParams.status" placeholder="请选择设备状态" clearable>
+          <el-option
+            v-for="dict in dict.type.device_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="二维码编号" prop="qrCodeNumber">
         <el-input
           v-model="queryParams.qrCodeNumber"
@@ -82,7 +92,11 @@
       <el-table-column label="设备编号" align="center" prop="deviceNumber" />
       <el-table-column label="名称" align="center" prop="name" />
       <el-table-column label="简介" align="center" prop="description" />
-      <el-table-column label="设备状态" align="center" prop="status" />
+      <el-table-column label="设备状态" align="center" prop="status">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.device_status" :value="scope.row.status"/>
+        </template>
+      </el-table-column>
       <el-table-column label="二维码编号" align="center" prop="qrCodeNumber" />
       <el-table-column label="工厂编号" align="center" prop="factoryNumber" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -122,6 +136,15 @@
         <el-form-item label="简介" prop="description">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
         </el-form-item>
+        <el-form-item label="设备状态" prop="status">
+          <el-radio-group v-model="form.status">
+            <el-radio
+              v-for="dict in dict.type.device_status"
+              :key="dict.value"
+              :label="dict.value"
+            >{{dict.label}}</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="二维码编号" prop="qrCodeNumber">
           <el-input v-model="form.qrCodeNumber" placeholder="请输入二维码编号" />
         </el-form-item>
@@ -142,6 +165,7 @@ import { listDevice, getDevice, delDevice, addDevice, updateDevice } from "@/api
 
 export default {
   name: "Device",
+  dicts: ['device_status'],
   data() {
     return {
       // 遮罩层
@@ -178,6 +202,9 @@ export default {
       rules: {
         name: [
           { required: true, message: "名称不能为空", trigger: "blur" }
+        ],
+        description: [
+          { required: true, message: "简介不能为空", trigger: "blur" }
         ],
       }
     };

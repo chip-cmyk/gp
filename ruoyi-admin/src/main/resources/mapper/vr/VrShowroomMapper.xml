@@ -51,15 +51,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <delete id="deleteVrShowroomByShowroomId" parameterType="Long">
         delete from vr_showroom where showroom_id = #{showroomId}
-        AND NOT EXISTS(
-            SELECT * from vr_exhibit_zone WHERE exhibit_zone_id = #{showroomId}
-            )
     </delete>
 
-    <!--<delete id="deleteVrShowroomByShowroomIds" parameterType="String">
+    <delete id="deleteVrShowroomByShowroomIds" parameterType="String">
         delete from vr_showroom where showroom_id in 
         <foreach item="showroomId" collection="array" open="(" separator="," close=")">
             #{showroomId}
         </foreach>
-    </delete>-->
+    </delete>
 </mapper>

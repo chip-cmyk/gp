@@ -37,14 +37,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into device
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="name != null and name != ''">name,</if>
-            <if test="description != null">description,</if>
+            <if test="description != null and description != ''">description,</if>
             <if test="status != null">status,</if>
             <if test="qrCodeNumber != null">qr_code_number,</if>
             <if test="factoryNumber != null">factory_number,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="name != null and name != ''">#{name},</if>
-            <if test="description != null">#{description},</if>
+            <if test="description != null and description != ''">#{description},</if>
             <if test="status != null">#{status},</if>
             <if test="qrCodeNumber != null">#{qrCodeNumber},</if>
             <if test="factoryNumber != null">#{factoryNumber},</if>
@@ -55,7 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update device
         <trim prefix="SET" suffixOverrides=",">
             <if test="name != null and name != ''">name = #{name},</if>
-            <if test="description != null">description = #{description},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
             <if test="status != null">status = #{status},</if>
             <if test="qrCodeNumber != null">qr_code_number = #{qrCodeNumber},</if>
             <if test="factoryNumber != null">factory_number = #{factoryNumber},</if>
