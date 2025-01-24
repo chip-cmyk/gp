@@ -288,8 +288,8 @@ export default {
 
     // 根据案例编号回显对应的案例名称
     getCaseName(caseId) {
-      const index = this.caseList.findIndex((item) => item.caseId === caseId);
-      return this.caseList[index].caseName;
+      const caseItem = this.caseList.find((item) => item.caseId === caseId);
+      return caseItem ? caseItem.caseName : "";
     },
     // 取消按钮
     cancel() {

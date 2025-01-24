@@ -52,21 +52,39 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="载体编号" prop="carrierId">
-        <el-input
+      <el-form-item label="载体名称" prop="carrierId">
+        <el-select
           v-model="queryParams.carrierId"
-          placeholder="请输入载体编号"
+          placeholder="请选择载体名称"
+          filterable
           clearable
+          allow-create
           @keyup.enter.native="handleQuery"
-        />
+        >
+          <el-option
+            v-for="item in carrierList"
+            :key="item.carrierId"
+            :label="item.carrierName"
+            :value="item.carrierId"
+          ></el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item label="作品编号" prop="workId">
-        <el-input
+      <el-form-item label="作品标题" prop="workId">
+        <el-select
           v-model="queryParams.workId"
-          placeholder="请输入作品编号"
+          placeholder="请选择作品标题"
+          filterable
           clearable
+          allow-create
           @keyup.enter.native="handleQuery"
-        />
+        >
+          <el-option
+            v-for="item in workList"
+            :key="item.workId"
+            :label="item.title"
+            :value="item.workId"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -161,8 +179,16 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="载体编号" align="center" prop="carrierId" />
-      <el-table-column label="作品编号" align="center" prop="workId" />
+      <el-table-column label="载体名称" align="center" prop="carrierId">
+        <template slot-scope="scope">
+          <span>{{ getCarrierName(scope.row.carrierId) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="作品标题" align="center" prop="workId">
+        <template slot-scope="scope">
+          <span>{{ getWorkTitle(scope.row.workId) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作"
         align="center"
@@ -249,11 +275,37 @@
             >
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="载体编号" prop="carrierId">
-          <el-input v-model="form.carrierId" placeholder="请输入载体编号" />
+        <el-form-item label="载体名称" prop="carrierId">
+          <el-select
+            v-model="form.carrierId"
+            placeholder="请选择载体名称"
+            filterable
+            clearable
+            allow-create
+          >
+            <el-option
+              v-for="item in carrierList"
+              :key="item.carrierId"
+              :label="item.carrierName"
+              :value="item.carrierId"
+            ></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="作品编号" prop="workId">
-          <el-input v-model="form.workId" placeholder="请输入作品编号" />
+        <el-form-item label="作品标题" prop="workId">
+          <el-select
+            v-model="form.workId"
+            placeholder="请选择作品标题"
+            filterable
+            clearable
+            allow-create
+          >
+            <el-option
+              v-for="item in workList"
+              :key="item.workId"
+              :label="item.title"
+              :value="item.workId"
+            ></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -272,6 +324,8 @@ import {
   addContent,
   updateContent,
 } from "@/api/vr/content";
+import { listCarrier } from "@/api/vr/carrier";
+import { listWork } from "@/api/vr/work";
 
 export default {
   name: "Content",
@@ -324,11 +378,17 @@ export default {
       },
       // 类别列表
       allCategoryList: [],
+      // 载体列表
+      carrierList: [],
+      // 作品列表
+      workList: [],
     };
   },
   created() {
     this.getList();
     this.getCategory();
+    this.getCarrierList();
+    this.getWorkList();
   },
   methods: {
     /** 查询VR内容列表 */
@@ -442,6 +502,7 @@ export default {
     },
     // 计算出类别列表（this.dict.type.vr_content_category加上this.contentList.category中的数据，然后去重）
     getCategory() {
+      // 延迟0.8秒才能取出this.dict.type.vr_content_category的值(ob_observer只能异步取值)
       setTimeout(() => {
         const categorySet = new Set();
         this.dict.type.vr_content_category.forEach((item) => {
@@ -457,6 +518,26 @@ export default {
           this.allCategoryList = Array.from(categorySet);
         });
       }, 800);
+    },
+    getCarrierList() {
+      listCarrier().then((response) => {
+        this.carrierList = response.rows;
+      });
+    },
+    getCarrierName(carrierId) {
+      const carrier = this.carrierList.find(
+        (item) => item.carrierId === carrierId
+      );
+      return carrier ? carrier.carrierName : "";
+    },
+    getWorkList() {
+      listWork().then((response) => {
+        this.workList = response.rows;
+      });
+    },
+    getWorkTitle(workId) {
+      const work = this.workList.find((item) => item.workId === workId);
+      return work ? work.title : "";
     },
   },
 };

@@ -16,13 +16,22 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="展厅编号" prop="showroomId">
-        <el-input
+      <el-form-item label="展厅名称" prop="showroomId">
+        <el-select
           v-model="queryParams.showroomId"
-          placeholder="请输入展厅编号"
+          placeholder="请选择展厅名称"
+          filterable
           clearable
+          allow-create
           @keyup.enter.native="handleQuery"
-        />
+        >
+          <el-option
+            v-for="item in showroomList"
+            :key="item.showroomId"
+            :label="item.showroomName"
+            :value="item.showroomId"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -100,7 +109,11 @@
       <el-table-column label="展区编号" align="center" prop="exhibitZoneId" />
       <el-table-column label="展区名称" align="center" prop="exhibitZoneName" />
       <el-table-column label="简介" align="center" prop="description" />
-      <el-table-column label="展厅编号" align="center" prop="showroomId" />
+      <el-table-column label="展厅名称" align="center" prop="showroomId">
+        <template slot-scope="scope">
+          <span>{{ getShowroomName(scope.row.showroomId) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作"
         align="center"
@@ -151,8 +164,21 @@
             placeholder="请输入内容"
           />
         </el-form-item>
-        <el-form-item label="展厅编号" prop="showroomId">
-          <el-input v-model="form.showroomId" placeholder="请输入展厅编号" />
+        <el-form-item label="展厅名称" prop="showroomId">
+          <el-select
+            v-model="form.showroomId"
+            placeholder="请选择展厅名称"
+            filterable
+            clearable
+            allow-create
+          >
+            <el-option
+              v-for="item in showroomList"
+              :key="item.showroomId"
+              :label="item.showroomName"
+              :value="item.showroomId"
+            ></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -171,6 +197,7 @@ import {
   addExhibitZone,
   updateExhibitZone,
 } from "@/api/vr/exhibitZone";
+import { listShowroom } from "@/api/vr/showroom";
 
 export default {
   name: "ExhibitZone",
@@ -215,10 +242,13 @@ export default {
           { required: true, message: "展厅编号不能为空", trigger: "blur" },
         ],
       },
+      // 展厅列表
+      showroomList: [],
     };
   },
   created() {
     this.getList();
+    this.getShowroomList();
   },
   methods: {
     /** 查询VR展区列表 */
@@ -320,6 +350,19 @@ export default {
         },
         `exhibitZone_${new Date().getTime()}.xlsx`
       );
+    },
+    /** 获取展厅列表 */
+    getShowroomList() {
+      listShowroom().then((response) => {
+        this.showroomList = response.rows;
+      });
+    },
+    /** 获取展厅名称 */
+    getShowroomName(showroomId) {
+      const showroom = this.showroomList.find(
+        (item) => item.showroomId === showroomId
+      );
+      return showroom ? showroom.showroomName : "";
     },
   },
 };

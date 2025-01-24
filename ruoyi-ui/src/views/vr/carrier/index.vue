@@ -44,13 +44,22 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="展区编号" prop="exhibitZoneId">
-        <el-input
+      <el-form-item label="展区名称" prop="exhibitZoneId">
+        <el-select
           v-model="queryParams.exhibitZoneId"
-          placeholder="请输入展区编号"
+          placeholder="请选择展区名称"
+          filterable
           clearable
+          allow-create
           @keyup.enter.native="handleQuery"
-        />
+        >
+          <el-option
+            v-for="item in exhibitZoneList"
+            :key="item.exhibitZoneId"
+            :label="item.exhibitZoneName"
+            :value="item.exhibitZoneId"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -144,7 +153,11 @@
         </template>
       </el-table-column>
       <el-table-column label="规格" align="center" prop="specifications" />
-      <el-table-column label="展区编号" align="center" prop="exhibitZoneId" />
+      <el-table-column label="展区名称" align="center" prop="exhibitZoneId">
+        <template slot-scope="scope">
+          <span>{{ getExhibitZoneName(scope.row.exhibitZoneId) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作"
         align="center"
@@ -212,8 +225,21 @@
             placeholder="请输入内容"
           />
         </el-form-item>
-        <el-form-item label="展区编号" prop="exhibitZoneId">
-          <el-input v-model="form.exhibitZoneId" placeholder="请输入展区编号" />
+        <el-form-item label="展区名称" prop="exhibitZoneId">
+          <el-select
+            v-model="form.exhibitZoneId"
+            placeholder="请选择展区名称"
+            filterable
+            clearable
+            allow-create
+          >
+            <el-option
+              v-for="item in exhibitZoneList"
+              :key="item.exhibitZoneId"
+              :label="item.exhibitZoneName"
+              :value="item.exhibitZoneId"
+            ></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -232,6 +258,7 @@ import {
   addCarrier,
   updateCarrier,
 } from "@/api/vr/carrier";
+import { listExhibitZone } from "@/api/vr/exhibitZone";
 
 export default {
   name: "Carrier",
@@ -283,10 +310,13 @@ export default {
           { required: true, message: "展区编号不能为空", trigger: "blur" },
         ],
       },
+      // 展区列表
+      exhibitZoneList: [],
     };
   },
   created() {
     this.getList();
+    this.getExhibitZoneList();
   },
   methods: {
     /** 查询载体列表 */
@@ -390,6 +420,19 @@ export default {
         },
         `carrier_${new Date().getTime()}.xlsx`
       );
+    },
+    /** 获取展区列表 */
+    getExhibitZoneList() {
+      listExhibitZone().then((response) => {
+        this.exhibitZoneList = response.rows;
+      });
+    },
+    /** 获取展区名称 */
+    getExhibitZoneName(exhibitZoneId) {
+      const exhibitZone = this.exhibitZoneList.find(
+        (item) => item.exhibitZoneId === exhibitZoneId
+      );
+      return exhibitZone ? exhibitZone.exhibitZoneName : '';
     },
   },
 };

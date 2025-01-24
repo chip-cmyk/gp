@@ -283,10 +283,8 @@ export default {
     },
     // 根据场景编号回显对应的场景名称
     getSceneName(sceneId) {
-      const index = this.sceneList.findIndex(
-        (item) => item.sceneId === sceneId
-      );
-      return this.sceneList[index].sceneName;
+      const scene = this.sceneList.find((item) => item.sceneId === sceneId);
+      return scene ? scene.sceneName : '';
     },
     // 取消按钮
     cancel() {
