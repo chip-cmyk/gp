@@ -1,6 +1,13 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      size="small"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
       <el-form-item label="能耗" prop="energyConsumed">
         <el-input
           v-model="queryParams.energyConsumed"
@@ -18,7 +25,11 @@
         />
       </el-form-item>
       <el-form-item label="类型" prop="type">
-        <el-select v-model="queryParams.type" placeholder="请选择类型" clearable>
+        <el-select
+          v-model="queryParams.type"
+          placeholder="请选择类型"
+          clearable
+        >
           <el-option
             v-for="dict in dict.type.ar_energy_type"
             :key="dict.value"
@@ -28,19 +39,26 @@
         </el-select>
       </el-form-item>
       <el-form-item label="年度" prop="year">
-        <el-date-picker clearable
+        <el-date-picker
+          clearable
           v-model="queryParams.year"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择年度">
+          type="year"
+          format="yyyy年"
+          value-format="yyyy"
+          placeholder="请选择年度"
+        >
         </el-date-picker>
       </el-form-item>
       <el-form-item label="月份" prop="month">
-        <el-date-picker clearable
+        <el-date-picker
+          popper-class="due_month"
+          clearable
           v-model="queryParams.month"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择月份">
+          type="month"
+          format="M月"
+          value-format="M"
+          placeholder="请选择月份"
+        >
         </el-date-picker>
       </el-form-item>
       <el-form-item label="工厂编号" prop="factoryId">
@@ -52,8 +70,16 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          size="mini"
+          @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -66,7 +92,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['ar:consumption:add']"
-        >新增</el-button>
+          >新增</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -77,7 +104,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['ar:consumption:edit']"
-        >修改</el-button>
+          >修改</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -88,7 +116,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['ar:consumption:remove']"
-        >删除</el-button>
+          >删除</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -98,33 +127,48 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['ar:consumption:export']"
-        >导出</el-button>
+          >导出</el-button
+        >
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar
+        :showSearch.sync="showSearch"
+        @queryTable="getList"
+      ></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="consumptionList" @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="loading"
+      :data="consumptionList"
+      @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="编号" align="center" prop="id" />
       <el-table-column label="能耗" align="center" prop="energyConsumed" />
       <el-table-column label="计量单位" align="center" prop="unit" />
       <el-table-column label="类型" align="center" prop="type">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.ar_energy_type" :value="scope.row.type"/>
+          <dict-tag
+            :options="dict.type.ar_energy_type"
+            :value="scope.row.type"
+          />
         </template>
       </el-table-column>
       <el-table-column label="年度" align="center" prop="year" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.year, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.year, "{y}-{m}-{d}") }}</span>
         </template>
       </el-table-column>
       <el-table-column label="月份" align="center" prop="month" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.month, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.month, "{y}-{m}-{d}") }}</span>
         </template>
       </el-table-column>
       <el-table-column label="工厂编号" align="center" prop="factoryId" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -132,20 +176,22 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['ar:consumption:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['ar:consumption:remove']"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -172,19 +218,26 @@
           </el-select>
         </el-form-item>
         <el-form-item label="年度" prop="year">
-          <el-date-picker clearable
+          <el-date-picker
+            clearable
             v-model="form.year"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择年度">
+            type="year"
+            format="yyyy年"
+            value-format="yyyy"
+            placeholder="请选择年度"
+          >
           </el-date-picker>
         </el-form-item>
         <el-form-item label="月份" prop="month">
-          <el-date-picker clearable
+          <el-date-picker
+            popper-class="due_month"
+            clearable
             v-model="form.month"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择月份">
+            type="month"
+            format="M月"
+            value-format="M"
+            placeholder="请选择月份"
+          >
           </el-date-picker>
         </el-form-item>
         <el-form-item label="工厂编号" prop="factoryId">
@@ -200,11 +253,17 @@
 </template>
 
 <script>
-import { listConsumption, getConsumption, delConsumption, addConsumption, updateConsumption } from "@/api/ar/consumption";
+import {
+  listConsumption,
+  getConsumption,
+  delConsumption,
+  addConsumption,
+  updateConsumption,
+} from "@/api/ar/consumption";
 
 export default {
   name: "Consumption",
-  dicts: ['ar_energy_type'],
+  dicts: ["ar_energy_type"],
   data() {
     return {
       // 遮罩层
@@ -234,31 +293,25 @@ export default {
         type: null,
         year: null,
         month: null,
-        factoryId: null
+        factoryId: null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
         energyConsumed: [
-          { required: true, message: "能耗不能为空", trigger: "blur" }
+          { required: true, message: "能耗不能为空", trigger: "blur" },
         ],
         unit: [
-          { required: true, message: "计量单位不能为空", trigger: "blur" }
+          { required: true, message: "计量单位不能为空", trigger: "blur" },
         ],
-        type: [
-          { required: true, message: "类型不能为空", trigger: "change" }
-        ],
-        year: [
-          { required: true, message: "年度不能为空", trigger: "blur" }
-        ],
-        month: [
-          { required: true, message: "月份不能为空", trigger: "blur" }
-        ],
+        type: [{ required: true, message: "类型不能为空", trigger: "change" }],
+        year: [{ required: true, message: "年度不能为空", trigger: "blur" }],
+        month: [{ required: true, message: "月份不能为空", trigger: "blur" }],
         factoryId: [
-          { required: true, message: "工厂编号不能为空", trigger: "blur" }
-        ]
-      }
+          { required: true, message: "工厂编号不能为空", trigger: "blur" },
+        ],
+      },
     };
   },
   created() {
@@ -268,7 +321,7 @@ export default {
     /** 查询能耗清单列表 */
     getList() {
       this.loading = true;
-      listConsumption(this.queryParams).then(response => {
+      listConsumption(this.queryParams).then((response) => {
         this.consumptionList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -288,7 +341,7 @@ export default {
         type: null,
         year: null,
         month: null,
-        factoryId: null
+        factoryId: null,
       };
       this.resetForm("form");
     },
@@ -304,9 +357,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.id);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -317,8 +370,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
-      getConsumption(id).then(response => {
+      const id = row.id || this.ids;
+      getConsumption(id).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改能耗清单";
@@ -326,16 +379,18 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
+        console.log(this.form);
         if (valid) {
+          console.log(this.form);
           if (this.form.id != null) {
-            updateConsumption(this.form).then(response => {
+            updateConsumption(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addConsumption(this.form).then(response => {
+            addConsumption(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -347,19 +402,33 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除能耗清单编号为"' + ids + '"的数据项？').then(function() {
-        return delConsumption(ids);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm('是否确认删除能耗清单编号为"' + ids + '"的数据项？')
+        .then(function () {
+          return delConsumption(ids);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('ar/consumption/export', {
-        ...this.queryParams
-      }, `consumption_${new Date().getTime()}.xlsx`)
-    }
-  }
+      this.download(
+        "ar/consumption/export",
+        {
+          ...this.queryParams,
+        },
+        `consumption_${new Date().getTime()}.xlsx`
+      );
+    },
+  },
 };
 </script>
+
+<style lang="scss">
+.due_month .el-date-picker__header {
+  display: none;
+}
+</style>

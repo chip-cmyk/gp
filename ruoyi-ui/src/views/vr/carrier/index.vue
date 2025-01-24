@@ -219,11 +219,25 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="规格" prop="specifications">
-          <el-input
+          <!-- <el-input -->
+          <!-- v-model="form.specifications" -->
+          <!-- type="textarea" -->
+          <!-- placeholder="请输入内容" -->
+          <!-- /> -->
+          <el-select
             v-model="form.specifications"
-            type="textarea"
-            placeholder="请输入内容"
-          />
+            placeholder="请选择规格"
+            filterable
+            clearable
+            allow-create
+          >
+            <el-option
+              v-for="item in specifications"
+              :key="item"
+              :label="item"
+              :value="item"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="展区名称" prop="exhibitZoneId">
           <el-select
@@ -312,6 +326,18 @@ export default {
       },
       // 展区列表
       exhibitZoneList: [],
+      // 载体（展台/展板）规格（网上常用的规格，带单位(全部转为cm),如1.0m*2.5m，3*3m,3*2m,1.20m×0.8m、1.0m×2.5m、90cm×240cm、120cm×240cm 等，标准板一般为 90cm×120cm 或 120cm×120cm(全部转为cm，统一格式为xxcm×xxcm)）
+      specifications: [
+        "100cm*250cm",
+        "300cm*300cm",
+        "300cm*200cm",
+        "120cm*80cm",
+        "100cm*250cm",
+        "90cm*240cm",
+        "120cm*240cm",
+        "90cm*120cm",
+        "120cm*120cm",
+      ],
     };
   },
   created() {
@@ -432,7 +458,7 @@ export default {
       const exhibitZone = this.exhibitZoneList.find(
         (item) => item.exhibitZoneId === exhibitZoneId
       );
-      return exhibitZone ? exhibitZone.exhibitZoneName : '';
+      return exhibitZone ? exhibitZone.exhibitZoneName : "";
     },
   },
 };
