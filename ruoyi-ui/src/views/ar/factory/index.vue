@@ -17,14 +17,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="联系电话" prop="contactPhone">
-        <el-input
-          v-model="queryParams.contactPhone"
-          placeholder="请输入联系电话"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="地址" prop="address">
         <el-input
           v-model="queryParams.address"
@@ -178,9 +170,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         name: null,
-        description: null,
         contactPerson: null,
-        contactPhone: null,
         address: null
       },
       // 表单参数
@@ -189,6 +179,9 @@ export default {
       rules: {
         name: [
           { required: true, message: "名称不能为空", trigger: "blur" }
+        ],
+        description: [
+          { required: true, message: "简介不能为空", trigger: "blur" }
         ],
         contactPerson: [
           { required: true, message: "联系人不能为空", trigger: "blur" }

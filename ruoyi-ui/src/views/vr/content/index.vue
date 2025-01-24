@@ -508,10 +508,7 @@ export default {
         this.dict.type.vr_content_category.forEach((item) => {
           categorySet.add(item.value);
         });
-        listContent({
-          pageNum: 1,
-          pageSize: 10000,
-        }).then((response) => {
+        listContent(this.allQueryParams).then((response) => {
           response.rows.forEach((item) => {
             categorySet.add(item.category);
           });
@@ -520,7 +517,7 @@ export default {
       }, 800);
     },
     getCarrierList() {
-      listCarrier().then((response) => {
+      listCarrier(this.allQueryParams).then((response) => {
         this.carrierList = response.rows;
       });
     },
@@ -531,7 +528,7 @@ export default {
       return carrier ? carrier.carrierName : "";
     },
     getWorkList() {
-      listWork().then((response) => {
+      listWork(this.allQueryParams).then((response) => {
         this.workList = response.rows;
       });
     },

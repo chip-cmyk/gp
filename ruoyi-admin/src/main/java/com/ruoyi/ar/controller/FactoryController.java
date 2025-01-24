@@ -25,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 工厂Controller
  * 
  * @author lazy
- * @date 2025-01-20
+ * @date 2025-01-24
  */
 @RestController
 @RequestMapping("/ar/factory")

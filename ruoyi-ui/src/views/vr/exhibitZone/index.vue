@@ -353,7 +353,7 @@ export default {
     },
     /** 获取展厅列表 */
     getShowroomList() {
-      listShowroom().then((response) => {
+      listShowroom(this.allQueryParams).then((response) => {
         this.showroomList = response.rows;
       });
     },

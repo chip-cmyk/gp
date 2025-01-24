@@ -21,10 +21,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectFactoryVo"/>
         <where>  
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
-            <if test="description != null  and description != ''"> and description = #{description}</if>
-            <if test="contactPerson != null  and contactPerson != ''"> and contact_person = #{contactPerson}</if>
-            <if test="contactPhone != null  and contactPhone != ''"> and contact_phone = #{contactPhone}</if>
-            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="contactPerson != null  and contactPerson != ''"> and contact_person like concat('%', #{contactPerson}, '%')</if>
+            <if test="address != null  and address != ''"> and address like concat('%', #{address}, '%')</if>
         </where>
     </select>
     
@@ -38,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="factoryId != null">factory_id,</if>
             <if test="name != null and name != ''">name,</if>
-            <if test="description != null">description,</if>
+            <if test="description != null and description != ''">description,</if>
             <if test="contactPerson != null and contactPerson != ''">contact_person,</if>
             <if test="contactPhone != null and contactPhone != ''">contact_phone,</if>
             <if test="address != null and address != ''">address,</if>
@@ -46,7 +44,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="factoryId != null">#{factoryId},</if>
             <if test="name != null and name != ''">#{name},</if>
-            <if test="description != null">#{description},</if>
+            <if test="description != null and description != ''">#{description},</if>
             <if test="contactPerson != null and contactPerson != ''">#{contactPerson},</if>
             <if test="contactPhone != null and contactPhone != ''">#{contactPhone},</if>
             <if test="address != null and address != ''">#{address},</if>
@@ -57,7 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update factory
         <trim prefix="SET" suffixOverrides=",">
             <if test="name != null and name != ''">name = #{name},</if>
-            <if test="description != null">description = #{description},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
             <if test="contactPerson != null and contactPerson != ''">contact_person = #{contactPerson},</if>
             <if test="contactPhone != null and contactPhone != ''">contact_phone = #{contactPhone},</if>
             <if test="address != null and address != ''">address = #{address},</if>

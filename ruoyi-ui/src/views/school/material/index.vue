@@ -277,7 +277,7 @@ export default {
     },
     // 获取场景列表
     getSceneList() {
-      listScene().then((response) => {
+      listScene(this.allQueryParams).then((response) => {
         this.sceneList = response.rows;
       });
     },

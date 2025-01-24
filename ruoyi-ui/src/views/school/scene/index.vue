@@ -281,7 +281,7 @@ export default {
     },
     // 取合作案例列表
     getCaseList() {
-      listCase().then((response) => {
+      listCase(this.allQueryParams).then((response) => {
         this.caseList = response.rows;
       });
     },

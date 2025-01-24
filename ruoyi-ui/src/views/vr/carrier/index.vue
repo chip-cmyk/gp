@@ -423,7 +423,7 @@ export default {
     },
     /** 获取展区列表 */
     getExhibitZoneList() {
-      listExhibitZone().then((response) => {
+      listExhibitZone(this.allQueryParams).then((response) => {
         this.exhibitZoneList = response.rows;
       });
     },
