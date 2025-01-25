@@ -7,7 +7,7 @@ import com.ruoyi.ar.domain.QrCode;
  * 二维码Service接口
  * 
  * @author lazy
- * @date 2025-01-20
+ * @date 2025-01-25
  */
 public interface IQrCodeService 
 {

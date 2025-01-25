@@ -9,7 +9,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 二维码对象 qr_code
  * 
  * @author lazy
- * @date 2025-01-20
+ * @date 2025-01-25
  */
 public class QrCode extends BaseEntity
 {
@@ -17,6 +17,10 @@ public class QrCode extends BaseEntity
 
     /** 二维码编号 */
     private Long qrCodeId;
+
+    /** 二维码名称 */
+    @Excel(name = "二维码名称")
+    private String qrCodeName;
 
     /** 二维码内容 */
     @Excel(name = "二维码内容")
@@ -34,6 +38,15 @@ public class QrCode extends BaseEntity
     public Long getQrCodeId() 
     {
         return qrCodeId;
+    }
+    public void setQrCodeName(String qrCodeName) 
+    {
+        this.qrCodeName = qrCodeName;
+    }
+
+    public String getQrCodeName() 
+    {
+        return qrCodeName;
     }
     public void setQrCode(String qrCode) 
     {
@@ -58,6 +71,7 @@ public class QrCode extends BaseEntity
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("qrCodeId", getQrCodeId())
+            .append("qrCodeName", getQrCodeName())
             .append("qrCode", getQrCode())
             .append("usageStatus", getUsageStatus())
             .toString();

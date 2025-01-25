@@ -6,17 +6,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="QrCode" id="QrCodeResult">
         <result property="qrCodeId"    column="qr_code_id"    />
+        <result property="qrCodeName"    column="qr_code_name"    />
         <result property="qrCode"    column="qr_code"    />
         <result property="usageStatus"    column="usage_status"    />
     </resultMap>
 
     <sql id="selectQrCodeVo">
-        select qr_code_id, qr_code, usage_status from qr_code
+        select qr_code_id, qr_code_name, qr_code, usage_status from qr_code
     </sql>
 
     <select id="selectQrCodeList" parameterType="QrCode" resultMap="QrCodeResult">
         <include refid="selectQrCodeVo"/>
         <where>  
+            <if test="qrCodeName != null  and qrCodeName != ''"> and qr_code_name like concat('%', #{qrCodeName}, '%')</if>
+            <if test="qrCode != null  and qrCode != ''"> and qr_code = #{qrCode}</if>
             <if test="usageStatus != null  and usageStatus != ''"> and usage_status = #{usageStatus}</if>
         </where>
     </select>
@@ -29,10 +32,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertQrCode" parameterType="QrCode" useGeneratedKeys="true" keyProperty="qrCodeId">
         insert into qr_code
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="qrCodeName != null and qrCodeName != ''">qr_code_name,</if>
             <if test="qrCode != null and qrCode != ''">qr_code,</if>
             <if test="usageStatus != null and usageStatus != ''">usage_status,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="qrCodeName != null and qrCodeName != ''">#{qrCodeName},</if>
             <if test="qrCode != null and qrCode != ''">#{qrCode},</if>
             <if test="usageStatus != null and usageStatus != ''">#{usageStatus},</if>
          </trim>
@@ -41,6 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateQrCode" parameterType="QrCode">
         update qr_code
         <trim prefix="SET" suffixOverrides=",">
+            <if test="qrCodeName != null and qrCodeName != ''">qr_code_name = #{qrCodeName},</if>
             <if test="qrCode != null and qrCode != ''">qr_code = #{qrCode},</if>
             <if test="usageStatus != null and usageStatus != ''">usage_status = #{usageStatus},</if>
         </trim>

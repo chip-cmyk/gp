@@ -1,6 +1,14 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="二维码名称" prop="qrCodeName">
+        <el-input
+          v-model="queryParams.qrCodeName"
+          placeholder="请输入二维码名称"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="使用情况" prop="usageStatus">
         <el-select v-model="queryParams.usageStatus" placeholder="请选择使用情况" clearable>
           <el-option
@@ -66,6 +74,7 @@
     <el-table v-loading="loading" :data="codeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="二维码编号" align="center" prop="qrCodeId" />
+      <el-table-column label="二维码名称" align="center" prop="qrCodeName" />
       <el-table-column label="二维码内容" align="center" prop="qrCode" width="100">
         <template slot-scope="scope">
           <image-preview :src="scope.row.qrCode" :width="50" :height="50"/>
@@ -107,6 +116,9 @@
     <!-- 添加或修改二维码对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="二维码名称" prop="qrCodeName">
+          <el-input v-model="form.qrCodeName" placeholder="请输入二维码名称" />
+        </el-form-item>
         <el-form-item label="二维码内容" prop="qrCode">
           <image-upload v-model="form.qrCode"/>
         </el-form-item>
@@ -158,12 +170,17 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        qrCodeName: null,
+        qrCode: null,
         usageStatus: null
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
+        qrCodeName: [
+          { required: true, message: "二维码名称不能为空", trigger: "blur" }
+        ],
         qrCode: [
           { required: true, message: "二维码内容不能为空", trigger: "blur" }
         ],
@@ -195,6 +212,7 @@ export default {
     reset() {
       this.form = {
         qrCodeId: null,
+        qrCodeName: null,
         qrCode: null,
         usageStatus: null
       };
