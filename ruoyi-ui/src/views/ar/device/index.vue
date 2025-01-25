@@ -38,13 +38,22 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="工厂编号" prop="factoryNumber">
-        <el-input
+      <el-form-item label="工厂名称" prop="factoryNumber">
+        <el-select
           v-model="queryParams.factoryNumber"
-          placeholder="请输入工厂编号"
+          placeholder="请选择工厂名称"
+          filterable
           clearable
+          allow-create
           @keyup.enter.native="handleQuery"
-        />
+        >
+          <el-option
+            v-for="item in factoryList"
+            :key="item.factoryId"
+            :label="item.name"
+            :value="item.factoryId"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -131,7 +140,14 @@
         </template>
       </el-table-column>
       <el-table-column label="二维码编号" align="center" prop="qrCodeNumber" />
-      <el-table-column label="工厂编号" align="center" prop="factoryNumber" />
+      <el-table-column label="工厂名称" align="center" prop="factoryNumber">
+        <template slot-scope="scope">
+          <span
+            >{{ getFactoryName(scope.row.factoryNumber)
+            }}{{ scope.row.factoryNumber }}</span
+          >
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作"
         align="center"
@@ -195,8 +211,21 @@
             placeholder="请输入二维码编号"
           />
         </el-form-item>
-        <el-form-item label="工厂编号" prop="factoryNumber">
-          <el-input v-model="form.factoryNumber" placeholder="请输入工厂编号" />
+        <el-form-item label="工厂名称" prop="factoryNumber">
+          <el-select
+            v-model="form.factoryNumber"
+            placeholder="请选择工厂名称"
+            filterable
+            clearable
+            allow-create
+          >
+            <el-option
+              v-for="item in factoryList"
+              :key="item.factoryId"
+              :label="item.name"
+              :value="item.factoryId"
+            ></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -215,6 +244,7 @@ import {
   addDevice,
   updateDevice,
 } from "@/api/ar/device";
+import { listFactory } from "@/api/ar/factory";
 
 export default {
   name: "Device",
@@ -259,13 +289,16 @@ export default {
         ],
         // 工厂编号
         factoryNumber: [
-          { required: true, message: "工厂编号不能为空", trigger: "blur" },
+          { required: true, message: "工厂名称不能为空", trigger: "blur" },
         ],
       },
+      // 工厂列表
+      factoryList: [],
     };
   },
   created() {
     this.getList();
+    this.getFactoryList();
   },
   methods: {
     /** 查询设备列表 */
@@ -275,6 +308,12 @@ export default {
         this.deviceList = response.rows;
         this.total = response.total;
         this.loading = false;
+      });
+    },
+    /** 查询工厂列表 */
+    getFactoryList() {
+      listFactory().then((response) => {
+        this.factoryList = response.rows;
       });
     },
     // 取消按钮
@@ -369,6 +408,14 @@ export default {
         },
         `device_${new Date().getTime()}.xlsx`
       );
+    },
+    // 根据工厂编号回显对应的工厂名称
+    getFactoryName(factoryId) {
+      const factory = this.factoryList.find(
+        (item) => item.factoryId == factoryId
+      );
+      console.log(factory, "device");
+      return factory ? factory.name : "";
     },
   },
 };

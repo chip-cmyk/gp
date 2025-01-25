@@ -24,13 +24,22 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="工厂编号" prop="factoryId">
-        <el-input
+      <el-form-item label="工厂名称" prop="factoryId">
+        <el-select
           v-model="queryParams.factoryId"
-          placeholder="请输入工厂编号"
+          placeholder="请选择工厂名称"
+          filterable
           clearable
+          allow-create
           @keyup.enter.native="handleQuery"
-        />
+        >
+          <el-option
+            v-for="item in factoryList"
+            :key="item.factoryId"
+            :label="item.name"
+            :value="item.factoryId"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -109,7 +118,11 @@
       <el-table-column label="名称" align="center" prop="name" />
       <el-table-column label="简介" align="center" prop="description" />
       <el-table-column label="二维码编号" align="center" prop="qrCodeId" />
-      <el-table-column label="工厂编号" align="center" prop="factoryId" />
+      <el-table-column label="工厂名称" align="center" prop="factoryId">
+        <template slot-scope="scope">
+          <span>{{ getFactoryName(scope.row.factoryId) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作"
         align="center"
@@ -160,8 +173,21 @@
         <el-form-item label="二维码编号" prop="qrCodeId">
           <el-input v-model="form.qrCodeId" placeholder="请输入二维码编号" />
         </el-form-item>
-        <el-form-item label="工厂编号" prop="factoryId">
-          <el-input v-model="form.factoryId" placeholder="请输入工厂编号" />
+        <el-form-item label="工厂名称" prop="factoryId">
+          <el-select
+            v-model="form.factoryId"
+            placeholder="请选择工厂名称"
+            filterable
+            clearable
+            allow-create
+          >
+            <el-option
+              v-for="item in factoryList"
+              :key="item.factoryId"
+              :label="item.name"
+              :value="item.factoryId"
+            ></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -174,6 +200,7 @@
 
 <script>
 import { listZone, getZone, delZone, addZone, updateZone } from "@/api/ar/zone";
+import { listFactory } from "@/api/ar/factory";
 
 export default {
   name: "Zone",
@@ -214,17 +241,17 @@ export default {
         description: [
           { required: true, message: "简介不能为空", trigger: "blur" },
         ],
-        // qrCodeId: [
-        //   { required: true, message: "二维码编号不能为空", trigger: "blur" }
-        // ],
         factoryId: [
-          { required: true, message: "工厂编号不能为空", trigger: "blur" },
+          { required: true, message: "工厂名称不能为空", trigger: "blur" },
         ],
       },
+      // 工厂列表
+      factoryList: [],
     };
   },
   created() {
     this.getList();
+    this.getFactoryList();
   },
   methods: {
     /** 查询沙盘分区列表 */
@@ -235,6 +262,21 @@ export default {
         this.total = response.total;
         this.loading = false;
       });
+    },
+    // 获取工厂列表
+    getFactoryList() {
+      listFactory().then((response) => {
+        this.factoryList = response.rows;
+      });
+    },
+    // 根据工厂编号回显对应的工厂名称
+    getFactoryName(factoryId) {
+      console.log(this.factoryList, "zone");
+      const factory = this.factoryList.find(
+        (item) => item.factoryId == factoryId
+      );
+      console.log(factory, "zone");
+      return factory ? factory.name : "";
     },
     // 取消按钮
     cancel() {

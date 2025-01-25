@@ -523,7 +523,7 @@ export default {
     },
     getCarrierName(carrierId) {
       const carrier = this.carrierList.find(
-        (item) => item.carrierId === carrierId
+        (item) => item.carrierId == carrierId
       );
       return carrier ? carrier.carrierName : "";
     },

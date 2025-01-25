@@ -61,13 +61,22 @@
         >
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="工厂编号" prop="factoryId">
-        <el-input
+      <el-form-item label="工厂名称" prop="factoryId">
+        <el-select
           v-model="queryParams.factoryId"
-          placeholder="请输入工厂编号"
+          placeholder="请选择工厂名称"
+          filterable
           clearable
+          allow-create
           @keyup.enter.native="handleQuery"
-        />
+        >
+          <el-option
+            v-for="item in factoryList"
+            :key="item.factoryId"
+            :label="item.name"
+            :value="item.factoryId"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -159,7 +168,11 @@
       <el-table-column label="月份" align="center" prop="month" width="180">
         <template slot-scope="scope"> {{ scope.row.month }}月 </template>
       </el-table-column>
-      <el-table-column label="工厂编号" align="center" prop="factoryId" />
+      <el-table-column label="工厂名称" align="center" prop="factoryId">
+        <template slot-scope="scope">
+          {{ getFactoryName(scope.row.factoryId) }}
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作"
         align="center"
@@ -236,8 +249,21 @@
           >
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="工厂编号" prop="factoryId">
-          <el-input v-model="form.factoryId" placeholder="请输入工厂编号" />
+        <el-form-item label="工厂名称" prop="factoryId">
+          <el-select
+            v-model="form.factoryId"
+            placeholder="请选择工厂名称"
+            filterable
+            clearable
+            allow-create
+          >
+            <el-option
+              v-for="item in factoryList"
+              :key="item.factoryId"
+              :label="item.name"
+              :value="item.factoryId"
+            ></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -256,6 +282,7 @@ import {
   addConsumption,
   updateConsumption,
 } from "@/api/ar/consumption";
+import { listFactory } from "@/api/ar/factory";
 
 export default {
   name: "Consumption",
@@ -305,13 +332,16 @@ export default {
         year: [{ required: true, message: "年度不能为空", trigger: "blur" }],
         month: [{ required: true, message: "月份不能为空", trigger: "blur" }],
         factoryId: [
-          { required: true, message: "工厂编号不能为空", trigger: "blur" },
+          { required: true, message: "工厂名称不能为空", trigger: "blur" },
         ],
       },
+      // 工厂列表
+      factoryList: [],
     };
   },
   created() {
     this.getList();
+    this.getFactoryList();
   },
   methods: {
     /** 查询能耗清单列表 */
@@ -321,6 +351,12 @@ export default {
         this.consumptionList = response.rows;
         this.total = response.total;
         this.loading = false;
+      });
+    },
+    /** 查询工厂列表 */
+    getFactoryList() {
+      listFactory().then((response) => {
+        this.factoryList = response.rows;
       });
     },
     // 取消按钮
@@ -416,6 +452,13 @@ export default {
         },
         `consumption_${new Date().getTime()}.xlsx`
       );
+    },
+    /** 获取工厂名称 */
+    getFactoryName(factoryId) {
+      const factory = this.factoryList.find(
+        (item) => item.factoryId == factoryId
+      );
+      return factory ? factory.name : "";
     },
   },
 };

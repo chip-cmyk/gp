@@ -321,7 +321,7 @@ export default {
           { required: true, message: "规格不能为空", trigger: "blur" },
         ],
         exhibitZoneId: [
-          { required: true, message: "展区编号不能为空", trigger: "blur" },
+          { required: true, message: "展区名称不能为空", trigger: "blur" },
         ],
       },
       // 展区列表
@@ -332,7 +332,6 @@ export default {
         "300cm*300cm",
         "300cm*200cm",
         "120cm*80cm",
-        "100cm*250cm",
         "90cm*240cm",
         "120cm*240cm",
         "90cm*120cm",
@@ -456,7 +455,7 @@ export default {
     /** 获取展区名称 */
     getExhibitZoneName(exhibitZoneId) {
       const exhibitZone = this.exhibitZoneList.find(
-        (item) => item.exhibitZoneId === exhibitZoneId
+        (item) => item.exhibitZoneId == exhibitZoneId
       );
       return exhibitZone ? exhibitZone.exhibitZoneName : "";
     },

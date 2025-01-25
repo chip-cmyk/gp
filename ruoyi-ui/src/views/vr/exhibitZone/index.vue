@@ -239,7 +239,7 @@ export default {
           { required: true, message: "简介不能为空", trigger: "blur" },
         ],
         showroomId: [
-          { required: true, message: "展厅编号不能为空", trigger: "blur" },
+          { required: true, message: "展厅名称不能为空", trigger: "blur" },
         ],
       },
       // 展厅列表
@@ -360,7 +360,7 @@ export default {
     /** 获取展厅名称 */
     getShowroomName(showroomId) {
       const showroom = this.showroomList.find(
-        (item) => item.showroomId === showroomId
+        (item) => item.showroomId == showroomId
       );
       return showroom ? showroom.showroomName : "";
     },

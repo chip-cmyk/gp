@@ -2,6 +2,7 @@
   <div class="app-container home">
     <el-row :gutter="20">
       <el-col :sm="24" :lg="24" style="padding-left: 20px">
+        <!-- <h2>尊敬的{{ user.nickName }}</h2> -->
         <h2>您好，欢迎来到合作创新管理系统！</h2>
         <p></p>
       </el-col>
@@ -14,14 +15,27 @@
 </template>
 
 <script>
+import { getUserProfile } from "@/api/system/user";
+
 export default {
   name: "Index",
   data() {
-    return {};
+    return {
+      user: {},
+    };
+  },
+  created() {
+    this.getUser();
   },
   methods: {
     goTarget(href) {
       window.open(href, "_blank");
+    },
+    getUser() {
+      getUserProfile().then((response) => {
+        this.user = response.data;
+        console.log(this.user);
+      });
     },
   },
 };

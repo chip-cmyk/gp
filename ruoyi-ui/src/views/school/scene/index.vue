@@ -257,7 +257,7 @@ export default {
           { required: true, message: "文件URL不能为空", trigger: "blur" },
         ],
         caseId: [
-          { required: true, message: "案例编号不能为空", trigger: "blur" },
+          { required: true, message: "案例名称不能为空", trigger: "blur" },
         ],
         description: [
           { required: true, message: "简介不能为空", trigger: "blur" },
@@ -288,7 +288,7 @@ export default {
 
     // 根据案例编号回显对应的案例名称
     getCaseName(caseId) {
-      const caseItem = this.caseList.find((item) => item.caseId === caseId);
+      const caseItem = this.caseList.find((item) => item.caseId == caseId);
       return caseItem ? caseItem.caseName : "";
     },
     // 取消按钮

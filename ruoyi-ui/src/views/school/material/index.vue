@@ -254,7 +254,7 @@ export default {
           { required: true, message: "文件URL不能为空", trigger: "blur" },
         ],
         sceneId: [
-          { required: true, message: "场景编号不能为空", trigger: "blur" },
+          { required: true, message: "场景名称不能为空", trigger: "blur" },
         ],
       },
       // 场景列表数据
@@ -283,8 +283,8 @@ export default {
     },
     // 根据场景编号回显对应的场景名称
     getSceneName(sceneId) {
-      const scene = this.sceneList.find((item) => item.sceneId === sceneId);
-      return scene ? scene.sceneName : '';
+      const scene = this.sceneList.find((item) => item.sceneId == sceneId);
+      return scene ? scene.sceneName : "";
     },
     // 取消按钮
     cancel() {
