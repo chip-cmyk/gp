@@ -30,13 +30,22 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="二维码编号" prop="qrCodeNumber">
-        <el-input
+      <el-form-item label="二维码名称" prop="qrCodeNumber">
+        <el-select
           v-model="queryParams.qrCodeNumber"
-          placeholder="请输入二维码编号"
+          placeholder="请选择二维码名称"
+          filterable
           clearable
+          allow-create
           @keyup.enter.native="handleQuery"
-        />
+        >
+          <el-option
+            v-for="item in qrCodeList"
+            :key="item.qrCodeId"
+            :label="item.qrCodeName"
+            :value="item.qrCodeId"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="工厂名称" prop="factoryNumber">
         <el-select
@@ -139,13 +148,14 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="二维码编号" align="center" prop="qrCodeNumber" />
+      <el-table-column label="二维码名称" align="center" prop="qrCodeNumber">
+        <template slot-scope="scope">
+          <span>{{ getQrCodeName(scope.row.qrCodeNumber) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="工厂名称" align="center" prop="factoryNumber">
         <template slot-scope="scope">
-          <span
-            >{{ getFactoryName(scope.row.factoryNumber)
-            }}{{ scope.row.factoryNumber }}</span
-          >
+          <span>{{ getFactoryName(scope.row.factoryNumber) }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -205,11 +215,21 @@
             >
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="二维码编号" prop="qrCodeNumber">
-          <el-input
+        <el-form-item label="二维码名称" prop="qrCodeNumber">
+          <el-select
             v-model="form.qrCodeNumber"
-            placeholder="请输入二维码编号"
-          />
+            placeholder="请选择二维码名称"
+            filterable
+            clearable
+            allow-create
+          >
+            <el-option
+              v-for="item in qrCodeList"
+              :key="item.qrCodeId"
+              :label="item.qrCodeName"
+              :value="item.qrCodeId"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="工厂名称" prop="factoryNumber">
           <el-select
@@ -245,6 +265,7 @@ import {
   updateDevice,
 } from "@/api/ar/device";
 import { listFactory } from "@/api/ar/factory";
+import { listCode } from "@/api/ar/code";
 
 export default {
   name: "Device",
@@ -294,11 +315,14 @@ export default {
       },
       // 工厂列表
       factoryList: [],
+      // 二维码列表
+      qrCodeList: [],
     };
   },
   created() {
     this.getList();
     this.getFactoryList();
+    this.getQrCodeList();
   },
   methods: {
     /** 查询设备列表 */
@@ -312,8 +336,14 @@ export default {
     },
     /** 查询工厂列表 */
     getFactoryList() {
-      listFactory().then((response) => {
+      listFactory(this.allQueryParams).then((response) => {
         this.factoryList = response.rows;
+      });
+    },
+    // 获取二维码列表
+    getQrCodeList() {
+      listCode(this.allQueryParams).then((response) => {
+        this.qrCodeList = response.rows;
       });
     },
     // 取消按钮
@@ -414,8 +444,12 @@ export default {
       const factory = this.factoryList.find(
         (item) => item.factoryId == factoryId
       );
-      console.log(factory, "device");
       return factory ? factory.name : "";
+    },
+    // 根据二维码编号回显对应的二维码名称
+    getQrCodeName(qrCodeId) {
+      const qrCode = this.qrCodeList.find((item) => item.qrCodeId == qrCodeId);
+      return qrCode ? qrCode.qrCodeName : "";
     },
   },
 };

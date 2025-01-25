@@ -258,7 +258,7 @@ export default {
     },
     // 获取工厂列表
     getFactoryList() {
-      listFactory().then((response) => {
+      listFactory(this.allQueryParams).then((response) => {
         this.factoryList = response.rows;
       });
     },

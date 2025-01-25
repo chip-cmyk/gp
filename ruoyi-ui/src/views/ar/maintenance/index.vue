@@ -302,7 +302,7 @@ export default {
     },
     // 获取设备列表
     getDeviceList() {
-      listDevice().then((response) => {
+      listDevice(this.allQueryParams).then((response) => {
         this.deviceList = response.rows;
       });
     },
