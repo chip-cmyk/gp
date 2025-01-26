@@ -11,7 +11,7 @@
  Target Server Version : 80012 (8.0.12)
  File Encoding         : 65001
 
- Date: 24/01/2025 22:54:31
+ Date: 26/01/2025 10:16:56
 */
 
 SET NAMES utf8mb4;
@@ -32,14 +32,16 @@ CREATE TABLE `ar_content`  (
   PRIMARY KEY (`ar_content_id`) USING BTREE,
   INDEX `qr_code_id`(`qr_code_id` ASC) USING BTREE,
   CONSTRAINT `ar_content_ibfk_1` FOREIGN KEY (`qr_code_id`) REFERENCES `qr_code` (`qr_code_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ar_content
 -- ----------------------------
-INSERT INTO `ar_content` VALUES (1, 's', '图片', 's', 's', '1', NULL);
-INSERT INTO `ar_content` VALUES (2, 'asdfas', '4D空间', 'dddd', 'sadfas', '0', NULL);
-INSERT INTO `ar_content` VALUES (4, 'ewffe', '图文', 'asdfasf', 'asfaf', '0', NULL);
+INSERT INTO `ar_content` VALUES (1, 's', '图片', 's', 's', '1', 2);
+INSERT INTO `ar_content` VALUES (2, 'asdfas', '4D空间', 'dddd', 'sadfas', '0', 2);
+INSERT INTO `ar_content` VALUES (4, 'ewffe', '图文', 'asdfasf', 'asfaf', '0', 1);
+INSERT INTO `ar_content` VALUES (5, 'asdfd', '5555', 'asdf', 'sssssss', '0', NULL);
+INSERT INTO `ar_content` VALUES (6, '你好', '2222', 'aaaaaaaa', 'sssssssss', '0', NULL);
 
 -- ----------------------------
 -- Table structure for cooperation_case
@@ -78,15 +80,17 @@ CREATE TABLE `device`  (
   INDEX `factory_id`(`factory_number` ASC) USING BTREE,
   CONSTRAINT `device_ibfk_1` FOREIGN KEY (`qr_code_number`) REFERENCES `qr_code` (`qr_code_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `device_ibfk_2` FOREIGN KEY (`factory_number`) REFERENCES `factory` (`factory_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of device
 -- ----------------------------
-INSERT INTO `device` VALUES (2, 'ww', NULL, NULL, NULL, NULL);
-INSERT INTO `device` VALUES (3, '4', '4', '0', NULL, NULL);
+INSERT INTO `device` VALUES (2, 'ww', NULL, NULL, NULL, 3);
+INSERT INTO `device` VALUES (3, '4', '4', '0', NULL, 2);
 INSERT INTO `device` VALUES (4, 'aa', 'aa', NULL, NULL, 4);
-INSERT INTO `device` VALUES (5, 'asdf', 'aa', NULL, 1, 3);
+INSERT INTO `device` VALUES (5, 'asdf', 'aa', NULL, 1, 1);
+INSERT INTO `device` VALUES (9, 'wwww', 'dd', NULL, 1, 4);
+INSERT INTO `device` VALUES (11, 'wwae', 'asdfas', NULL, 2, 1);
 
 -- ----------------------------
 -- Table structure for energy_consumption
@@ -206,7 +210,7 @@ INSERT INTO `gen_table` VALUES (35, 'device', '设备', NULL, NULL, 'Device', 'c
 INSERT INTO `gen_table` VALUES (36, 'vr_content', 'VR内容', NULL, NULL, 'VrContent', 'crud', 'element-ui', 'com.ruoyi.vr', 'vr', 'content', 'VR内容', 'lazy', '0', '/', '{\"parentMenuId\":2099}', 'admin', '2025-01-20 14:45:59', '', '2025-01-24 14:53:50', NULL);
 INSERT INTO `gen_table` VALUES (37, 'ar_content', 'AR内容', NULL, NULL, 'ArContent', 'crud', 'element-ui', 'com.ruoyi.ar', 'ar', 'content', 'AR内容', 'lazy', '0', '/', '{\"parentMenuId\":2044}', 'admin', '2025-01-20 15:10:26', '', '2025-01-22 21:02:04', NULL);
 INSERT INTO `gen_table` VALUES (38, 'production_batch', '生产批次', NULL, NULL, 'ProductionBatch', 'crud', 'element-ui', 'com.ruoyi.ar', 'ar', 'batch', '生产批次', 'lazy', '0', '/', '{\"parentMenuId\":2229}', 'admin', '2025-01-20 15:10:26', '', '2025-01-20 17:08:29', NULL);
-INSERT INTO `gen_table` VALUES (39, 'qr_code', '二维码', NULL, NULL, 'QrCode', 'crud', 'element-ui', 'com.ruoyi.ar', 'ar', 'code', '二维码', 'lazy', '0', '/', '{\"parentMenuId\":2044}', 'admin', '2025-01-20 15:10:26', '', '2025-01-22 21:09:31', NULL);
+INSERT INTO `gen_table` VALUES (39, 'qr_code', '二维码', NULL, NULL, 'QrCode', 'crud', 'element-ui', 'com.ruoyi.ar', 'ar', 'code', '二维码', 'lazy', '0', '/', '{\"parentMenuId\":2044}', 'admin', '2025-01-20 15:10:26', '', '2025-01-25 20:27:04', NULL);
 INSERT INTO `gen_table` VALUES (40, 'vr_material', 'VR素材', NULL, NULL, 'VrMaterial', 'crud', 'element-ui', 'com.ruoyi.school', 'school', 'material', 'VR素材', 'lazy', '0', '/', '{\"parentMenuId\":2100}', 'admin', '2025-01-20 15:10:26', '', '2025-01-21 20:52:59', 'VR素材');
 INSERT INTO `gen_table` VALUES (41, 'energy_consumption', '能耗清单', NULL, NULL, 'EnergyConsumption', 'crud', 'element-ui', 'com.ruoyi.ar', 'ar', 'consumption', '能耗清单', 'ruoyi', '0', '/', '{\"parentMenuId\":2044}', 'admin', '2025-01-22 22:22:22', '', '2025-01-24 22:21:01', '能耗清单');
 
@@ -238,7 +242,7 @@ CREATE TABLE `gen_table_column`  (
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`column_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 260 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '代码生成业务表字段' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 261 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '代码生成业务表字段' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of gen_table_column
@@ -364,9 +368,9 @@ INSERT INTO `gen_table_column` VALUES (236, 38, 'unit', '计量单位', 'varchar
 INSERT INTO `gen_table_column` VALUES (237, 38, 'production_date', '生产日期', 'date', 'Date', 'productionDate', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'datetime', '', 4, 'admin', '2025-01-20 15:10:26', '', '2025-01-20 17:08:29');
 INSERT INTO `gen_table_column` VALUES (238, 38, 'shelf_life', '保质期', 'int', 'Long', 'shelfLife', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 5, 'admin', '2025-01-20 15:10:26', '', '2025-01-20 17:08:29');
 INSERT INTO `gen_table_column` VALUES (239, 38, 'product_id', '产品编号', 'int', 'Long', 'productId', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 6, 'admin', '2025-01-20 15:10:26', '', '2025-01-20 17:08:29');
-INSERT INTO `gen_table_column` VALUES (240, 39, 'qr_code_id', '二维码编号', 'int', 'Long', 'qrCodeId', '1', '1', '0', '0', NULL, NULL, NULL, 'EQ', 'input', '', 1, 'admin', '2025-01-20 15:10:26', '', '2025-01-22 21:09:31');
-INSERT INTO `gen_table_column` VALUES (241, 39, 'qr_code', '二维码内容', 'varchar(255)', 'String', 'qrCode', '0', '0', '1', '1', '1', '1', '0', 'EQ', 'imageUpload', '', 2, 'admin', '2025-01-20 15:10:26', '', '2025-01-22 21:09:31');
-INSERT INTO `gen_table_column` VALUES (242, 39, 'usage_status', '使用情况', 'varchar(50)', 'String', 'usageStatus', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'radio', 'use_status', 3, 'admin', '2025-01-20 15:10:26', '', '2025-01-22 21:09:31');
+INSERT INTO `gen_table_column` VALUES (240, 39, 'qr_code_id', '二维码编号', 'int', 'Long', 'qrCodeId', '1', '1', '0', '0', NULL, NULL, NULL, 'EQ', 'input', '', 1, 'admin', '2025-01-20 15:10:26', '', '2025-01-25 20:27:04');
+INSERT INTO `gen_table_column` VALUES (241, 39, 'qr_code', '二维码内容', 'varchar(255)', 'String', 'qrCode', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'imageUpload', '', 3, 'admin', '2025-01-20 15:10:26', '', '2025-01-25 20:27:04');
+INSERT INTO `gen_table_column` VALUES (242, 39, 'usage_status', '使用情况', 'varchar(50)', 'String', 'usageStatus', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'radio', 'use_status', 4, 'admin', '2025-01-20 15:10:26', '', '2025-01-25 20:27:04');
 INSERT INTO `gen_table_column` VALUES (243, 40, 'vr_material_id', 'VR素材编号', 'int', 'Long', 'vrMaterialId', '1', '1', '0', '1', NULL, NULL, NULL, 'EQ', 'input', '', 1, 'admin', '2025-01-20 15:10:26', '', '2025-01-21 20:52:59');
 INSERT INTO `gen_table_column` VALUES (244, 40, 'name', '素材名称', 'varchar(255)', 'String', 'name', '0', '0', '1', '1', '1', '1', '1', 'LIKE', 'input', '', 2, 'admin', '2025-01-20 15:10:26', '', '2025-01-21 20:52:59');
 INSERT INTO `gen_table_column` VALUES (245, 40, 'category', '类别', 'enum(\'文本\',\'图片\',\'动画\',\'声音和视频\',\'3D模型\',\'VR场景\')', 'String', 'category', '0', '0', '1', '1', '1', '1', '1', 'EQ', NULL, '', 3, 'admin', '2025-01-20 15:10:26', '', '2025-01-21 20:52:59');
@@ -380,6 +384,7 @@ INSERT INTO `gen_table_column` VALUES (256, 41, 'energy_consumed', '能耗', 'de
 INSERT INTO `gen_table_column` VALUES (257, 41, 'type', '类型', 'varchar(50)', 'String', 'type', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'select', 'ar_energy_type', 4, '', '2025-01-22 23:11:38', '', '2025-01-24 22:21:02');
 INSERT INTO `gen_table_column` VALUES (258, 41, 'year', '年度', 'date', 'Long', 'year', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 5, '', '2025-01-22 23:11:38', '', '2025-01-24 22:21:02');
 INSERT INTO `gen_table_column` VALUES (259, 41, 'month', '月份', 'tinyint', 'Long', 'month', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 6, '', '2025-01-22 23:11:38', '', '2025-01-24 22:21:02');
+INSERT INTO `gen_table_column` VALUES (260, 39, 'qr_code_name', '二维码名称', 'varchar(50)', 'String', 'qrCodeName', '0', '0', '1', '1', '1', '1', '1', 'LIKE', 'input', '', 2, '', '2025-01-25 20:25:31', '', '2025-01-25 20:27:04');
 
 -- ----------------------------
 -- Table structure for maintenance_record
@@ -538,16 +543,18 @@ CREATE TABLE `production_batch`  (
 DROP TABLE IF EXISTS `qr_code`;
 CREATE TABLE `qr_code`  (
   `qr_code_id` int(11) NOT NULL AUTO_INCREMENT,
+  `qr_code_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `qr_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `usage_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  PRIMARY KEY (`qr_code_id`) USING BTREE
+  `usage_status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '0',
+  PRIMARY KEY (`qr_code_id`) USING BTREE,
+  UNIQUE INDEX `qr_code_name`(`qr_code_name` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of qr_code
 -- ----------------------------
-INSERT INTO `qr_code` VALUES (1, '/profile/upload/2025/01/22/Snipaste_2025-01-22_21-08-01_20250122210828A001.png', '0');
-INSERT INTO `qr_code` VALUES (2, '/profile/upload/2025/01/22/Snipaste_2025-01-22_21-08-01_20250122211034A002.png', '1');
+INSERT INTO `qr_code` VALUES (1, 'aaa', '/profile/upload/2025/01/22/Snipaste_2025-01-22_21-08-01_20250122210828A001.png', '0');
+INSERT INTO `qr_code` VALUES (2, 'bbb', '/profile/upload/2025/01/22/Snipaste_2025-01-22_21-08-01_20250122211034A002.png', '1');
 
 -- ----------------------------
 -- Table structure for qrtz_blob_triggers
@@ -782,12 +789,14 @@ CREATE TABLE `sandbox_zone`  (
   INDEX `factory_id`(`factory_id` ASC) USING BTREE,
   CONSTRAINT `sandbox_zone_ibfk_1` FOREIGN KEY (`qr_code_id`) REFERENCES `qr_code` (`qr_code_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `sandbox_zone_ibfk_2` FOREIGN KEY (`factory_id`) REFERENCES `factory` (`factory_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sandbox_zone
 -- ----------------------------
-INSERT INTO `sandbox_zone` VALUES (1, 'ww', 'asd', NULL, 3);
+INSERT INTO `sandbox_zone` VALUES (1, 'ww', 'asd', 1, 3);
+INSERT INTO `sandbox_zone` VALUES (2, 'safd', 'dsdd', 2, 2);
+INSERT INTO `sandbox_zone` VALUES (3, 'aa', 'asd', 1, 2);
 
 -- ----------------------------
 -- Table structure for supply_batch
@@ -1066,7 +1075,7 @@ CREATE TABLE `sys_logininfor`  (
   PRIMARY KEY (`info_id`) USING BTREE,
   INDEX `idx_sys_logininfor_s`(`status` ASC) USING BTREE,
   INDEX `idx_sys_logininfor_lt`(`login_time` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 147 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '系统访问记录' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 150 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '系统访问记录' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_logininfor
@@ -1118,6 +1127,9 @@ INSERT INTO `sys_logininfor` VALUES (143, 'admin', '127.0.0.1', '内网IP', 'Chr
 INSERT INTO `sys_logininfor` VALUES (144, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-01-21 20:17:36');
 INSERT INTO `sys_logininfor` VALUES (145, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-01-22 09:38:28');
 INSERT INTO `sys_logininfor` VALUES (146, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-01-24 10:23:14');
+INSERT INTO `sys_logininfor` VALUES (147, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-01-25 10:24:08');
+INSERT INTO `sys_logininfor` VALUES (148, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-01-25 15:43:19');
+INSERT INTO `sys_logininfor` VALUES (149, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-01-26 09:29:43');
 
 -- ----------------------------
 -- Table structure for sys_menu
@@ -1145,7 +1157,7 @@ CREATE TABLE `sys_menu`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`menu_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2476 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2482 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_menu
@@ -1258,38 +1270,38 @@ INSERT INTO `sys_menu` VALUES (2164, '库区新增', 2162, 2, '#', '', NULL, '',
 INSERT INTO `sys_menu` VALUES (2165, '库区修改', 2162, 3, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:warehouse:edit', '#', 'admin', '2025-01-14 17:10:04', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2166, '库区删除', 2162, 4, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:warehouse:remove', '#', 'admin', '2025-01-14 17:10:04', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2167, '库区导出', 2162, 5, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:warehouse:export', '#', 'admin', '2025-01-14 17:10:04', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2180, '材料信息', 2229, 1, 'material', 'ar/material/index', NULL, '', 1, 0, 'C', '0', '0', 'ar:material:list', '#', 'admin', '2025-01-14 18:33:39', 'admin', '2025-01-14 20:44:03', '材料信息菜单');
+INSERT INTO `sys_menu` VALUES (2180, '材料信息', 2229, 1, 'material', 'ar/material/index', NULL, '', 1, 0, 'C', '0', '0', 'ar:material:list', 'date-range', 'admin', '2025-01-14 18:33:39', 'admin', '2025-01-25 22:53:34', '材料信息菜单');
 INSERT INTO `sys_menu` VALUES (2181, '材料信息查询', 2180, 1, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:material:query', '#', 'admin', '2025-01-14 18:33:39', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2182, '材料信息新增', 2180, 2, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:material:add', '#', 'admin', '2025-01-14 18:33:39', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2183, '材料信息修改', 2180, 3, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:material:edit', '#', 'admin', '2025-01-14 18:33:39', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2184, '材料信息删除', 2180, 4, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:material:remove', '#', 'admin', '2025-01-14 18:33:39', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2185, '材料信息导出', 2180, 5, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:material:export', '#', 'admin', '2025-01-14 18:33:39', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2186, '材料出入库单', 2229, 1, 'materialTransaction', 'ar/materialTransaction/index', NULL, '', 1, 0, 'C', '0', '0', 'ar:materialTransaction:list', '#', 'admin', '2025-01-14 18:33:46', 'admin', '2025-01-14 20:44:17', '材料出入库单菜单');
+INSERT INTO `sys_menu` VALUES (2186, '材料出入库单', 2229, 1, 'materialTransaction', 'ar/materialTransaction/index', NULL, '', 1, 0, 'C', '0', '0', 'ar:materialTransaction:list', 'link', 'admin', '2025-01-14 18:33:46', 'admin', '2025-01-25 22:53:56', '材料出入库单菜单');
 INSERT INTO `sys_menu` VALUES (2187, '材料出入库单查询', 2186, 1, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:materialTransaction:query', '#', 'admin', '2025-01-14 18:33:46', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2188, '材料出入库单新增', 2186, 2, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:materialTransaction:add', '#', 'admin', '2025-01-14 18:33:46', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2189, '材料出入库单修改', 2186, 3, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:materialTransaction:edit', '#', 'admin', '2025-01-14 18:33:46', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2190, '材料出入库单删除', 2186, 4, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:materialTransaction:remove', '#', 'admin', '2025-01-14 18:33:46', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2191, '材料出入库单导出', 2186, 5, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:materialTransaction:export', '#', 'admin', '2025-01-14 18:33:46', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2198, '供应批次', 2229, 2, 'supplyBatch', 'ar/supplyBatch/index', NULL, '', 1, 0, 'C', '0', '0', 'ar:supplyBatch:list', '#', 'admin', '2025-01-14 19:15:33', 'admin', '2025-01-21 20:14:51', '供应批次菜单');
+INSERT INTO `sys_menu` VALUES (2198, '供应批次', 2229, 2, 'supplyBatch', 'ar/supplyBatch/index', NULL, '', 1, 0, 'C', '0', '0', 'ar:supplyBatch:list', 'form', 'admin', '2025-01-14 19:15:33', 'admin', '2025-01-25 22:54:12', '供应批次菜单');
 INSERT INTO `sys_menu` VALUES (2199, '供应批次查询', 2198, 1, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:supplyBatch:query', '#', 'admin', '2025-01-14 19:15:33', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2200, '供应批次新增', 2198, 2, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:supplyBatch:add', '#', 'admin', '2025-01-14 19:15:33', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2201, '供应批次修改', 2198, 3, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:supplyBatch:edit', '#', 'admin', '2025-01-14 19:15:33', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2202, '供应批次删除', 2198, 4, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:supplyBatch:remove', '#', 'admin', '2025-01-14 19:15:33', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2203, '供应批次导出', 2198, 5, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:supplyBatch:export', '#', 'admin', '2025-01-14 19:15:33', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2204, '产品信息', 2216, 1, 'product', 'ar/product/index', NULL, '', 1, 0, 'C', '0', '0', 'ar:product:list', '#', 'admin', '2025-01-14 19:48:05', 'admin', '2025-01-14 20:29:58', '产品信息菜单');
+INSERT INTO `sys_menu` VALUES (2204, '产品信息', 2216, 1, 'product', 'ar/product/index', NULL, '', 1, 0, 'C', '0', '0', 'ar:product:list', 'log', 'admin', '2025-01-14 19:48:05', 'admin', '2025-01-25 22:54:44', '产品信息菜单');
 INSERT INTO `sys_menu` VALUES (2205, '产品信息查询', 2204, 1, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:product:query', '#', 'admin', '2025-01-14 19:48:05', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2206, '产品信息新增', 2204, 2, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:product:add', '#', 'admin', '2025-01-14 19:48:05', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2207, '产品信息修改', 2204, 3, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:product:edit', '#', 'admin', '2025-01-14 19:48:05', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2208, '产品信息删除', 2204, 4, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:product:remove', '#', 'admin', '2025-01-14 19:48:05', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2209, '产品信息导出', 2204, 5, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:product:export', '#', 'admin', '2025-01-14 19:48:05', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2210, '产品出入库单', 2216, 1, 'productTransaction', 'ar/productTransaction/index', NULL, '', 1, 0, 'C', '0', '0', 'ar:productTransaction:list', '#', 'admin', '2025-01-14 19:48:12', 'admin', '2025-01-14 20:37:17', '产品出入库单菜单');
+INSERT INTO `sys_menu` VALUES (2210, '产品出入库单', 2216, 1, 'productTransaction', 'ar/productTransaction/index', NULL, '', 1, 0, 'C', '0', '0', 'ar:productTransaction:list', 'link', 'admin', '2025-01-14 19:48:12', 'admin', '2025-01-25 22:55:04', '产品出入库单菜单');
 INSERT INTO `sys_menu` VALUES (2211, '产品出入库单查询', 2210, 1, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:productTransaction:query', '#', 'admin', '2025-01-14 19:48:12', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2212, '产品出入库单新增', 2210, 2, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:productTransaction:add', '#', 'admin', '2025-01-14 19:48:12', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2213, '产品出入库单修改', 2210, 3, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:productTransaction:edit', '#', 'admin', '2025-01-14 19:48:12', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2214, '产品出入库单删除', 2210, 4, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:productTransaction:remove', '#', 'admin', '2025-01-14 19:48:12', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2215, '产品出入库单导出', 2210, 5, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:productTransaction:export', '#', 'admin', '2025-01-14 19:48:12', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2216, '产品管理', 2044, 10, 'product', NULL, NULL, '', 1, 0, 'M', '0', '0', '', 'component', 'admin', '2025-01-14 20:14:06', 'admin', '2025-01-21 20:04:29', '');
-INSERT INTO `sys_menu` VALUES (2229, '材料管理', 2044, 9, 'material', NULL, NULL, '', 1, 0, 'M', '0', '0', '', 'table', 'admin', '2025-01-14 20:38:57', 'admin', '2025-01-21 20:04:23', '');
+INSERT INTO `sys_menu` VALUES (2216, '产品管理', 2044, 10, 'productManagement', NULL, NULL, '', 1, 0, 'M', '0', '0', '', 'component', 'admin', '2025-01-14 20:14:06', 'admin', '2025-01-25 18:21:22', '');
+INSERT INTO `sys_menu` VALUES (2229, '材料管理', 2044, 9, 'materialManagement', NULL, NULL, '', 1, 0, 'M', '0', '0', '', 'table', 'admin', '2025-01-14 20:38:57', 'admin', '2025-01-25 18:21:18', '');
 INSERT INTO `sys_menu` VALUES (2254, 'AR内容', 2044, 1, 'content', 'ar/content/index', NULL, '', 1, 0, 'C', '0', '0', 'ar:content:list', 'language', 'admin', '2025-01-20 16:00:19', 'admin', '2025-01-21 20:16:17', 'AR内容菜单');
 INSERT INTO `sys_menu` VALUES (2255, 'AR内容查询', 2254, 1, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:content:query', '#', 'admin', '2025-01-20 16:00:19', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2256, 'AR内容新增', 2254, 2, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:content:add', '#', 'admin', '2025-01-20 16:00:19', '', NULL, '');
@@ -1355,7 +1367,7 @@ INSERT INTO `sys_menu` VALUES (2346, '设备新增', 2344, 2, '#', '', NULL, '',
 INSERT INTO `sys_menu` VALUES (2347, '设备修改', 2344, 3, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:device:edit', '#', 'admin', '2025-01-20 17:25:22', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2348, '设备删除', 2344, 4, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:device:remove', '#', 'admin', '2025-01-20 17:25:22', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2349, '设备导出', 2344, 5, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:device:export', '#', 'admin', '2025-01-20 17:25:22', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2380, '产品清单明细', 2216, 1, 'productTransactionDetail', 'ar/productTransactionDetail/index', NULL, '', 1, 0, 'C', '0', '0', 'ar:productTransactionDetail:list', '#', 'admin', '2025-01-20 17:25:22', '', NULL, '产品清单明细菜单');
+INSERT INTO `sys_menu` VALUES (2380, '产品清单明细', 2216, 1, 'productTransactionDetail', 'ar/productTransactionDetail/index', NULL, '', 1, 0, 'C', '0', '0', 'ar:productTransactionDetail:list', 'documentation', 'admin', '2025-01-20 17:25:22', 'admin', '2025-01-25 22:54:22', '产品清单明细菜单');
 INSERT INTO `sys_menu` VALUES (2381, '产品清单明细查询', 2380, 1, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:productTransactionDetail:query', '#', 'admin', '2025-01-20 17:25:22', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2382, '产品清单明细新增', 2380, 2, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:productTransactionDetail:add', '#', 'admin', '2025-01-20 17:25:22', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2383, '产品清单明细修改', 2380, 3, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:productTransactionDetail:edit', '#', 'admin', '2025-01-20 17:25:22', '', NULL, '');
@@ -1373,13 +1385,13 @@ INSERT INTO `sys_menu` VALUES (2418, 'VR内容新增', 2416, 2, '#', '', NULL, '
 INSERT INTO `sys_menu` VALUES (2419, 'VR内容修改', 2416, 3, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'vr:content:edit', '#', 'admin', '2025-01-20 17:25:44', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2420, 'VR内容删除', 2416, 4, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'vr:content:remove', '#', 'admin', '2025-01-20 17:25:44', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2421, 'VR内容导出', 2416, 5, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'vr:content:export', '#', 'admin', '2025-01-20 17:25:44', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2428, '材料清单明细', 2229, 1, 'materialTransactionDetail', 'ar/materialTransactionDetail/index', NULL, '', 1, 0, 'C', '0', '0', 'ar:materialTransactionDetail:list', '#', 'admin', '2025-01-21 20:07:02', 'admin', '2025-01-21 20:13:02', '材料清单明细菜单');
+INSERT INTO `sys_menu` VALUES (2428, '材料清单明细', 2229, 1, 'materialTransactionDetail', 'ar/materialTransactionDetail/index', NULL, '', 1, 0, 'C', '0', '0', 'ar:materialTransactionDetail:list', 'documentation', 'admin', '2025-01-21 20:07:02', 'admin', '2025-01-25 10:26:02', '材料清单明细菜单');
 INSERT INTO `sys_menu` VALUES (2429, '材料清单明细查询', 2428, 1, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:materialTransactionDetail:query', '#', 'admin', '2025-01-21 20:07:02', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2430, '材料清单明细新增', 2428, 2, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:materialTransactionDetail:add', '#', 'admin', '2025-01-21 20:07:02', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2431, '材料清单明细修改', 2428, 3, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:materialTransactionDetail:edit', '#', 'admin', '2025-01-21 20:07:02', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2432, '材料清单明细删除', 2428, 4, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:materialTransactionDetail:remove', '#', 'admin', '2025-01-21 20:07:02', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2433, '材料清单明细导出', 2428, 5, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:materialTransactionDetail:export', '#', 'admin', '2025-01-21 20:07:02', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2434, '生产批次', 2216, 1, 'batch', 'ar/batch/index', NULL, '', 1, 0, 'C', '0', '0', 'ar:batch:list', '#', 'admin', '2025-01-21 20:07:08', 'admin', '2025-01-21 20:12:44', '生产批次菜单');
+INSERT INTO `sys_menu` VALUES (2434, '生产批次', 2216, 1, 'batch', 'ar/batch/index', NULL, '', 1, 0, 'C', '0', '0', 'ar:batch:list', 'date-range', 'admin', '2025-01-21 20:07:08', 'admin', '2025-01-25 22:54:30', '生产批次菜单');
 INSERT INTO `sys_menu` VALUES (2435, '生产批次查询', 2434, 1, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:batch:query', '#', 'admin', '2025-01-21 20:07:08', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2436, '生产批次新增', 2434, 2, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:batch:add', '#', 'admin', '2025-01-21 20:07:08', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2437, '生产批次修改', 2434, 3, '#', '', NULL, '', 1, 0, 'F', '0', '0', 'ar:batch:edit', '#', 'admin', '2025-01-21 20:07:08', '', NULL, '');
@@ -1442,7 +1454,7 @@ CREATE TABLE `sys_oper_log`  (
   INDEX `idx_sys_oper_log_bt`(`business_type` ASC) USING BTREE,
   INDEX `idx_sys_oper_log_s`(`status` ASC) USING BTREE,
   INDEX `idx_sys_oper_log_ot`(`oper_time` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1101 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '操作日志记录' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1138 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '操作日志记录' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_oper_log
@@ -2448,6 +2460,43 @@ INSERT INTO `sys_oper_log` VALUES (1097, 'AR内容', 1, 'com.ruoyi.ar.controller
 INSERT INTO `sys_oper_log` VALUES (1098, 'AR内容', 1, 'com.ruoyi.ar.controller.ArContentController.add()', 'POST', 1, 'admin', '研发部门', '/ar/content', '127.0.0.1', '内网IP', '{\"arContentId\":3,\"category\":\"5D空间\",\"description\":\"aaaaaaaaa\",\"fileUrl\":\"sssssssss\",\"name\":\"asflalal\",\"params\":{}}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-24 22:51:17', 53);
 INSERT INTO `sys_oper_log` VALUES (1099, 'AR内容', 1, 'com.ruoyi.ar.controller.ArContentController.add()', 'POST', 1, 'admin', '研发部门', '/ar/content', '127.0.0.1', '内网IP', '{\"arContentId\":4,\"category\":\"图文\",\"description\":\"asfaf\",\"fileUrl\":\"asdfasf\",\"name\":\"ewffe\",\"params\":{}}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-24 22:51:56', 112);
 INSERT INTO `sys_oper_log` VALUES (1100, 'AR内容', 3, 'com.ruoyi.ar.controller.ArContentController.remove()', 'DELETE', 1, 'admin', '研发部门', '/ar/content/3', '127.0.0.1', '内网IP', '[3]', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-24 22:52:30', 78);
+INSERT INTO `sys_oper_log` VALUES (1101, 'AR内容', 1, 'com.ruoyi.ar.controller.ArContentController.add()', 'POST', 1, 'admin', '研发部门', '/ar/content', '127.0.0.1', '内网IP', '{\"arContentId\":5,\"category\":\"5555\",\"description\":\"sssssss\",\"fileUrl\":\"asdf\",\"name\":\"asdfd\",\"params\":{}}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-24 22:59:20', 13);
+INSERT INTO `sys_oper_log` VALUES (1102, '菜单管理', 2, 'com.ruoyi.web.controller.system.SysMenuController.edit()', 'PUT', 1, 'admin', '研发部门', '/system/menu', '127.0.0.1', '内网IP', '{\"children\":[],\"component\":\"ar/materialTransactionDetail/index\",\"createTime\":\"2025-01-21 20:07:02\",\"icon\":\"build\",\"isCache\":\"0\",\"isFrame\":\"1\",\"menuId\":2428,\"menuName\":\"材料清单明细\",\"menuType\":\"C\",\"orderNum\":1,\"params\":{},\"parentId\":2229,\"path\":\"materialTransactionDetail\",\"perms\":\"ar:materialTransactionDetail:list\",\"routeName\":\"\",\"status\":\"0\",\"updateBy\":\"admin\",\"visible\":\"0\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 10:25:16', 106);
+INSERT INTO `sys_oper_log` VALUES (1103, '菜单管理', 2, 'com.ruoyi.web.controller.system.SysMenuController.edit()', 'PUT', 1, 'admin', '研发部门', '/system/menu', '127.0.0.1', '内网IP', '{\"children\":[],\"component\":\"ar/materialTransactionDetail/index\",\"createTime\":\"2025-01-21 20:07:02\",\"icon\":\"documentation\",\"isCache\":\"0\",\"isFrame\":\"1\",\"menuId\":2428,\"menuName\":\"材料清单明细\",\"menuType\":\"C\",\"orderNum\":1,\"params\":{},\"parentId\":2229,\"path\":\"materialTransactionDetail\",\"perms\":\"ar:materialTransactionDetail:list\",\"routeName\":\"\",\"status\":\"0\",\"updateBy\":\"admin\",\"visible\":\"0\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 10:26:02', 115);
+INSERT INTO `sys_oper_log` VALUES (1104, '沙盘分区', 1, 'com.ruoyi.ar.controller.SandboxZoneController.add()', 'POST', 1, 'admin', '研发部门', '/ar/zone', '127.0.0.1', '内网IP', '{\"description\":\"dsdd\",\"factoryId\":2,\"name\":\"safd\",\"params\":{},\"qrCodeId\":2}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 16:29:20', 38);
+INSERT INTO `sys_oper_log` VALUES (1105, '设备', 1, 'com.ruoyi.ar.controller.DeviceController.add()', 'POST', 1, 'admin', '研发部门', '/ar/device', '127.0.0.1', '内网IP', '{\"description\":\"dd\",\"factoryNumber\":\"4\",\"name\":\"asdf\",\"params\":{},\"qrCodeNumber\":\"4\"}', NULL, 1, '\r\n### Error updating database.  Cause: java.sql.SQLIntegrityConstraintViolationException: Duplicate entry \'asdf\' for key \'device_name_uindex\'\r\n### The error may exist in file [E:\\Desk\\SchoolFiles\\graduationProject\\code\\22222\\ruoyi-admin\\target\\classes\\mapper\\ar\\DeviceMapper.xml]\r\n### The error may involve com.ruoyi.ar.mapper.DeviceMapper.insertDevice-Inline\r\n### The error occurred while setting parameters\r\n### SQL: insert into device          ( name,             description,                          qr_code_number,             factory_number )           values ( ?,             ?,                          ?,             ? )\r\n### Cause: java.sql.SQLIntegrityConstraintViolationException: Duplicate entry \'asdf\' for key \'device_name_uindex\'\n; Duplicate entry \'asdf\' for key \'device_name_uindex\'; nested exception is java.sql.SQLIntegrityConstraintViolationException: Duplicate entry \'asdf\' for key \'device_name_uindex\'', '2025-01-25 16:29:50', 226);
+INSERT INTO `sys_oper_log` VALUES (1106, '设备', 1, 'com.ruoyi.ar.controller.DeviceController.add()', 'POST', 1, 'admin', '研发部门', '/ar/device', '127.0.0.1', '内网IP', '{\"description\":\"dd\",\"factoryNumber\":\"4\",\"name\":\"wwww\",\"params\":{},\"qrCodeNumber\":\"4\"}', NULL, 1, '\r\n### Error updating database.  Cause: java.sql.SQLIntegrityConstraintViolationException: Cannot add or update a child row: a foreign key constraint fails (`ry-vue`.`device`, CONSTRAINT `device_ibfk_1` FOREIGN KEY (`qr_code_number`) REFERENCES `qr_code` (`qr_code_id`))\r\n### The error may exist in file [E:\\Desk\\SchoolFiles\\graduationProject\\code\\22222\\ruoyi-admin\\target\\classes\\mapper\\ar\\DeviceMapper.xml]\r\n### The error may involve com.ruoyi.ar.mapper.DeviceMapper.insertDevice-Inline\r\n### The error occurred while setting parameters\r\n### SQL: insert into device          ( name,             description,                          qr_code_number,             factory_number )           values ( ?,             ?,                          ?,             ? )\r\n### Cause: java.sql.SQLIntegrityConstraintViolationException: Cannot add or update a child row: a foreign key constraint fails (`ry-vue`.`device`, CONSTRAINT `device_ibfk_1` FOREIGN KEY (`qr_code_number`) REFERENCES `qr_code` (`qr_code_id`))\n; Cannot add or update a child row: a foreign key constraint fails (`ry-vue`.`device`, CONSTRAINT `device_ibfk_1` FOREIGN KEY (`qr_code_number`) REFERENCES `qr_code` (`qr_code_id`)); nested exception is java.sql.SQLIntegrityConstraintViolationException: Cannot add or update a child row: a foreign key constraint fails (`ry-vue`.`device`, CONSTRAINT `device_ibfk_1` FOREIGN KEY (`qr_code_number`) REFERENCES `qr_code` (`qr_code_id`))', '2025-01-25 16:30:07', 69);
+INSERT INTO `sys_oper_log` VALUES (1107, '设备', 1, 'com.ruoyi.ar.controller.DeviceController.add()', 'POST', 1, 'admin', '研发部门', '/ar/device', '127.0.0.1', '内网IP', '{\"description\":\"dd\",\"factoryNumber\":\"4\",\"name\":\"wwww\",\"params\":{},\"qrCodeNumber\":\"3\"}', NULL, 1, '\r\n### Error updating database.  Cause: java.sql.SQLIntegrityConstraintViolationException: Cannot add or update a child row: a foreign key constraint fails (`ry-vue`.`device`, CONSTRAINT `device_ibfk_1` FOREIGN KEY (`qr_code_number`) REFERENCES `qr_code` (`qr_code_id`))\r\n### The error may exist in file [E:\\Desk\\SchoolFiles\\graduationProject\\code\\22222\\ruoyi-admin\\target\\classes\\mapper\\ar\\DeviceMapper.xml]\r\n### The error may involve com.ruoyi.ar.mapper.DeviceMapper.insertDevice-Inline\r\n### The error occurred while setting parameters\r\n### SQL: insert into device          ( name,             description,                          qr_code_number,             factory_number )           values ( ?,             ?,                          ?,             ? )\r\n### Cause: java.sql.SQLIntegrityConstraintViolationException: Cannot add or update a child row: a foreign key constraint fails (`ry-vue`.`device`, CONSTRAINT `device_ibfk_1` FOREIGN KEY (`qr_code_number`) REFERENCES `qr_code` (`qr_code_id`))\n; Cannot add or update a child row: a foreign key constraint fails (`ry-vue`.`device`, CONSTRAINT `device_ibfk_1` FOREIGN KEY (`qr_code_number`) REFERENCES `qr_code` (`qr_code_id`)); nested exception is java.sql.SQLIntegrityConstraintViolationException: Cannot add or update a child row: a foreign key constraint fails (`ry-vue`.`device`, CONSTRAINT `device_ibfk_1` FOREIGN KEY (`qr_code_number`) REFERENCES `qr_code` (`qr_code_id`))', '2025-01-25 16:30:15', 58);
+INSERT INTO `sys_oper_log` VALUES (1108, '设备', 1, 'com.ruoyi.ar.controller.DeviceController.add()', 'POST', 1, 'admin', '研发部门', '/ar/device', '127.0.0.1', '内网IP', '{\"description\":\"dd\",\"deviceNumber\":9,\"factoryNumber\":\"4\",\"name\":\"wwww\",\"params\":{},\"qrCodeNumber\":\"1\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 16:30:23', 35);
+INSERT INTO `sys_oper_log` VALUES (1109, '设备', 1, 'com.ruoyi.ar.controller.DeviceController.add()', 'POST', 1, 'admin', '研发部门', '/ar/device', '127.0.0.1', '内网IP', '{\"description\":\"asdfsaf\",\"factoryNumber\":\"1\",\"name\":\"eeee\",\"params\":{},\"qrCodeNumber\":\"5\"}', NULL, 1, '\r\n### Error updating database.  Cause: java.sql.SQLIntegrityConstraintViolationException: Cannot add or update a child row: a foreign key constraint fails (`ry-vue`.`device`, CONSTRAINT `device_ibfk_1` FOREIGN KEY (`qr_code_number`) REFERENCES `qr_code` (`qr_code_id`))\r\n### The error may exist in file [E:\\Desk\\SchoolFiles\\graduationProject\\code\\22222\\ruoyi-admin\\target\\classes\\mapper\\ar\\DeviceMapper.xml]\r\n### The error may involve com.ruoyi.ar.mapper.DeviceMapper.insertDevice-Inline\r\n### The error occurred while setting parameters\r\n### SQL: insert into device          ( name,             description,                          qr_code_number,             factory_number )           values ( ?,             ?,                          ?,             ? )\r\n### Cause: java.sql.SQLIntegrityConstraintViolationException: Cannot add or update a child row: a foreign key constraint fails (`ry-vue`.`device`, CONSTRAINT `device_ibfk_1` FOREIGN KEY (`qr_code_number`) REFERENCES `qr_code` (`qr_code_id`))\n; Cannot add or update a child row: a foreign key constraint fails (`ry-vue`.`device`, CONSTRAINT `device_ibfk_1` FOREIGN KEY (`qr_code_number`) REFERENCES `qr_code` (`qr_code_id`)); nested exception is java.sql.SQLIntegrityConstraintViolationException: Cannot add or update a child row: a foreign key constraint fails (`ry-vue`.`device`, CONSTRAINT `device_ibfk_1` FOREIGN KEY (`qr_code_number`) REFERENCES `qr_code` (`qr_code_id`))', '2025-01-25 16:30:49', 149);
+INSERT INTO `sys_oper_log` VALUES (1110, '设备', 2, 'com.ruoyi.ar.controller.DeviceController.edit()', 'PUT', 1, 'admin', '研发部门', '/ar/device', '127.0.0.1', '内网IP', '{\"description\":\"aa\",\"deviceNumber\":5,\"factoryNumber\":\"1\",\"name\":\"asdf\",\"params\":{},\"qrCodeNumber\":\"1\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 16:44:29', 129);
+INSERT INTO `sys_oper_log` VALUES (1111, '库区', 1, 'com.ruoyi.ar.controller.WarehouseZoneController.add()', 'POST', 1, 'admin', '研发部门', '/ar/warehouse', '127.0.0.1', '内网IP', '{\"description\":\"ss\",\"factoryId\":4,\"name\":\"as\",\"params\":{}}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 17:38:22', 101);
+INSERT INTO `sys_oper_log` VALUES (1112, '菜单管理', 2, 'com.ruoyi.web.controller.system.SysMenuController.edit()', 'PUT', 1, 'admin', '研发部门', '/system/menu', '127.0.0.1', '内网IP', '{\"children\":[],\"createTime\":\"2025-01-14 20:38:57\",\"icon\":\"table\",\"isCache\":\"0\",\"isFrame\":\"1\",\"menuId\":2229,\"menuName\":\"材料管理\",\"menuType\":\"M\",\"orderNum\":9,\"params\":{},\"parentId\":2044,\"path\":\"materialManagement\",\"perms\":\"\",\"routeName\":\"\",\"status\":\"0\",\"updateBy\":\"admin\",\"visible\":\"0\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 18:21:19', 103);
+INSERT INTO `sys_oper_log` VALUES (1113, '菜单管理', 2, 'com.ruoyi.web.controller.system.SysMenuController.edit()', 'PUT', 1, 'admin', '研发部门', '/system/menu', '127.0.0.1', '内网IP', '{\"children\":[],\"createTime\":\"2025-01-14 20:14:06\",\"icon\":\"component\",\"isCache\":\"0\",\"isFrame\":\"1\",\"menuId\":2216,\"menuName\":\"产品管理\",\"menuType\":\"M\",\"orderNum\":10,\"params\":{},\"parentId\":2044,\"path\":\"productManagement\",\"perms\":\"\",\"routeName\":\"\",\"status\":\"0\",\"updateBy\":\"admin\",\"visible\":\"0\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 18:21:22', 17);
+INSERT INTO `sys_oper_log` VALUES (1114, '代码生成', 2, 'com.ruoyi.generator.controller.GenController.synchDb()', 'GET', 1, 'admin', '研发部门', '/tool/gen/synchDb/qr_code', '127.0.0.1', '内网IP', '{}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 20:25:31', 225);
+INSERT INTO `sys_oper_log` VALUES (1115, '代码生成', 2, 'com.ruoyi.generator.controller.GenController.editSave()', 'PUT', 1, 'admin', '研发部门', '/tool/gen', '127.0.0.1', '内网IP', '{\"businessName\":\"code\",\"className\":\"QrCode\",\"columns\":[{\"capJavaField\":\"QrCodeId\",\"columnComment\":\"二维码编号\",\"columnId\":240,\"columnName\":\"qr_code_id\",\"columnType\":\"int\",\"createBy\":\"admin\",\"createTime\":\"2025-01-20 15:10:26\",\"dictType\":\"\",\"edit\":false,\"htmlType\":\"input\",\"increment\":true,\"insert\":false,\"isIncrement\":\"1\",\"isInsert\":\"0\",\"isPk\":\"1\",\"isRequired\":\"0\",\"javaField\":\"qrCodeId\",\"javaType\":\"Long\",\"list\":false,\"params\":{},\"pk\":true,\"query\":false,\"queryType\":\"EQ\",\"required\":false,\"sort\":1,\"superColumn\":false,\"tableId\":39,\"updateBy\":\"\",\"updateTime\":\"2025-01-25 20:25:31\",\"usableColumn\":false},{\"capJavaField\":\"QrCodeName\",\"columnComment\":\"二维码名称\",\"columnId\":260,\"columnName\":\"qr_code_name\",\"columnType\":\"varchar(50)\",\"createBy\":\"\",\"createTime\":\"2025-01-25 20:25:31\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"qrCodeName\",\"javaType\":\"String\",\"list\":true,\"params\":{},\"pk\":false,\"query\":true,\"queryType\":\"LIKE\",\"required\":true,\"sort\":2,\"superColumn\":false,\"tableId\":39,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"QrCode\",\"columnComment\":\"二维码内容\",\"columnId\":241,\"columnName\":\"qr_code\",\"columnType\":\"varchar(255)\",\"createBy\":\"admin\",\"createTime\":\"2025-01-20 15:10:26\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"imageUpload\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"qrCode\",\"javaType\":\"String\",\"list\":true,\"params\":{},\"pk\":false,\"query\":true,\"queryType\":\"EQ\",\"required\":true,\"sort\":3,\"superColumn\":false,\"tableId\":39,\"updateBy\":\"\",\"updateTime\":\"2025-01-25 20:25:31\",\"usableColumn\":false},{\"capJavaField\":\"UsageStatus\",\"columnComment\":\"使用情况\",\"columnId\":242,\"columnName\":\"usage_status\",\"columnType\":\"varchar(50)\",\"createBy\":\"admin\",\"createTime\":\"2025-01-20 15:10:26\",\"dictType\":\"use_status\",\"edit\":true,\"htmlType\":\"radio\",\"increment\":false,\"insert\":t', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 20:27:04', 66);
+INSERT INTO `sys_oper_log` VALUES (1116, '代码生成', 8, 'com.ruoyi.generator.controller.GenController.batchGenCode()', 'GET', 1, 'admin', '研发部门', '/tool/gen/batchGenCode', '127.0.0.1', '内网IP', '{\"tables\":\"qr_code\"}', NULL, 0, NULL, '2025-01-25 20:27:09', 181);
+INSERT INTO `sys_oper_log` VALUES (1117, '菜单管理', 3, 'com.ruoyi.web.controller.system.SysMenuController.remove()', 'DELETE', 1, 'admin', '研发部门', '/system/menu/2476', '127.0.0.1', '内网IP', '2476', '{\"msg\":\"存在子菜单,不允许删除\",\"code\":601}', 0, NULL, '2025-01-25 20:35:50', 11);
+INSERT INTO `sys_oper_log` VALUES (1118, '菜单管理', 3, 'com.ruoyi.web.controller.system.SysMenuController.remove()', 'DELETE', 1, 'admin', '研发部门', '/system/menu/2477', '127.0.0.1', '内网IP', '2477', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 20:36:01', 64);
+INSERT INTO `sys_oper_log` VALUES (1119, '菜单管理', 3, 'com.ruoyi.web.controller.system.SysMenuController.remove()', 'DELETE', 1, 'admin', '研发部门', '/system/menu/2478', '127.0.0.1', '内网IP', '2478', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 20:36:03', 34);
+INSERT INTO `sys_oper_log` VALUES (1120, '菜单管理', 3, 'com.ruoyi.web.controller.system.SysMenuController.remove()', 'DELETE', 1, 'admin', '研发部门', '/system/menu/2479', '127.0.0.1', '内网IP', '2479', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 20:36:05', 29);
+INSERT INTO `sys_oper_log` VALUES (1121, '菜单管理', 3, 'com.ruoyi.web.controller.system.SysMenuController.remove()', 'DELETE', 1, 'admin', '研发部门', '/system/menu/2480', '127.0.0.1', '内网IP', '2480', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 20:36:06', 33);
+INSERT INTO `sys_oper_log` VALUES (1122, '菜单管理', 3, 'com.ruoyi.web.controller.system.SysMenuController.remove()', 'DELETE', 1, 'admin', '研发部门', '/system/menu/2481', '127.0.0.1', '内网IP', '2481', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 20:36:08', 21);
+INSERT INTO `sys_oper_log` VALUES (1123, '菜单管理', 3, 'com.ruoyi.web.controller.system.SysMenuController.remove()', 'DELETE', 1, 'admin', '研发部门', '/system/menu/2476', '127.0.0.1', '内网IP', '2476', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 20:36:10', 21);
+INSERT INTO `sys_oper_log` VALUES (1124, '沙盘分区', 2, 'com.ruoyi.ar.controller.SandboxZoneController.edit()', 'PUT', 1, 'admin', '研发部门', '/ar/zone', '127.0.0.1', '内网IP', '{\"description\":\"asd\",\"factoryId\":3,\"name\":\"ww\",\"params\":{},\"qrCodeId\":1,\"zoneId\":1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 22:17:32', 78);
+INSERT INTO `sys_oper_log` VALUES (1125, '沙盘分区', 1, 'com.ruoyi.ar.controller.SandboxZoneController.add()', 'POST', 1, 'admin', '研发部门', '/ar/zone', '127.0.0.1', '内网IP', '{\"description\":\"asd\",\"factoryId\":2,\"name\":\"aa\",\"params\":{},\"qrCodeId\":1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 22:17:44', 67);
+INSERT INTO `sys_oper_log` VALUES (1126, 'AR内容', 2, 'com.ruoyi.ar.controller.ArContentController.edit()', 'PUT', 1, 'admin', '研发部门', '/ar/content', '127.0.0.1', '内网IP', '{\"arContentId\":2,\"category\":\"4D空间\",\"description\":\"sadfas\",\"fileUrl\":\"dddd\",\"name\":\"asdfas\",\"params\":{},\"qrCodeId\":2,\"usageStatus\":\"0\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 22:18:05', 161);
+INSERT INTO `sys_oper_log` VALUES (1127, 'AR内容', 2, 'com.ruoyi.ar.controller.ArContentController.edit()', 'PUT', 1, 'admin', '研发部门', '/ar/content', '127.0.0.1', '内网IP', '{\"arContentId\":4,\"category\":\"图文\",\"description\":\"asfaf\",\"fileUrl\":\"asdfasf\",\"name\":\"ewffe\",\"params\":{},\"qrCodeId\":1,\"usageStatus\":\"0\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 22:18:13', 44);
+INSERT INTO `sys_oper_log` VALUES (1128, 'AR内容', 2, 'com.ruoyi.ar.controller.ArContentController.edit()', 'PUT', 1, 'admin', '研发部门', '/ar/content', '127.0.0.1', '内网IP', '{\"arContentId\":1,\"category\":\"图片\",\"description\":\"s\",\"fileUrl\":\"s\",\"name\":\"s\",\"params\":{},\"qrCodeId\":2,\"usageStatus\":\"1\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 22:18:16', 30);
+INSERT INTO `sys_oper_log` VALUES (1129, '设备', 1, 'com.ruoyi.ar.controller.DeviceController.add()', 'POST', 1, 'admin', '研发部门', '/ar/device', '127.0.0.1', '内网IP', '{\"description\":\"asdfas\",\"deviceNumber\":11,\"factoryNumber\":\"1\",\"name\":\"wwae\",\"params\":{},\"qrCodeNumber\":\"2\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 22:28:51', 88);
+INSERT INTO `sys_oper_log` VALUES (1130, '菜单管理', 2, 'com.ruoyi.web.controller.system.SysMenuController.edit()', 'PUT', 1, 'admin', '研发部门', '/system/menu', '127.0.0.1', '内网IP', '{\"children\":[],\"component\":\"ar/material/index\",\"createTime\":\"2025-01-14 18:33:39\",\"icon\":\"date-range\",\"isCache\":\"0\",\"isFrame\":\"1\",\"menuId\":2180,\"menuName\":\"材料信息\",\"menuType\":\"C\",\"orderNum\":1,\"params\":{},\"parentId\":2229,\"path\":\"material\",\"perms\":\"ar:material:list\",\"routeName\":\"\",\"status\":\"0\",\"updateBy\":\"admin\",\"visible\":\"0\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 22:53:34', 99);
+INSERT INTO `sys_oper_log` VALUES (1131, '菜单管理', 2, 'com.ruoyi.web.controller.system.SysMenuController.edit()', 'PUT', 1, 'admin', '研发部门', '/system/menu', '127.0.0.1', '内网IP', '{\"children\":[],\"component\":\"ar/materialTransaction/index\",\"createTime\":\"2025-01-14 18:33:46\",\"icon\":\"link\",\"isCache\":\"0\",\"isFrame\":\"1\",\"menuId\":2186,\"menuName\":\"材料出入库单\",\"menuType\":\"C\",\"orderNum\":1,\"params\":{},\"parentId\":2229,\"path\":\"materialTransaction\",\"perms\":\"ar:materialTransaction:list\",\"routeName\":\"\",\"status\":\"0\",\"updateBy\":\"admin\",\"visible\":\"0\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 22:53:56', 103);
+INSERT INTO `sys_oper_log` VALUES (1132, '菜单管理', 2, 'com.ruoyi.web.controller.system.SysMenuController.edit()', 'PUT', 1, 'admin', '研发部门', '/system/menu', '127.0.0.1', '内网IP', '{\"children\":[],\"component\":\"ar/supplyBatch/index\",\"createTime\":\"2025-01-14 19:15:33\",\"icon\":\"form\",\"isCache\":\"0\",\"isFrame\":\"1\",\"menuId\":2198,\"menuName\":\"供应批次\",\"menuType\":\"C\",\"orderNum\":2,\"params\":{},\"parentId\":2229,\"path\":\"supplyBatch\",\"perms\":\"ar:supplyBatch:list\",\"routeName\":\"\",\"status\":\"0\",\"updateBy\":\"admin\",\"visible\":\"0\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 22:54:12', 123);
+INSERT INTO `sys_oper_log` VALUES (1133, '菜单管理', 2, 'com.ruoyi.web.controller.system.SysMenuController.edit()', 'PUT', 1, 'admin', '研发部门', '/system/menu', '127.0.0.1', '内网IP', '{\"children\":[],\"component\":\"ar/productTransactionDetail/index\",\"createTime\":\"2025-01-20 17:25:22\",\"icon\":\"documentation\",\"isCache\":\"0\",\"isFrame\":\"1\",\"menuId\":2380,\"menuName\":\"产品清单明细\",\"menuType\":\"C\",\"orderNum\":1,\"params\":{},\"parentId\":2216,\"path\":\"productTransactionDetail\",\"perms\":\"ar:productTransactionDetail:list\",\"routeName\":\"\",\"status\":\"0\",\"updateBy\":\"admin\",\"visible\":\"0\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 22:54:22', 73);
+INSERT INTO `sys_oper_log` VALUES (1134, '菜单管理', 2, 'com.ruoyi.web.controller.system.SysMenuController.edit()', 'PUT', 1, 'admin', '研发部门', '/system/menu', '127.0.0.1', '内网IP', '{\"children\":[],\"component\":\"ar/batch/index\",\"createTime\":\"2025-01-21 20:07:08\",\"icon\":\"date-range\",\"isCache\":\"0\",\"isFrame\":\"1\",\"menuId\":2434,\"menuName\":\"生产批次\",\"menuType\":\"C\",\"orderNum\":1,\"params\":{},\"parentId\":2216,\"path\":\"batch\",\"perms\":\"ar:batch:list\",\"routeName\":\"\",\"status\":\"0\",\"updateBy\":\"admin\",\"visible\":\"0\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 22:54:30', 22);
+INSERT INTO `sys_oper_log` VALUES (1135, '菜单管理', 2, 'com.ruoyi.web.controller.system.SysMenuController.edit()', 'PUT', 1, 'admin', '研发部门', '/system/menu', '127.0.0.1', '内网IP', '{\"children\":[],\"component\":\"ar/product/index\",\"createTime\":\"2025-01-14 19:48:05\",\"icon\":\"log\",\"isCache\":\"0\",\"isFrame\":\"1\",\"menuId\":2204,\"menuName\":\"产品信息\",\"menuType\":\"C\",\"orderNum\":1,\"params\":{},\"parentId\":2216,\"path\":\"product\",\"perms\":\"ar:product:list\",\"routeName\":\"\",\"status\":\"0\",\"updateBy\":\"admin\",\"visible\":\"0\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 22:54:44', 28);
+INSERT INTO `sys_oper_log` VALUES (1136, '菜单管理', 2, 'com.ruoyi.web.controller.system.SysMenuController.edit()', 'PUT', 1, 'admin', '研发部门', '/system/menu', '127.0.0.1', '内网IP', '{\"children\":[],\"component\":\"ar/productTransaction/index\",\"createTime\":\"2025-01-14 19:48:12\",\"icon\":\"link\",\"isCache\":\"0\",\"isFrame\":\"1\",\"menuId\":2210,\"menuName\":\"产品出入库单\",\"menuType\":\"C\",\"orderNum\":1,\"params\":{},\"parentId\":2216,\"path\":\"productTransaction\",\"perms\":\"ar:productTransaction:list\",\"routeName\":\"\",\"status\":\"0\",\"updateBy\":\"admin\",\"visible\":\"0\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-25 22:55:04', 109);
+INSERT INTO `sys_oper_log` VALUES (1137, 'AR内容', 1, 'com.ruoyi.ar.controller.ArContentController.add()', 'POST', 1, 'admin', '研发部门', '/ar/content', '127.0.0.1', '内网IP', '{\"arContentId\":6,\"category\":\"2222\",\"description\":\"sssssssss\",\"fileUrl\":\"aaaaaaaa\",\"name\":\"你好\",\"params\":{}}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-01-26 09:31:28', 155);
 
 -- ----------------------------
 -- Table structure for sys_post
@@ -2658,7 +2707,7 @@ CREATE TABLE `sys_user`  (
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO `sys_user` VALUES (1, 103, 'admin', '小明', '00', 'xiaoming@163.com', '15888888888', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2025-01-24 10:23:14', 'admin', '2024-12-24 16:55:22', '', '2025-01-24 10:23:14', '管理员');
+INSERT INTO `sys_user` VALUES (1, 103, 'admin', '小明', '00', 'xiaoming@163.com', '15888888888', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2025-01-26 09:29:44', 'admin', '2024-12-24 16:55:22', '', '2025-01-26 09:29:43', '管理员');
 INSERT INTO `sys_user` VALUES (2, 105, 'ry', '若依', '00', 'ry@qq.com', '15666666666', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2025-01-07 20:41:30', 'admin', '2024-12-24 16:55:22', '', '2025-01-07 20:41:30', '测试员');
 INSERT INTO `sys_user` VALUES (100, NULL, 'lazy', '懒酱', '00', '', '', '0', '', '$2a$10$bfxb1pIgr5VGlSi9324Ff.7HkY98ZMqxpnMmqCevfYPwjdZk0IhIO', '0', '0', '127.0.0.1', '2025-01-07 20:37:19', 'admin', '2025-01-07 20:37:01', '', '2025-01-07 20:37:18', NULL);
 
@@ -2887,12 +2936,13 @@ CREATE TABLE `warehouse_zone`  (
   PRIMARY KEY (`zone_id`) USING BTREE,
   INDEX `factory_id`(`factory_id` ASC) USING BTREE,
   CONSTRAINT `warehouse_zone_ibfk_1` FOREIGN KEY (`factory_id`) REFERENCES `factory` (`factory_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of warehouse_zone
 -- ----------------------------
 INSERT INTO `warehouse_zone` VALUES (4, '2', '2', 1);
+INSERT INTO `warehouse_zone` VALUES (5, 'as', 'ss', 4);
 
 -- ----------------------------
 -- Table structure for work

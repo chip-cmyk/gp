@@ -436,9 +436,10 @@ export default {
     },
     // 计算出类别列表（this.dict.type.ar_content_category加上this.contentList.category中的数据，然后去重）
     getCategory() {
-      // 延迟0.8秒才能取出this.dict.type.ar_content_category的值(ob_observer只能异步取值)
-      setTimeout(() => {
+      // this.$nextTick才能取出this.dict.type.ar_content_category的值(ob_observer只能异步取值)
+      this.$nextTick(() => {
         const categorySet = new Set();
+        console.log(this.dict.type.ar_content_category);
         this.dict.type.ar_content_category.forEach((item) => {
           categorySet.add(item.value);
         });
@@ -448,7 +449,7 @@ export default {
           });
           this.allCategoryList = Array.from(categorySet);
         });
-      }, 800);
+      });
     },
     // 获取二维码列表
     getQrCodeList() {
@@ -458,7 +459,7 @@ export default {
     },
     // 根据二维码编号回显对应的二维码名称
     getQrCodeName(qrCodeId) {
-      const qrCode = this.qrCodeList.find((item) => item.qrCodeId === qrCodeId);
+      const qrCode = this.qrCodeList.find((item) => item.qrCodeId == qrCodeId);
       return qrCode ? qrCode.qrCodeName : "";
     },
   },
