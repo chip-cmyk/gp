@@ -118,6 +118,12 @@
     <!-- 添加或修改产品清单明细对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="产品编号" prop="productId">
+          <el-input v-model="form.productId" placeholder="请输入产品编号" />
+        </el-form-item>
+        <el-form-item label="单号" prop="transactionId">
+          <el-input v-model="form.transactionId" placeholder="请输入单号" />
+        </el-form-item>
         <el-form-item label="数量" prop="quantity">
           <el-input v-model="form.quantity" placeholder="请输入数量" />
         </el-form-item>

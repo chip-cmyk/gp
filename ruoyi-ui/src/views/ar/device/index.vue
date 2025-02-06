@@ -195,6 +195,22 @@
     <!-- 添加或修改设备对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="工厂名称" prop="factoryNumber">
+          <el-select
+            v-model="form.factoryNumber"
+            placeholder="请选择工厂名称"
+            filterable
+            clearable
+            allow-create
+          >
+            <el-option
+              v-for="item in factoryList"
+              :key="item.factoryId"
+              :label="item.name"
+              :value="item.factoryId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入名称" />
         </el-form-item>
@@ -228,22 +244,6 @@
               :key="item.qrCodeId"
               :label="item.qrCodeName"
               :value="item.qrCodeId"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="工厂名称" prop="factoryNumber">
-          <el-select
-            v-model="form.factoryNumber"
-            placeholder="请选择工厂名称"
-            filterable
-            clearable
-            allow-create
-          >
-            <el-option
-              v-for="item in factoryList"
-              :key="item.factoryId"
-              :label="item.name"
-              :value="item.factoryId"
             ></el-option>
           </el-select>
         </el-form-item>

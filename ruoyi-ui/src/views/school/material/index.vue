@@ -153,6 +153,22 @@
     <!-- 添加或修改VR素材对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="场景名称" prop="sceneId">
+          <el-select
+            v-model="form.sceneId"
+            placeholder="请选择场景名称"
+            filterable
+            clearable
+            allow-create
+          >
+            <el-option
+              v-for="item in sceneList"
+              :key="item.sceneId"
+              :label="item.sceneName"
+              :value="item.sceneId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="素材名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入素材名称" />
         </el-form-item>
@@ -169,22 +185,6 @@
             type="textarea"
             placeholder="请输入内容"
           />
-        </el-form-item>
-        <el-form-item label="场景名称" prop="sceneId">
-          <el-select
-            v-model="form.sceneId"
-            placeholder="请选择场景名称"
-            filterable
-            clearable
-            allow-create
-          >
-            <el-option
-              v-for="item in sceneList"
-              :key="item.sceneId"
-              :label="item.sceneName"
-              :value="item.sceneId"
-            ></el-option>
-          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

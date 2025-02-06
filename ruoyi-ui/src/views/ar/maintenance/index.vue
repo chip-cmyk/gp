@@ -171,6 +171,22 @@
     <!-- 添加或修改运维记录对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="设备名称" prop="equipmentId">
+          <el-select
+            v-model="form.equipmentId"
+            placeholder="请选择设备名称"
+            filterable
+            clearable
+            allow-create
+          >
+            <el-option
+              v-for="item in deviceList"
+              :key="item.deviceNumber"
+              :label="item.name"
+              :value="item.deviceNumber"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="运维日记" prop="maintenanceLog">
           <el-input
             v-model="form.maintenanceLog"
@@ -193,22 +209,6 @@
             v-model="form.maintainerName"
             placeholder="请输入维护负责人"
           />
-        </el-form-item>
-        <el-form-item label="设备名称" prop="equipmentId">
-          <el-select
-            v-model="form.equipmentId"
-            placeholder="请选择设备名称"
-            filterable
-            clearable
-            allow-create
-          >
-            <el-option
-              v-for="item in deviceList"
-              :key="item.deviceNumber"
-              :label="item.name"
-              :value="item.deviceNumber"
-            ></el-option>
-          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

@@ -1,6 +1,14 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="库区编号" prop="warehouseZoneId">
+        <el-input
+          v-model="queryParams.warehouseZoneId"
+          placeholder="请输入库区编号"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="材料名称" prop="materialName">
         <el-input
           v-model="queryParams.materialName"
@@ -13,14 +21,6 @@
         <el-input
           v-model="queryParams.materialModel"
           placeholder="请输入材料型号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="库区编号" prop="warehouseZoneId">
-        <el-input
-          v-model="queryParams.warehouseZoneId"
-          placeholder="请输入库区编号"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -116,6 +116,9 @@
     <!-- 添加或修改材料信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="库区编号" prop="warehouseZoneId">
+          <el-input v-model="form.warehouseZoneId" placeholder="请输入库区编号" />
+        </el-form-item>
         <el-form-item label="材料名称" prop="materialName">
           <el-input v-model="form.materialName" placeholder="请输入材料名称" />
         </el-form-item>
@@ -124,12 +127,6 @@
         </el-form-item>
         <el-form-item label="材料简介" prop="materialDescription">
           <el-input v-model="form.materialDescription" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="库存量" prop="stockAmount">
-          <el-input v-model="form.stockAmount" placeholder="请输入库存量" />
-        </el-form-item>
-        <el-form-item label="库区编号" prop="warehouseZoneId">
-          <el-input v-model="form.warehouseZoneId" placeholder="请输入库区编号" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -185,9 +182,6 @@ export default {
         ],
         materialDescription: [
           { required: true, message: "材料简介不能为空", trigger: "blur" }
-        ],
-        stockAmount: [
-          { required: true, message: "库存量不能为空", trigger: "blur" }
         ],
         warehouseZoneId: [
           { required: true, message: "库区编号不能为空", trigger: "blur" }
