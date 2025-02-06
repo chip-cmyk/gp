@@ -136,6 +136,34 @@
         <el-form-item label="库区管理员" prop="warehouseAdminName">
           <el-input v-model="form.warehouseAdminName" placeholder="请输入库区管理员" />
         </el-form-item>
+        <el-divider content-position="center">产品清单明细信息</el-divider>
+        <el-row :gutter="10" class="mb8">
+          <el-col :span="1.5">
+            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddProductTransactionDetail">添加</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDeleteProductTransactionDetail">删除</el-button>
+          </el-col>
+        </el-row>
+        <el-table :data="productTransactionDetailList" :row-class-name="rowProductTransactionDetailIndex" @selection-change="handleProductTransactionDetailSelectionChange" ref="productTransactionDetail">
+          <el-table-column type="selection" width="50" align="center" />
+          <el-table-column label="序号" align="center" prop="index" width="50"/>
+          <el-table-column label="产品编号" prop="productId" width="150">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.productId" placeholder="请输入产品编号" />
+            </template>
+          </el-table-column>
+          <el-table-column label="数量" prop="quantity" width="150">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.quantity" placeholder="请输入数量" />
+            </template>
+          </el-table-column>
+          <el-table-column label="日期" prop="transactionDate" width="240">
+            <template slot-scope="scope">
+              <el-date-picker clearable v-model="scope.row.transactionDate" type="date" value-format="yyyy-MM-dd" placeholder="请选择日期" />
+            </template>
+          </el-table-column>
+        </el-table>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -157,6 +185,8 @@ export default {
       loading: true,
       // 选中数组
       ids: [],
+      // 子表选中数据
+      checkedProductTransactionDetail: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -167,6 +197,8 @@ export default {
       total: 0,
       // 产品出入库单表格数据
       productTransactionList: [],
+      // 产品清单明细表格数据
+      productTransactionDetailList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -221,6 +253,7 @@ export default {
         operatorName: null,
         warehouseAdminName: null
       };
+      this.productTransactionDetailList = [];
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -251,6 +284,7 @@ export default {
       const transactionId = row.transactionId || this.ids
       getProductTransaction(transactionId).then(response => {
         this.form = response.data;
+        this.productTransactionDetailList = response.data.productTransactionDetailList;
         this.open = true;
         this.title = "修改产品出入库单";
       });
@@ -259,6 +293,7 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          this.form.productTransactionDetailList = this.productTransactionDetailList;
           if (this.form.transactionId != null) {
             updateProductTransaction(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
@@ -284,6 +319,34 @@ export default {
         this.getList();
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
+    },
+	/** 产品清单明细序号 */
+    rowProductTransactionDetailIndex({ row, rowIndex }) {
+      row.index = rowIndex + 1;
+    },
+    /** 产品清单明细添加按钮操作 */
+    handleAddProductTransactionDetail() {
+      let obj = {};
+      obj.productId = "";
+      obj.quantity = "";
+      obj.transactionDate = "";
+      this.productTransactionDetailList.push(obj);
+    },
+    /** 产品清单明细删除按钮操作 */
+    handleDeleteProductTransactionDetail() {
+      if (this.checkedProductTransactionDetail.length == 0) {
+        this.$modal.msgError("请先选择要删除的产品清单明细数据");
+      } else {
+        const productTransactionDetailList = this.productTransactionDetailList;
+        const checkedProductTransactionDetail = this.checkedProductTransactionDetail;
+        this.productTransactionDetailList = productTransactionDetailList.filter(function(item) {
+          return checkedProductTransactionDetail.indexOf(item.index) == -1
+        });
+      }
+    },
+    /** 复选框选中数据 */
+    handleProductTransactionDetailSelectionChange(selection) {
+      this.checkedProductTransactionDetail = selection.map(item => item.index)
     },
     /** 导出按钮操作 */
     handleExport() {

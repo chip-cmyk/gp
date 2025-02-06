@@ -7,7 +7,7 @@ import com.ruoyi.ar.domain.MaterialTransaction;
  * 材料出入库单Service接口
  * 
  * @author laazy
- * @date 2025-01-20
+ * @date 2025-02-06
  */
 public interface IMaterialTransactionService 
 {

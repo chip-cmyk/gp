@@ -11,6 +11,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="warehouseAdminName"    column="warehouse_admin_name"    />
     </resultMap>
 
+    <resultMap id="MaterialTransactionMaterialTransactionDetailResult" type="MaterialTransaction" extends="MaterialTransactionResult">
+        <collection property="materialTransactionDetailList" ofType="MaterialTransactionDetail" column="transaction_id" select="selectMaterialTransactionDetailList" />
+    </resultMap>
+
+    <resultMap type="MaterialTransactionDetail" id="MaterialTransactionDetailResult">
+        <result property="materialId"    column="material_id"    />
+        <result property="transactionId"    column="transaction_id"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="transactionDate"    column="transaction_date"    />
+    </resultMap>
+
     <sql id="selectMaterialTransactionVo">
         select transaction_id, transaction_type, operator_name, warehouse_admin_name from material_transaction
     </sql>
@@ -24,9 +35,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
     
-    <select id="selectMaterialTransactionByTransactionId" parameterType="Long" resultMap="MaterialTransactionResult">
-        <include refid="selectMaterialTransactionVo"/>
+    <select id="selectMaterialTransactionByTransactionId" parameterType="Long" resultMap="MaterialTransactionMaterialTransactionDetailResult">
+        select transaction_id, transaction_type, operator_name, warehouse_admin_name
+        from material_transaction
         where transaction_id = #{transactionId}
+    </select>
+
+    <select id="selectMaterialTransactionDetailList" resultMap="MaterialTransactionDetailResult">
+        select material_id, transaction_id, quantity, transaction_date
+        from material_transaction_detail
+        where transaction_id = #{transaction_id}
     </select>
 
     <insert id="insertMaterialTransaction" parameterType="MaterialTransaction">
@@ -65,4 +83,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{transactionId}
         </foreach>
     </delete>
+    
+    <delete id="deleteMaterialTransactionDetailByTransactionIds" parameterType="String">
+        delete from material_transaction_detail where transaction_id in 
+        <foreach item="transactionId" collection="array" open="(" separator="," close=")">
+            #{transactionId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteMaterialTransactionDetailByTransactionId" parameterType="Long">
+        delete from material_transaction_detail where transaction_id = #{transactionId}
+    </delete>
+
+    <insert id="batchMaterialTransactionDetail">
+        insert into material_transaction_detail( material_id, transaction_id, quantity, transaction_date) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.materialId}, #{item.transactionId}, #{item.quantity}, #{item.transactionDate})
+        </foreach>
+    </insert>
 </mapper>

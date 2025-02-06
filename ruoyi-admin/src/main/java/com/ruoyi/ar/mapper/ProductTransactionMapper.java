@@ -2,12 +2,13 @@ package com.ruoyi.ar.mapper;
 
 import java.util.List;
 import com.ruoyi.ar.domain.ProductTransaction;
+import com.ruoyi.ar.domain.ProductTransactionDetail;
 
 /**
  * 产品出入库单Mapper接口
  * 
  * @author laazy
- * @date 2025-01-20
+ * @date 2025-02-07
  */
 public interface ProductTransactionMapper 
 {
@@ -58,4 +59,29 @@ public interface ProductTransactionMapper
      * @return 结果
      */
     public int deleteProductTransactionByTransactionIds(Long[] transactionIds);
+
+    /**
+     * 批量删除产品清单明细
+     * 
+     * @param transactionIds 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int deleteProductTransactionDetailByTransactionIds(Long[] transactionIds);
+    
+    /**
+     * 批量新增产品清单明细
+     * 
+     * @param productTransactionDetailList 产品清单明细列表
+     * @return 结果
+     */
+    public int batchProductTransactionDetail(List<ProductTransactionDetail> productTransactionDetailList);
+    
+
+    /**
+     * 通过产品出入库单主键删除产品清单明细信息
+     * 
+     * @param transactionId 产品出入库单ID
+     * @return 结果
+     */
+    public int deleteProductTransactionDetailByTransactionId(Long transactionId);
 }

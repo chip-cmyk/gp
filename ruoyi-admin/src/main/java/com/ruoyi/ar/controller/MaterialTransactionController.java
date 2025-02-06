@@ -25,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 材料出入库单Controller
  * 
  * @author laazy
- * @date 2025-01-20
+ * @date 2025-02-06
  */
 @RestController
 @RequestMapping("/ar/materialTransaction")
