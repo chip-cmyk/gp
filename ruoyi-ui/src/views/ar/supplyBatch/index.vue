@@ -1,6 +1,13 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      size="small"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
       <el-form-item label="数量" prop="quantity">
         <el-input
           v-model="queryParams.quantity"
@@ -28,17 +35,34 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="材料编号" prop="materialId">
-        <el-input
+      <el-form-item label="材料名称" prop="materialId">
+        <el-select
           v-model="queryParams.materialId"
-          placeholder="请输入材料编号"
+          placeholder="请选择材料名称"
+          filterable
           clearable
+          allow-create
           @keyup.enter.native="handleQuery"
-        />
+        >
+          <el-option
+            v-for="item in materialList"
+            :key="item.materialId"
+            :label="item.materialName"
+            :value="item.materialId"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          size="mini"
+          @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -51,7 +75,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['ar:supplyBatch:add']"
-        >新增</el-button>
+          >新增</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -62,7 +87,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['ar:supplyBatch:edit']"
-        >修改</el-button>
+          >修改</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -73,7 +99,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['ar:supplyBatch:remove']"
-        >删除</el-button>
+          >删除</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -83,25 +110,46 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['ar:supplyBatch:export']"
-        >导出</el-button>
+          >导出</el-button
+        >
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar
+        :showSearch.sync="showSearch"
+        @queryTable="getList"
+      ></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="supplyBatchList" @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="loading"
+      :data="supplyBatchList"
+      @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="批号" align="center" prop="batchId" />
       <el-table-column label="数量" align="center" prop="quantity" />
       <el-table-column label="计量单位" align="center" prop="unit" />
-      <el-table-column label="生产日期" align="center" prop="productionDate" width="180">
+      <el-table-column
+        label="生产日期"
+        align="center"
+        prop="productionDate"
+        width="180"
+      >
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.productionDate, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.productionDate, "{y}-{m}-{d}") }}</span>
         </template>
       </el-table-column>
       <el-table-column label="保质期" align="center" prop="shelfLife" />
       <el-table-column label="生产厂家" align="center" prop="manufacturer" />
-      <el-table-column label="材料编号" align="center" prop="materialId" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="材料名称" align="center" prop="materialId">
+        <template slot-scope="scope">
+          <span>{{ getMaterialName(scope.row.materialId) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -109,20 +157,22 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['ar:supplyBatch:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['ar:supplyBatch:remove']"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -132,8 +182,21 @@
     <!-- 添加或修改供应批次对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="材料编号" prop="materialId">
-          <el-input v-model="form.materialId" placeholder="请输入材料编号" />
+        <el-form-item label="材料名称" prop="materialId">
+          <el-select
+            v-model="form.materialId"
+            placeholder="请选择材料名称"
+            filterable
+            clearable
+            allow-create
+          >
+            <el-option
+              v-for="item in materialList"
+              :key="item.materialId"
+              :label="item.materialName"
+              :value="item.materialId"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="数量" prop="quantity">
           <el-input v-model="form.quantity" placeholder="请输入数量" />
@@ -142,11 +205,13 @@
           <el-input v-model="form.unit" placeholder="请输入计量单位" />
         </el-form-item>
         <el-form-item label="生产日期" prop="productionDate">
-          <el-date-picker clearable
+          <el-date-picker
+            clearable
             v-model="form.productionDate"
             type="date"
             value-format="yyyy-MM-dd"
-            placeholder="请选择生产日期">
+            placeholder="请选择生产日期"
+          >
           </el-date-picker>
         </el-form-item>
         <el-form-item label="保质期" prop="shelfLife">
@@ -165,7 +230,14 @@
 </template>
 
 <script>
-import { listSupplyBatch, getSupplyBatch, delSupplyBatch, addSupplyBatch, updateSupplyBatch } from "@/api/ar/supplyBatch";
+import {
+  listSupplyBatch,
+  getSupplyBatch,
+  delSupplyBatch,
+  addSupplyBatch,
+  updateSupplyBatch,
+} from "@/api/ar/supplyBatch";
+import { listMaterial } from "@/api/ar/material";
 
 export default {
   name: "SupplyBatch",
@@ -198,50 +270,71 @@ export default {
         quantity: null,
         productionDate: null,
         manufacturer: null,
-        materialId: null
+        materialId: null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
         quantity: [
-          { required: true, message: "数量不能为空", trigger: "blur" }
+          { required: true, message: "数量不能为空", trigger: "blur" },
         ],
         unit: [
-          { required: true, message: "计量单位不能为空", trigger: "blur" }
+          { required: true, message: "计量单位不能为空", trigger: "blur" },
         ],
         productionDate: [
-          { required: true, message: "生产日期不能为空", trigger: "blur" }
+          { required: true, message: "生产日期不能为空", trigger: "blur" },
         ],
         shelfLife: [
-          { required: true, message: "保质期不能为空", trigger: "blur" }
+          { required: true, message: "保质期不能为空", trigger: "blur" },
         ],
         manufacturer: [
-          { required: true, message: "生产厂家不能为空", trigger: "blur" }
+          { required: true, message: "生产厂家不能为空", trigger: "blur" },
         ],
         materialId: [
-          { required: true, message: "材料编号不能为空", trigger: "blur" }
-        ]
-      }
+          { required: true, message: "材料名称不能为空", trigger: "blur" },
+        ],
+      },
+      // 材料列表
+      materialList: [],
     };
   },
   created() {
     this.getList();
+    this.getMaterialList();
   },
   methods: {
     /** 查询供应批次列表 */
     getList() {
       this.loading = true;
       this.queryParams.params = {};
-      if (null != this.daterangeProductionDate && '' != this.daterangeProductionDate) {
-        this.queryParams.params["beginProductionDate"] = this.daterangeProductionDate[0];
-        this.queryParams.params["endProductionDate"] = this.daterangeProductionDate[1];
+      if (
+        null != this.daterangeProductionDate &&
+        "" != this.daterangeProductionDate
+      ) {
+        this.queryParams.params["beginProductionDate"] =
+          this.daterangeProductionDate[0];
+        this.queryParams.params["endProductionDate"] =
+          this.daterangeProductionDate[1];
       }
-      listSupplyBatch(this.queryParams).then(response => {
+      listSupplyBatch(this.queryParams).then((response) => {
         this.supplyBatchList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
+    },
+    // 获取材料列表
+    getMaterialList() {
+      listMaterial(this.allQueryParams).then((response) => {
+        this.materialList = response.rows;
+      });
+    },
+    // 根据材料编号回显对应的材料名称
+    getMaterialName(materialId) {
+      const material = this.materialList.find(
+        (item) => item.materialId == materialId
+      );
+      return material ? material.materialName : "";
     },
     // 取消按钮
     cancel() {
@@ -257,7 +350,7 @@ export default {
         productionDate: null,
         shelfLife: null,
         manufacturer: null,
-        materialId: null
+        materialId: null,
       };
       this.resetForm("form");
     },
@@ -274,9 +367,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.batchId)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.batchId);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -287,8 +380,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const batchId = row.batchId || this.ids
-      getSupplyBatch(batchId).then(response => {
+      const batchId = row.batchId || this.ids;
+      getSupplyBatch(batchId).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改供应批次";
@@ -296,16 +389,16 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.batchId != null) {
-            updateSupplyBatch(this.form).then(response => {
+            updateSupplyBatch(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addSupplyBatch(this.form).then(response => {
+            addSupplyBatch(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -317,19 +410,27 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const batchIds = row.batchId || this.ids;
-      this.$modal.confirm('是否确认删除供应批次编号为"' + batchIds + '"的数据项？').then(function() {
-        return delSupplyBatch(batchIds);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm('是否确认删除供应批次编号为"' + batchIds + '"的数据项？')
+        .then(function () {
+          return delSupplyBatch(batchIds);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('ar/supplyBatch/export', {
-        ...this.queryParams
-      }, `supplyBatch_${new Date().getTime()}.xlsx`)
-    }
-  }
+      this.download(
+        "ar/supplyBatch/export",
+        {
+          ...this.queryParams,
+        },
+        `supplyBatch_${new Date().getTime()}.xlsx`
+      );
+    },
+  },
 };
 </script>

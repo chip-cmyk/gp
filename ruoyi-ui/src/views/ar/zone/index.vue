@@ -307,11 +307,9 @@ export default {
     },
     // 根据工厂编号回显对应的工厂名称
     getFactoryName(factoryId) {
-      console.log(this.factoryList, "zone");
       const factory = this.factoryList.find(
         (item) => item.factoryId == factoryId
       );
-      console.log(factory, "zone");
       return factory ? factory.name : "";
     },
     // 根据二维码编号回显对应的二维码名称
