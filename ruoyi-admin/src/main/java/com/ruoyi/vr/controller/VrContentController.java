@@ -91,14 +91,28 @@ public class VrContentController extends BaseController
         return toAjax(vrContentService.updateVrContent(vrContent));
     }
 
+    private boolean isVrContentInUse(Long[] vrContentIds) {
+        // 检查VR内容是否在使用中
+        for (Long vrContentId : vrContentIds) {
+            VrContent vrContent = vrContentService.selectVrContentByVrContentId(vrContentId);
+            if (vrContent != null && "1".equals(vrContent.getUsageStatus())) {
+                // 1表示VR内容正在使用中，无法删除
+                return true;
+            }
+        }
+        return false;
+    }
     /**
      * 删除VR内容
      */
     @PreAuthorize("@ss.hasPermi('vr:content:remove')")
     @Log(title = "VR内容", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{vrContentIds}")
-    public AjaxResult remove(@PathVariable Long[] vrContentIds)
-    {
+    @DeleteMapping("/{vrContentIds}")
+    public AjaxResult remove(@PathVariable Long[] vrContentIds) {
+        // 检查VR内容是否在使用中
+        if (isVrContentInUse(vrContentIds)) {
+            return AjaxResult.error("存在正在使用的VR内容，无法删除");
+        }
         return toAjax(vrContentService.deleteVrContentByVrContentIds(vrContentIds));
     }
 }
