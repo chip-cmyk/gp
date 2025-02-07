@@ -1,6 +1,8 @@
 package com.ruoyi.vr.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.system.mapper.SysDictDataMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.vr.mapper.VrCarrierMapper;
@@ -18,6 +20,9 @@ public class VrCarrierServiceImpl implements IVrCarrierService
 {
     @Autowired
     private VrCarrierMapper vrCarrierMapper;
+
+    @Autowired
+    private SysDictDataMapper dictDataMapper;
 
     /**
      * 查询载体
@@ -55,7 +60,9 @@ public class VrCarrierServiceImpl implements IVrCarrierService
         if (vrCarrier.getCarrierName()==null || vrCarrier.getCarrierName().equals("")) {
             vrCarrierMapper.insertVrCarrier(vrCarrier);
             Long carrierId = vrCarrier.getCarrierId();
-            vrCarrier.setCarrierName("载体"+carrierId);
+            Long carrierType = vrCarrier.getCarrierType();
+            String carrierTypeLabel=  dictDataMapper.selectDictLabel("vr_carrier_type", carrierType.toString());
+            vrCarrier.setCarrierName(carrierTypeLabel + carrierId);
             int rows = vrCarrierMapper.updateVrCarrier(vrCarrier);
             return rows;
         }else {
