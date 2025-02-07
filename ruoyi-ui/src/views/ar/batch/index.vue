@@ -136,6 +136,9 @@
     <!-- 添加或修改生产批次对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="产品编号" prop="productId">
+          <el-input v-model="form.productId" placeholder="请输入产品编号" />
+        </el-form-item>
         <el-form-item label="数量" prop="quantity">
           <el-input v-model="form.quantity" placeholder="请输入数量" />
         </el-form-item>
@@ -152,9 +155,6 @@
         </el-form-item>
         <el-form-item label="保质期" prop="shelfLife">
           <el-input v-model="form.shelfLife" placeholder="请输入保质期" />
-        </el-form-item>
-        <el-form-item label="产品编号" prop="productId">
-          <el-input v-model="form.productId" placeholder="请输入产品编号" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

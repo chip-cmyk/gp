@@ -163,21 +163,8 @@
     <!-- 添加或修改VR场景对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="场景名称" prop="sceneName">
-          <el-input v-model="form.sceneName" placeholder="请输入场景名称" />
-        </el-form-item>
-        <el-form-item label="文件URL" prop="fileUrl">
-          <el-input v-model="form.fileUrl" placeholder="请输入文件URL" />
-        </el-form-item>
-        <el-form-item label="简介" prop="description">
-          <el-input
-            v-model="form.description"
-            type="textarea"
-            placeholder="请输入内容"
-          />
-        </el-form-item>
-        <!-- 下拉框 -->
-        <el-form-item label="案例名称" prop="caseId">
+         <!-- 下拉框 -->
+         <el-form-item label="案例名称" prop="caseId">
           <el-select
             v-model="form.caseId"
             placeholder="请选择案例名称"
@@ -192,6 +179,19 @@
               :value="item.caseId"
             ></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="场景名称" prop="sceneName">
+          <el-input v-model="form.sceneName" placeholder="请输入场景名称" />
+        </el-form-item>
+        <el-form-item label="文件URL" prop="fileUrl">
+          <el-input v-model="form.fileUrl" placeholder="请输入文件URL" />
+        </el-form-item>
+        <el-form-item label="简介" prop="description">
+          <el-input
+            v-model="form.description"
+            type="textarea"
+            placeholder="请输入内容"
+          />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

@@ -1,26 +1,18 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="产品名称" prop="productName">
+      <el-form-item label="材料名称" prop="materialName">
         <el-input
-          v-model="queryParams.productName"
-          placeholder="请输入产品名称"
+          v-model="queryParams.materialName"
+          placeholder="请输入材料名称"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="产品型号" prop="productModel">
+      <el-form-item label="材料型号" prop="materialModel">
         <el-input
-          v-model="queryParams.productModel"
-          placeholder="请输入产品型号"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="库存量" prop="stockAmount">
-        <el-input
-          v-model="queryParams.stockAmount"
-          placeholder="请输入库存量"
+          v-model="queryParams.materialModel"
+          placeholder="请输入材料型号"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -47,7 +39,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['ar:product:add']"
+          v-hasPermi="['ar:material:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -58,7 +50,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['ar:product:edit']"
+          v-hasPermi="['ar:material:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -69,7 +61,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['ar:product:remove']"
+          v-hasPermi="['ar:material:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -79,18 +71,18 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['ar:product:export']"
+          v-hasPermi="['ar:material:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="productList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="materialList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="产品编号" align="center" prop="productId" />
-      <el-table-column label="产品名称" align="center" prop="productName" />
-      <el-table-column label="产品型号" align="center" prop="productModel" />
-      <el-table-column label="产品简介" align="center" prop="productDescription" />
+      <el-table-column label="材料编号" align="center" prop="materialId" />
+      <el-table-column label="材料名称" align="center" prop="materialName" />
+      <el-table-column label="材料型号" align="center" prop="materialModel" />
+      <el-table-column label="材料简介" align="center" prop="materialDescription" />
       <el-table-column label="库存量" align="center" prop="stockAmount" />
       <el-table-column label="库区编号" align="center" prop="warehouseZoneId" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -100,14 +92,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['ar:product:edit']"
+            v-hasPermi="['ar:material:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['ar:product:remove']"
+            v-hasPermi="['ar:material:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -121,20 +113,17 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改产品信息对话框 -->
+    <!-- 添加或修改材料信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="产品名称" prop="productName">
-          <el-input v-model="form.productName" placeholder="请输入产品名称" />
+        <el-form-item label="材料名称" prop="materialName">
+          <el-input v-model="form.materialName" placeholder="请输入材料名称" />
         </el-form-item>
-        <el-form-item label="产品型号" prop="productModel">
-          <el-input v-model="form.productModel" placeholder="请输入产品型号" />
+        <el-form-item label="材料型号" prop="materialModel">
+          <el-input v-model="form.materialModel" placeholder="请输入材料型号" />
         </el-form-item>
-        <el-form-item label="产品简介" prop="productDescription">
-          <el-input v-model="form.productDescription" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="库存量" prop="stockAmount">
-          <el-input v-model="form.stockAmount" placeholder="请输入库存量" />
+        <el-form-item label="材料简介" prop="materialDescription">
+          <el-input v-model="form.materialDescription" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="库区编号" prop="warehouseZoneId">
           <el-input v-model="form.warehouseZoneId" placeholder="请输入库区编号" />
@@ -149,10 +138,10 @@
 </template>
 
 <script>
-import { listProduct, getProduct, delProduct, addProduct, updateProduct } from "@/api/ar/product";
+import { listMaterial, getMaterial, delMaterial, addMaterial, updateMaterial } from "@/api/ar/material";
 
 export default {
-  name: "Product",
+  name: "Material",
   data() {
     return {
       // 遮罩层
@@ -167,8 +156,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 产品信息表格数据
-      productList: [],
+      // 材料信息表格数据
+      materialList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -177,23 +166,22 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        productName: null,
-        productModel: null,
-        stockAmount: null,
+        materialName: null,
+        materialModel: null,
         warehouseZoneId: null
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        productName: [
-          { required: true, message: "产品名称不能为空", trigger: "blur" }
+        materialName: [
+          { required: true, message: "材料名称不能为空", trigger: "blur" }
         ],
-        productModel: [
-          { required: true, message: "产品型号不能为空", trigger: "blur" }
+        materialModel: [
+          { required: true, message: "材料型号不能为空", trigger: "blur" }
         ],
-        stockAmount: [
-          { required: true, message: "库存量不能为空", trigger: "blur" }
+        materialDescription: [
+          { required: true, message: "材料简介不能为空", trigger: "blur" }
         ],
         warehouseZoneId: [
           { required: true, message: "库区编号不能为空", trigger: "blur" }
@@ -205,11 +193,11 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询产品信息列表 */
+    /** 查询材料信息列表 */
     getList() {
       this.loading = true;
-      listProduct(this.queryParams).then(response => {
-        this.productList = response.rows;
+      listMaterial(this.queryParams).then(response => {
+        this.materialList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
@@ -222,10 +210,10 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        productId: null,
-        productName: null,
-        productModel: null,
-        productDescription: null,
+        materialId: null,
+        materialName: null,
+        materialModel: null,
+        materialDescription: null,
         stockAmount: null,
         warehouseZoneId: null
       };
@@ -243,7 +231,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.productId)
+      this.ids = selection.map(item => item.materialId)
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
@@ -251,30 +239,30 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加产品信息";
+      this.title = "添加材料信息";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const productId = row.productId || this.ids
-      getProduct(productId).then(response => {
+      const materialId = row.materialId || this.ids
+      getMaterial(materialId).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改产品信息";
+        this.title = "修改材料信息";
       });
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
-          if (this.form.productId != null) {
-            updateProduct(this.form).then(response => {
+          if (this.form.materialId != null) {
+            updateMaterial(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addProduct(this.form).then(response => {
+            addMaterial(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -285,9 +273,9 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const productIds = row.productId || this.ids;
-      this.$modal.confirm('是否确认删除产品信息编号为"' + productIds + '"的数据项？').then(function() {
-        return delProduct(productIds);
+      const materialIds = row.materialId || this.ids;
+      this.$modal.confirm('是否确认删除材料信息编号为"' + materialIds + '"的数据项？').then(function() {
+        return delMaterial(materialIds);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -295,9 +283,9 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('ar/product/export', {
+      this.download('ar/material/export', {
         ...this.queryParams
-      }, `product_${new Date().getTime()}.xlsx`)
+      }, `material_${new Date().getTime()}.xlsx`)
     }
   }
 };
