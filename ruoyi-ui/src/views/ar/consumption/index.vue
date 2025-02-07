@@ -210,6 +210,22 @@
     <!-- 添加或修改能耗清单对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="工厂名称" prop="factoryId">
+          <el-select
+            v-model="form.factoryId"
+            placeholder="请选择工厂名称"
+            filterable
+            clearable
+            allow-create
+          >
+            <el-option
+              v-for="item in factoryList"
+              :key="item.factoryId"
+              :label="item.name"
+              :value="item.factoryId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="能耗" prop="energyConsumed">
           <el-input v-model="form.energyConsumed" placeholder="请输入能耗" />
         </el-form-item>
@@ -248,22 +264,6 @@
             placeholder="请选择月份"
           >
           </el-date-picker>
-        </el-form-item>
-        <el-form-item label="工厂名称" prop="factoryId">
-          <el-select
-            v-model="form.factoryId"
-            placeholder="请选择工厂名称"
-            filterable
-            clearable
-            allow-create
-          >
-            <el-option
-              v-for="item in factoryList"
-              :key="item.factoryId"
-              :label="item.name"
-              :value="item.factoryId"
-            ></el-option>
-          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
