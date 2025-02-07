@@ -47,7 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where transaction_id = #{transaction_id}
     </select>
 
-    <insert id="insertProductTransaction" parameterType="ProductTransaction">
+    <insert id="insertProductTransaction" parameterType="ProductTransaction" useGeneratedKeys="true" keyProperty="transactionId" keyColumn="transaction_id">
         insert into product_transaction
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="transactionId != null">transaction_id,</if>

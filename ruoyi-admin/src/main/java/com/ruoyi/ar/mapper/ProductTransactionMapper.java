@@ -3,6 +3,7 @@ package com.ruoyi.ar.mapper;
 import java.util.List;
 import com.ruoyi.ar.domain.ProductTransaction;
 import com.ruoyi.ar.domain.ProductTransactionDetail;
+import org.apache.ibatis.annotations.Options;
 
 /**
  * 产品出入库单Mapper接口
@@ -34,6 +35,7 @@ public interface ProductTransactionMapper
      * @param productTransaction 产品出入库单
      * @return 结果
      */
+    @Options(useGeneratedKeys = true, keyProperty = "transactionId")
     public int insertProductTransaction(ProductTransaction productTransaction);
 
     /**

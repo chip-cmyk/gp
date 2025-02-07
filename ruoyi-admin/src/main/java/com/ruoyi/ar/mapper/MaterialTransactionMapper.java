@@ -3,6 +3,7 @@ package com.ruoyi.ar.mapper;
 import java.util.List;
 import com.ruoyi.ar.domain.MaterialTransaction;
 import com.ruoyi.ar.domain.MaterialTransactionDetail;
+import org.apache.ibatis.annotations.Options;
 
 /**
  * 材料出入库单Mapper接口
@@ -34,6 +35,7 @@ public interface MaterialTransactionMapper
      * @param materialTransaction 材料出入库单
      * @return 结果
      */
+    @Options(useGeneratedKeys = true, keyProperty = "transactionId")
     public int insertMaterialTransaction(MaterialTransaction materialTransaction);
 
     /**
