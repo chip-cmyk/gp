@@ -94,11 +94,34 @@ public class VrContentController extends BaseController
     /**
      * 删除VR内容
      */
+
+    /**
+     * 检查VR内容是否在使用中
+     * @param vrContentIds VR内容ID数组
+     * @return 是否在使用中
+     */
+    private boolean isVrContentInUse(Long[] vrContentIds) {
+        for (Long vrContentId : vrContentIds) {
+            VrContent vrContent = vrContentService.selectVrContentByVrContentId(vrContentId);
+            //System.out.println("1".equals(vrContent.getUsageStatus()));
+            if (vrContent != null && "1".equals(vrContent.getUsageStatus())) {
+                //"1"是已使用，如果有任何VR内容在使用中，返回true
+                //为null或未使用都能删除
+                return true;
+            }
+        }
+        return false; // 如果所有VR内容都不在使用中，返回false
+    }
+
     @PreAuthorize("@ss.hasPermi('vr:content:remove')")
     @Log(title = "VR内容", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{vrContentIds}")
     public AjaxResult remove(@PathVariable Long[] vrContentIds)
     {
+        // 检查VR内容是否在使用中
+        if (isVrContentInUse(vrContentIds)) {
+            return AjaxResult.error("存在正在使用的VR内容，无法删除");
+        }
         return toAjax(vrContentService.deleteVrContentByVrContentIds(vrContentIds));
     }
 }
