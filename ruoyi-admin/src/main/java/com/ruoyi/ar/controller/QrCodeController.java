@@ -92,13 +92,33 @@ public class QrCodeController extends BaseController
     }
 
     /**
+     * 检查二维码是否在使用中
+     * @param qrCodeIds 二维码ID数组
+     * @return 是否在使用中
+     */
+    private boolean isQrCodeInUse(Long[] qrCodeIds) {
+        for (Long qrCodeId : qrCodeIds) {
+            QrCode qrCode = qrCodeService.selectQrCodeByQrCodeId(qrCodeId);
+            if (qrCode != null && "1".equals(qrCode.getUsageStatus())) {
+                return true; // 如果有任何一个二维码在使用中，返回true
+            }
+        }
+        return false; // 如果所有二维码都不在使用中，返回false
+    }
+
+
+    /**
      * 删除二维码
      */
     @PreAuthorize("@ss.hasPermi('ar:code:remove')")
     @Log(title = "二维码", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{qrCodeIds}")
-    public AjaxResult remove(@PathVariable Long[] qrCodeIds)
-    {
+    @DeleteMapping("/{qrCodeIds}")
+    public AjaxResult remove(@PathVariable Long[] qrCodeIds) {
+        // 检查二维码是否在使用中
+        if (isQrCodeInUse(qrCodeIds)) {
+            return AjaxResult.error("存在正在使用的二维码，无法删除");
+        }
         return toAjax(qrCodeService.deleteQrCodeByQrCodeIds(qrCodeIds));
     }
+
 }

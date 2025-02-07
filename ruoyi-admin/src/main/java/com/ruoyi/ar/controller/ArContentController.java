@@ -2,6 +2,7 @@ package com.ruoyi.ar.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,14 +24,13 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * AR内容Controller
- * 
+ *
  * @author lazy
  * @date 2025-01-20
  */
 @RestController
 @RequestMapping("/ar/content")
-public class ArContentController extends BaseController
-{
+public class ArContentController extends BaseController {
     @Autowired
     private IArContentService arContentService;
 
@@ -39,8 +39,7 @@ public class ArContentController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('ar:content:list')")
     @GetMapping("/list")
-    public TableDataInfo list(ArContent arContent)
-    {
+    public TableDataInfo list(ArContent arContent) {
         startPage();
         List<ArContent> list = arContentService.selectArContentList(arContent);
         return getDataTable(list);
@@ -52,8 +51,7 @@ public class ArContentController extends BaseController
     @PreAuthorize("@ss.hasPermi('ar:content:export')")
     @Log(title = "AR内容", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, ArContent arContent)
-    {
+    public void export(HttpServletResponse response, ArContent arContent) {
         List<ArContent> list = arContentService.selectArContentList(arContent);
         ExcelUtil<ArContent> util = new ExcelUtil<ArContent>(ArContent.class);
         util.exportExcel(response, list, "AR内容数据");
@@ -64,8 +62,7 @@ public class ArContentController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('ar:content:query')")
     @GetMapping(value = "/{arContentId}")
-    public AjaxResult getInfo(@PathVariable("arContentId") Long arContentId)
-    {
+    public AjaxResult getInfo(@PathVariable("arContentId") Long arContentId) {
         return success(arContentService.selectArContentByArContentId(arContentId));
     }
 
@@ -75,8 +72,7 @@ public class ArContentController extends BaseController
     @PreAuthorize("@ss.hasPermi('ar:content:add')")
     @Log(title = "AR内容", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody ArContent arContent)
-    {
+    public AjaxResult add(@RequestBody ArContent arContent) {
         return toAjax(arContentService.insertArContent(arContent));
     }
 
@@ -86,9 +82,24 @@ public class ArContentController extends BaseController
     @PreAuthorize("@ss.hasPermi('ar:content:edit')")
     @Log(title = "AR内容", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody ArContent arContent)
-    {
+    public AjaxResult edit(@RequestBody ArContent arContent) {
         return toAjax(arContentService.updateArContent(arContent));
+    }
+
+    /**
+     * 检查AR内容是否在使用中
+     *
+     * @param arContentIds AR内容ID数组
+     * @return 是否在使用中
+     */
+    private boolean isArContentInUse(Long[] arContentIds) {
+        for (Long arContentId : arContentIds) {
+            ArContent arContent = arContentService.selectArContentByArContentId(arContentId);
+            if (arContent != null && "1".equals(arContent.getUsageStatus())) {
+                return true; // 1表示如果有任何一个AR内容在使用中，返回true
+            }
+        }
+        return false; // 如果所有AR内容都不在使用中，返回false
     }
 
     /**
@@ -96,9 +107,11 @@ public class ArContentController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('ar:content:remove')")
     @Log(title = "AR内容", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{arContentIds}")
-    public AjaxResult remove(@PathVariable Long[] arContentIds)
-    {
+    @DeleteMapping("/{arContentIds}")
+    public AjaxResult remove(@PathVariable Long[] arContentIds) {
+        if (isArContentInUse(arContentIds)) {
+            return AjaxResult.error("存在正在使用的AR内容，无法删除");
+        }
         return toAjax(arContentService.deleteArContentByArContentIds(arContentIds));
     }
 }
