@@ -52,7 +52,14 @@ public class VrCarrierServiceImpl implements IVrCarrierService
     @Override
     public int insertVrCarrier(VrCarrier vrCarrier)
     {
-        return vrCarrierMapper.insertVrCarrier(vrCarrier);
+        if (vrCarrier.getCarrierName()==null || vrCarrier.getCarrierName().equals("")) {
+            vrCarrierMapper.insertVrCarrier(vrCarrier);
+            Long carrierId = vrCarrier.getCarrierId();
+            vrCarrier.setCarrierName("载体"+carrierId);
+            int rows = vrCarrierMapper.updateVrCarrier(vrCarrier);
+            return rows;
+        }else {
+            return vrCarrierMapper.insertVrCarrier(vrCarrier);}
     }
 
     /**

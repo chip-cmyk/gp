@@ -2,6 +2,7 @@ package com.ruoyi.vr.mapper;
 
 import java.util.List;
 import com.ruoyi.vr.domain.VrCarrier;
+import org.apache.ibatis.annotations.Options;
 
 /**
  * 载体Mapper接口
@@ -33,6 +34,7 @@ public interface VrCarrierMapper
      * @param vrCarrier 载体
      * @return 结果
      */
+    @Options(useGeneratedKeys = true, keyProperty = "carrierId")
     public int insertVrCarrier(VrCarrier vrCarrier);
 
     /**
