@@ -230,25 +230,13 @@
           <el-input v-model="form.name" placeholder="请输入名称" />
         </el-form-item>
         <el-form-item label="类别" prop="category">
-          <el-select
-            v-model="form.category"
-            placeholder="请选择类别"
-            filterable
-            clearable
-            allow-create
-          >
-            <!-- <el-option -->
-            <!-- v-for="dict in dict.type.vr_content_category" -->
-            <!-- :key="dict.value" -->
-            <!-- :label="dict.label" -->
-            <!-- :value="dict.value" -->
-            <!-- ></el-option> -->
+          <el-select v-model="form.category" placeholder="请选择类别">
             <el-option
-              v-for="item in allCategoryList"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
+              v-for="dict in dict.type.vr_content_category"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="文件URL" prop="fileUrl">

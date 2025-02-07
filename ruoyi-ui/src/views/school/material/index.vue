@@ -172,6 +172,14 @@
         <el-form-item label="素材名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入素材名称" />
         </el-form-item>
+        <el-form-item label="类别" prop="category">
+        <el-input
+          v-model="queryParams.category"
+          placeholder="请输入类别"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
         <el-form-item label="文件URL" prop="fileUrl">
           <el-input
             v-model="form.fileUrl"
