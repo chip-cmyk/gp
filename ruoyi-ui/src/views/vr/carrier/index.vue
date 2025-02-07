@@ -311,9 +311,9 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        carrierName: [
-          { required: true, message: "载体名称不能为空", trigger: "blur" },
-        ],
+        // carrierName: [
+        //   { required: true, message: "载体名称不能为空", trigger: "blur" },
+        // ],
         carrierType: [
           { required: true, message: "载体类型不能为空", trigger: "change" },
         ],

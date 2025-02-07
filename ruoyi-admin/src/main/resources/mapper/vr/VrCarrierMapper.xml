@@ -33,7 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where carrier_id = #{carrierId}
     </select>
 
-    <insert id="insertVrCarrier" parameterType="VrCarrier">
+    <insert id="insertVrCarrier" parameterType="VrCarrier" useGeneratedKeys="true" keyProperty="carrierId" keyColumn="carrier_id">
         insert into vr_carrier
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="carrierId != null">carrier_id,</if>
