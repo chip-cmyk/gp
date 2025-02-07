@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.ar.mapper.DeviceMapper">
-    
+
     <resultMap type="Device" id="DeviceResult">
         <result property="deviceNumber"    column="device_number"    />
         <result property="name"    column="name"    />
@@ -19,7 +19,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectDeviceList" parameterType="Device" resultMap="DeviceResult">
         <include refid="selectDeviceVo"/>
-        <where>  
+        <where>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="description != null  and description != ''"> and description = #{description}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
@@ -27,7 +27,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="factoryNumber != null  and factoryNumber != ''"> and factory_number = #{factoryNumber}</if>
         </where>
     </select>
-    
+
     <select id="selectDeviceByDeviceNumber" parameterType="Long" resultMap="DeviceResult">
         <include refid="selectDeviceVo"/>
         where device_number = #{deviceNumber}
@@ -57,7 +57,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="name != null and name != ''">name = #{name},</if>
             <if test="description != null and description != ''">description = #{description},</if>
             <if test="status != null">status = #{status},</if>
-            <if test="qrCodeNumber != null">qr_code_number = #{qrCodeNumber},</if>
+            <if test="qrCodeNumber != null and qrCodeNumber != ''">
+                qr_code_number = #{qrCodeNumber},
+            </if>
+            <if test="qrCodeNumber != null and qrCodeNumber == ''">
+                qr_code_number = null,
+            </if>
             <if test="factoryNumber != null">factory_number = #{factoryNumber},</if>
         </trim>
         where device_number = #{deviceNumber}
@@ -68,7 +73,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteDeviceByDeviceNumbers" parameterType="String">
-        delete from device where device_number in 
+        delete from device where device_number in
         <foreach item="deviceNumber" collection="array" open="(" separator="," close=")">
             #{deviceNumber}
         </foreach>

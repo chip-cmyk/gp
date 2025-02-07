@@ -202,12 +202,13 @@
             filterable
             clearable
             allow-create
+            @change="handleFactoryChange"
           >
             <el-option
               v-for="item in factoryList"
               :key="item.factoryId"
               :label="item.name"
-              :value="item.factoryId"
+              :value="String(item.factoryId)"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -222,18 +223,22 @@
           />
         </el-form-item>
         <el-form-item label="设备状态" prop="status">
-          <el-radio-group v-model="form.status">
-            <el-radio
+          <el-select
+            v-model="form.status"
+            placeholder="请选择设备状态"
+            clearable
+          >
+            <el-option
               v-for="dict in dict.type.device_status"
               :key="dict.value"
-              :label="dict.value"
-              >{{ dict.label }}</el-radio
-            >
-          </el-radio-group>
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="二维码名称" prop="qrCodeNumber">
           <el-select
-            v-model="form.qrCodeNumber"
+            v-model.number="form.qrCodeNumber"
             placeholder="请选择二维码名称"
             filterable
             clearable
@@ -243,7 +248,7 @@
               v-for="item in qrCodeList"
               :key="item.qrCodeId"
               :label="item.qrCodeName"
-              :value="item.qrCodeId"
+              :value="String(item.qrCodeId)"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -450,6 +455,10 @@ export default {
     getQrCodeName(qrCodeId) {
       const qrCode = this.qrCodeList.find((item) => item.qrCodeId == qrCodeId);
       return qrCode ? qrCode.qrCodeName : "";
+    },
+
+    handleFactoryChange(value) {
+      this.form.factoryNumber = value;
     },
   },
 };

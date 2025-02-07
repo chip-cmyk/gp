@@ -173,13 +173,21 @@
           <el-input v-model="form.name" placeholder="请输入素材名称" />
         </el-form-item>
         <el-form-item label="类别" prop="category">
-        <el-input
-          v-model="queryParams.category"
-          placeholder="请输入类别"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+          <el-select
+            v-model="form.category"
+            placeholder="请选择类别"
+            filterable
+            clearable
+            allow-create
+          >
+            <el-option
+              v-for="item in categoryList"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="文件URL" prop="fileUrl">
           <el-input
             v-model="form.fileUrl"
@@ -267,6 +275,7 @@ export default {
       },
       // 场景列表数据
       sceneList: [],
+      categoryList: ["文本", "图片", "动画", "声音和视频", "3D模型", "VR场景"],
     };
   },
   created() {
