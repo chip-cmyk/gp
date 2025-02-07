@@ -7,7 +7,7 @@ import com.ruoyi.ar.domain.ProductTransaction;
  * 产品出入库单Service接口
  * 
  * @author laazy
- * @date 2025-01-20
+ * @date 2025-02-07
  */
 public interface IProductTransactionService 
 {

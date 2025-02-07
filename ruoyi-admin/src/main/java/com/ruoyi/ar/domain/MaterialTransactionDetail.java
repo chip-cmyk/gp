@@ -11,7 +11,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 材料清单明细对象 material_transaction_detail
  * 
  * @author laazy
- * @date 2025-01-21
+ * @date 2025-02-06
  */
 public class MaterialTransactionDetail extends BaseEntity
 {

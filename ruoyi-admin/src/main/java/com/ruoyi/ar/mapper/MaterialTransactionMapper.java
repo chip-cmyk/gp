@@ -2,12 +2,14 @@ package com.ruoyi.ar.mapper;
 
 import java.util.List;
 import com.ruoyi.ar.domain.MaterialTransaction;
+import com.ruoyi.ar.domain.MaterialTransactionDetail;
+import org.apache.ibatis.annotations.Options;
 
 /**
  * 材料出入库单Mapper接口
  * 
  * @author laazy
- * @date 2025-01-20
+ * @date 2025-02-06
  */
 public interface MaterialTransactionMapper 
 {
@@ -33,6 +35,7 @@ public interface MaterialTransactionMapper
      * @param materialTransaction 材料出入库单
      * @return 结果
      */
+    @Options(useGeneratedKeys = true, keyProperty = "transactionId")
     public int insertMaterialTransaction(MaterialTransaction materialTransaction);
 
     /**
@@ -58,4 +61,29 @@ public interface MaterialTransactionMapper
      * @return 结果
      */
     public int deleteMaterialTransactionByTransactionIds(Long[] transactionIds);
+
+    /**
+     * 批量删除材料清单明细
+     * 
+     * @param transactionIds 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int deleteMaterialTransactionDetailByTransactionIds(Long[] transactionIds);
+    
+    /**
+     * 批量新增材料清单明细
+     * 
+     * @param materialTransactionDetailList 材料清单明细列表
+     * @return 结果
+     */
+    public int batchMaterialTransactionDetail(List<MaterialTransactionDetail> materialTransactionDetailList);
+    
+
+    /**
+     * 通过材料出入库单主键删除材料清单明细信息
+     * 
+     * @param transactionId 材料出入库单ID
+     * @return 结果
+     */
+    public int deleteMaterialTransactionDetailByTransactionId(Long transactionId);
 }

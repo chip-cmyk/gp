@@ -25,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 产品出入库单Controller
  * 
  * @author laazy
- * @date 2025-01-20
+ * @date 2025-02-07
  */
 @RestController
 @RequestMapping("/ar/productTransaction")

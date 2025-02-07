@@ -3,6 +3,10 @@ package com.ruoyi.ar.service.impl;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import com.ruoyi.common.utils.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
+import com.ruoyi.ar.domain.MaterialTransactionDetail;
 import com.ruoyi.ar.mapper.MaterialTransactionMapper;
 import com.ruoyi.ar.domain.MaterialTransaction;
 import com.ruoyi.ar.service.IMaterialTransactionService;
@@ -11,7 +15,7 @@ import com.ruoyi.ar.service.IMaterialTransactionService;
  * 材料出入库单Service业务层处理
  * 
  * @author laazy
- * @date 2025-01-20
+ * @date 2025-02-06
  */
 @Service
 public class MaterialTransactionServiceImpl implements IMaterialTransactionService 
@@ -49,10 +53,13 @@ public class MaterialTransactionServiceImpl implements IMaterialTransactionServi
      * @param materialTransaction 材料出入库单
      * @return 结果
      */
+    @Transactional
     @Override
     public int insertMaterialTransaction(MaterialTransaction materialTransaction)
     {
-        return materialTransactionMapper.insertMaterialTransaction(materialTransaction);
+        int rows = materialTransactionMapper.insertMaterialTransaction(materialTransaction);
+        insertMaterialTransactionDetail(materialTransaction);
+        return rows;
     }
 
     /**
@@ -61,9 +68,12 @@ public class MaterialTransactionServiceImpl implements IMaterialTransactionServi
      * @param materialTransaction 材料出入库单
      * @return 结果
      */
+    @Transactional
     @Override
     public int updateMaterialTransaction(MaterialTransaction materialTransaction)
     {
+        materialTransactionMapper.deleteMaterialTransactionDetailByTransactionId(materialTransaction.getTransactionId());
+        insertMaterialTransactionDetail(materialTransaction);
         return materialTransactionMapper.updateMaterialTransaction(materialTransaction);
     }
 
@@ -73,9 +83,11 @@ public class MaterialTransactionServiceImpl implements IMaterialTransactionServi
      * @param transactionIds 需要删除的材料出入库单主键
      * @return 结果
      */
+    @Transactional
     @Override
     public int deleteMaterialTransactionByTransactionIds(Long[] transactionIds)
     {
+        materialTransactionMapper.deleteMaterialTransactionDetailByTransactionIds(transactionIds);
         return materialTransactionMapper.deleteMaterialTransactionByTransactionIds(transactionIds);
     }
 
@@ -85,9 +97,35 @@ public class MaterialTransactionServiceImpl implements IMaterialTransactionServi
      * @param transactionId 材料出入库单主键
      * @return 结果
      */
+    @Transactional
     @Override
     public int deleteMaterialTransactionByTransactionId(Long transactionId)
     {
+        materialTransactionMapper.deleteMaterialTransactionDetailByTransactionId(transactionId);
         return materialTransactionMapper.deleteMaterialTransactionByTransactionId(transactionId);
+    }
+
+    /**
+     * 新增材料清单明细信息
+     * 
+     * @param materialTransaction 材料出入库单对象
+     */
+    public void insertMaterialTransactionDetail(MaterialTransaction materialTransaction)
+    {
+        List<MaterialTransactionDetail> materialTransactionDetailList = materialTransaction.getMaterialTransactionDetailList();
+        Long transactionId = materialTransaction.getTransactionId();
+        if (StringUtils.isNotNull(materialTransactionDetailList))
+        {
+            List<MaterialTransactionDetail> list = new ArrayList<MaterialTransactionDetail>();
+            for (MaterialTransactionDetail materialTransactionDetail : materialTransactionDetailList)
+            {
+                materialTransactionDetail.setTransactionId(transactionId);
+                list.add(materialTransactionDetail);
+            }
+            if (list.size() > 0)
+            {
+                materialTransactionMapper.batchMaterialTransactionDetail(list);
+            }
+        }
     }
 }

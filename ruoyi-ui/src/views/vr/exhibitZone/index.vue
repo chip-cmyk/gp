@@ -151,6 +151,19 @@
     <!-- 添加或修改VR展区对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="展区名称" prop="exhibitZoneName">
+          <el-input
+            v-model="form.exhibitZoneName"
+            placeholder="请输入展区名称"
+          />
+        </el-form-item>
+        <el-form-item label="简介" prop="description">
+          <el-input
+            v-model="form.description"
+            type="textarea"
+            placeholder="请输入内容"
+          />
+        </el-form-item>
         <el-form-item label="展厅名称" prop="showroomId">
           <el-select
             v-model="form.showroomId"
@@ -166,19 +179,6 @@
               :value="item.showroomId"
             ></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="展区名称" prop="exhibitZoneName">
-          <el-input
-            v-model="form.exhibitZoneName"
-            placeholder="请输入展区名称"
-          />
-        </el-form-item>
-        <el-form-item label="简介" prop="description">
-          <el-input
-            v-model="form.description"
-            type="textarea"
-            placeholder="请输入内容"
-          />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

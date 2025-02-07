@@ -11,6 +11,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="warehouseAdminName"    column="warehouse_admin_name"    />
     </resultMap>
 
+    <resultMap id="ProductTransactionProductTransactionDetailResult" type="ProductTransaction" extends="ProductTransactionResult">
+        <collection property="productTransactionDetailList" ofType="ProductTransactionDetail" column="transaction_id" select="selectProductTransactionDetailList" />
+    </resultMap>
+
+    <resultMap type="ProductTransactionDetail" id="ProductTransactionDetailResult">
+        <result property="productId"    column="product_id"    />
+        <result property="transactionId"    column="transaction_id"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="transactionDate"    column="transaction_date"    />
+    </resultMap>
+
     <sql id="selectProductTransactionVo">
         select transaction_id, transaction_type, operator_name, warehouse_admin_name from product_transaction
     </sql>
@@ -24,12 +35,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
     
-    <select id="selectProductTransactionByTransactionId" parameterType="Long" resultMap="ProductTransactionResult">
-        <include refid="selectProductTransactionVo"/>
+    <select id="selectProductTransactionByTransactionId" parameterType="Long" resultMap="ProductTransactionProductTransactionDetailResult">
+        select transaction_id, transaction_type, operator_name, warehouse_admin_name
+        from product_transaction
         where transaction_id = #{transactionId}
     </select>
 
-    <insert id="insertProductTransaction" parameterType="ProductTransaction">
+    <select id="selectProductTransactionDetailList" resultMap="ProductTransactionDetailResult">
+        select product_id, transaction_id, quantity, transaction_date
+        from product_transaction_detail
+        where transaction_id = #{transaction_id}
+    </select>
+
+    <insert id="insertProductTransaction" parameterType="ProductTransaction" useGeneratedKeys="true" keyProperty="transactionId" keyColumn="transaction_id">
         insert into product_transaction
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="transactionId != null">transaction_id,</if>
@@ -65,4 +83,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{transactionId}
         </foreach>
     </delete>
+    
+    <delete id="deleteProductTransactionDetailByTransactionIds" parameterType="String">
+        delete from product_transaction_detail where transaction_id in 
+        <foreach item="transactionId" collection="array" open="(" separator="," close=")">
+            #{transactionId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteProductTransactionDetailByTransactionId" parameterType="Long">
+        delete from product_transaction_detail where transaction_id = #{transactionId}
+    </delete>
+
+    <insert id="batchProductTransactionDetail">
+        insert into product_transaction_detail( product_id, transaction_id, quantity, transaction_date) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.productId}, #{item.transactionId}, #{item.quantity}, #{item.transactionDate})
+        </foreach>
+    </insert>
 </mapper>

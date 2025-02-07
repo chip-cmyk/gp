@@ -136,6 +136,34 @@
         <el-form-item label="库区管理员" prop="warehouseAdminName">
           <el-input v-model="form.warehouseAdminName" placeholder="请输入库区管理员" />
         </el-form-item>
+        <el-divider content-position="center">材料清单明细信息</el-divider>
+        <el-row :gutter="10" class="mb8">
+          <el-col :span="1.5">
+            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddMaterialTransactionDetail">添加</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDeleteMaterialTransactionDetail">删除</el-button>
+          </el-col>
+        </el-row>
+        <el-table :data="materialTransactionDetailList" :row-class-name="rowMaterialTransactionDetailIndex" @selection-change="handleMaterialTransactionDetailSelectionChange" ref="materialTransactionDetail">
+          <el-table-column type="selection" width="50" align="center" />
+          <el-table-column label="序号" align="center" prop="index" width="50"/>
+          <el-table-column label="材料编号" prop="materialId" width="150">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.materialId" placeholder="请输入材料编号" />
+            </template>
+          </el-table-column>
+          <el-table-column label="数量" prop="quantity" width="150">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.quantity" placeholder="请输入数量" />
+            </template>
+          </el-table-column>
+          <el-table-column label="日期" prop="transactionDate" width="240">
+            <template slot-scope="scope">
+              <el-date-picker clearable v-model="scope.row.transactionDate" type="date" value-format="yyyy-MM-dd" placeholder="请选择日期" />
+            </template>
+          </el-table-column>
+        </el-table>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -157,6 +185,8 @@ export default {
       loading: true,
       // 选中数组
       ids: [],
+      // 子表选中数据
+      checkedMaterialTransactionDetail: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -167,6 +197,8 @@ export default {
       total: 0,
       // 材料出入库单表格数据
       materialTransactionList: [],
+      // 材料清单明细表格数据
+      materialTransactionDetailList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -221,6 +253,7 @@ export default {
         operatorName: null,
         warehouseAdminName: null
       };
+      this.materialTransactionDetailList = [];
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -251,6 +284,7 @@ export default {
       const transactionId = row.transactionId || this.ids
       getMaterialTransaction(transactionId).then(response => {
         this.form = response.data;
+        this.materialTransactionDetailList = response.data.materialTransactionDetailList;
         this.open = true;
         this.title = "修改材料出入库单";
       });
@@ -259,6 +293,7 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          this.form.materialTransactionDetailList = this.materialTransactionDetailList;
           if (this.form.transactionId != null) {
             updateMaterialTransaction(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
@@ -284,6 +319,34 @@ export default {
         this.getList();
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
+    },
+	/** 材料清单明细序号 */
+    rowMaterialTransactionDetailIndex({ row, rowIndex }) {
+      row.index = rowIndex + 1;
+    },
+    /** 材料清单明细添加按钮操作 */
+    handleAddMaterialTransactionDetail() {
+      let obj = {};
+      obj.materialId = "";
+      obj.quantity = "";
+      obj.transactionDate = "";
+      this.materialTransactionDetailList.push(obj);
+    },
+    /** 材料清单明细删除按钮操作 */
+    handleDeleteMaterialTransactionDetail() {
+      if (this.checkedMaterialTransactionDetail.length == 0) {
+        this.$modal.msgError("请先选择要删除的材料清单明细数据");
+      } else {
+        const materialTransactionDetailList = this.materialTransactionDetailList;
+        const checkedMaterialTransactionDetail = this.checkedMaterialTransactionDetail;
+        this.materialTransactionDetailList = materialTransactionDetailList.filter(function(item) {
+          return checkedMaterialTransactionDetail.indexOf(item.index) == -1
+        });
+      }
+    },
+    /** 复选框选中数据 */
+    handleMaterialTransactionDetailSelectionChange(selection) {
+      this.checkedMaterialTransactionDetail = selection.map(item => item.index)
     },
     /** 导出按钮操作 */
     handleExport() {

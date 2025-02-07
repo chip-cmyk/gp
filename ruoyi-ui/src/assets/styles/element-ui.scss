@@ -91,6 +91,7 @@
   display: none;
 }
 
+//下面是自定义样式
 .el-textarea__inner {
   font-family: inherit;
 }
@@ -99,7 +100,7 @@
   margin-right: 24px;
 }
 
-.el-form-item__label {
+.el-dialog .el-form-item__label {
   width: 96px !important;
 }
 .el-dialog .el-form-item__content {

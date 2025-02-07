@@ -1,5 +1,6 @@
 package com.ruoyi.ar.domain;
 
+import java.util.List;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -9,7 +10,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 材料出入库单对象 material_transaction
  * 
  * @author laazy
- * @date 2025-01-20
+ * @date 2025-02-06
  */
 public class MaterialTransaction extends BaseEntity
 {
@@ -29,6 +30,9 @@ public class MaterialTransaction extends BaseEntity
     /** 库区管理员 */
     @Excel(name = "库区管理员")
     private String warehouseAdminName;
+
+    /** 材料清单明细信息 */
+    private List<MaterialTransactionDetail> materialTransactionDetailList;
 
     public void setTransactionId(Long transactionId) 
     {
@@ -67,6 +71,16 @@ public class MaterialTransaction extends BaseEntity
         return warehouseAdminName;
     }
 
+    public List<MaterialTransactionDetail> getMaterialTransactionDetailList()
+    {
+        return materialTransactionDetailList;
+    }
+
+    public void setMaterialTransactionDetailList(List<MaterialTransactionDetail> materialTransactionDetailList)
+    {
+        this.materialTransactionDetailList = materialTransactionDetailList;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -74,6 +88,7 @@ public class MaterialTransaction extends BaseEntity
             .append("transactionType", getTransactionType())
             .append("operatorName", getOperatorName())
             .append("warehouseAdminName", getWarehouseAdminName())
+            .append("materialTransactionDetailList", getMaterialTransactionDetailList())
             .toString();
     }
 }
