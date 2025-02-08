@@ -208,7 +208,7 @@
               v-for="item in factoryList"
               :key="item.factoryId"
               :label="item.name"
-              :value="String(item.factoryId)"
+              :value="item.factoryId"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -248,7 +248,7 @@
               v-for="item in qrCodeList"
               :key="item.qrCodeId"
               :label="item.qrCodeName"
-              :value="String(item.qrCodeId)"
+              :value="item.qrCodeId"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -396,6 +396,13 @@ export default {
       const deviceNumber = row.deviceNumber || this.ids;
       getDevice(deviceNumber).then((response) => {
         this.form = response.data;
+        //非空就转换为数字
+        if (this.form.qrCodeNumber) {
+          this.form.qrCodeNumber = Number(this.form.qrCodeNumber);
+        }
+        if (this.form.factoryNumber) {
+          this.form.factoryNumber = Number(this.form.factoryNumber);
+        }
         this.open = true;
         this.title = "修改设备";
       });
