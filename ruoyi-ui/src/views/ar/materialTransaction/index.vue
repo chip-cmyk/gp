@@ -211,6 +211,7 @@
           :row-class-name="rowMaterialTransactionDetailIndex"
           @selection-change="handleMaterialTransactionDetailSelectionChange"
           ref="materialTransactionDetail"
+          class="transactionDetailTable"
         >
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column
@@ -221,12 +222,23 @@
           />
           <el-table-column label="材料名称" prop="materialId" width="150">
             <template slot-scope="scope">
+              <div
+                v-if="
+                  materialTransactionDetailList[scope.$index].errors.materialId
+                "
+                class="error-msg"
+              >
+                {{
+                  materialTransactionDetailList[scope.$index].errors.materialId
+                }}
+              </div>
               <el-select
                 v-model="scope.row.materialId"
                 placeholder="请选择材料名称"
                 filterable
                 clearable
                 allow-create
+                @change="validateMaterialId(scope.$index)"
               >
                 <el-option
                   v-for="item in materialList"
@@ -239,17 +251,44 @@
           </el-table-column>
           <el-table-column label="数量" prop="quantity" width="150">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.quantity" placeholder="请输入数量" />
+              <div
+                v-if="
+                  materialTransactionDetailList[scope.$index].errors.quantity
+                "
+                class="error-msg"
+              >
+                {{
+                  materialTransactionDetailList[scope.$index].errors.quantity
+                }}
+              </div>
+              <el-input
+                v-model="scope.row.quantity"
+                placeholder="请输入数量 "
+                @blur="validateQuantity(scope.$index)"
+              />
             </template>
           </el-table-column>
           <el-table-column label="日期" prop="transactionDate" width="240">
             <template slot-scope="scope">
+              <div
+                v-if="
+                  materialTransactionDetailList[scope.$index].errors
+                    .transactionDate
+                "
+                class="error-msg"
+              >
+                {{
+                  materialTransactionDetailList[scope.$index].errors
+                    .transactionDate
+                }}
+              </div>
               <el-date-picker
                 clearable
                 v-model="scope.row.transactionDate"
                 type="date"
                 value-format="yyyy-MM-dd"
                 placeholder="请选择日期"
+                @blur="validateTransactionDate(scope.$index)"
               />
             </template>
           </el-table-column>
@@ -329,6 +368,17 @@ export default {
   created() {
     this.getList();
     this.getMaterialList();
+    // 初始化materialTransactionDetailList的数据，添加errors对象
+    this.materialTransactionDetailList = this.materialTransactionDetailList.map(
+      (item) => ({
+        ...item,
+        errors: {
+          materialId: "",
+          quantity: "",
+          transactionDate: "",
+        },
+      })
+    );
   },
   methods: {
     /** 查询材料出入库单列表 */
@@ -346,13 +396,6 @@ export default {
         this.materialList = response.rows;
       });
     },
-    // // 根据材料编号回显对应的材料名称
-    // getMaterialName(materialId) {
-    //   const material = this.materialList.find(
-    //     (item) => item.materialId == materialId
-    //   );
-    //   return material ? material.materialName : "";
-    // },
     // 取消按钮
     cancel() {
       this.open = false;
@@ -403,10 +446,56 @@ export default {
         this.title = "修改材料出入库单";
       });
     },
+    // 校验材料名称
+    validateMaterialId(index) {
+      const row = this.materialTransactionDetailList[index];
+      if (!row.materialId) {
+        row.errors.materialId = "材料名称不能为空";
+      } else {
+        row.errors.materialId = "";
+      }
+    },
+    // 校验数量
+    validateQuantity(index) {
+      const row = this.materialTransactionDetailList[index];
+      if (!row.quantity) {
+        row.errors.quantity = "数量不能为空";
+      } else if (isNaN(row.quantity) || parseInt(row.quantity) <= 0) {
+        row.errors.quantity = "数量必须为正整数";
+      } else {
+        row.errors.quantity = "";
+      }
+    },
+    // 校验日期
+    validateTransactionDate(index) {
+      const row = this.materialTransactionDetailList[index];
+      if (!row.transactionDate) {
+        row.errors.transactionDate = "日期不能为空";
+      } else {
+        row.errors.transactionDate = "";
+      }
+    },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
+          let hasError = false;
+          // 遍历所有行的数据，检查是否存在错误信息
+          this.materialTransactionDetailList.forEach((row, index) => {
+            this.validateMaterialId(index);
+            this.validateQuantity(index);
+            this.validateTransactionDate(index);
+            if (
+              row.errors.materialId ||
+              row.errors.quantity ||
+              row.errors.transactionDate
+            ) {
+              hasError = true;
+            }
+          });
+          if (hasError) {
+            return;
+          }
           this.form.materialTransactionDetailList =
             this.materialTransactionDetailList;
           if (this.form.transactionId != null) {
@@ -447,10 +536,16 @@ export default {
     },
     /** 材料清单明细添加按钮操作 */
     handleAddMaterialTransactionDetail() {
-      let obj = {};
-      obj.materialId = "";
-      obj.quantity = "";
-      obj.transactionDate = "";
+      let obj = {
+        materialId: "",
+        quantity: "",
+        transactionDate: "",
+        errors: {
+          materialId: "",
+          quantity: "",
+          transactionDate: "",
+        },
+      };
       this.materialTransactionDetailList.push(obj);
     },
     /** 材料清单明细删除按钮操作 */
@@ -487,3 +582,22 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.error-msg {
+  position: absolute;
+  bottom: 4px;
+  color: #f56c6c;
+  line-height: 1;
+  font-size: 6px;
+}
+.transactionDetailTable ::v-deep .el-table__cell {
+  padding: 20px 0;
+}
+
+/* 选择 .error-msg 前面同一层级的 .el-input__inner */
+::v-deep .error-msg ~ .el-select .el-input .el-input__inner,
+::v-deep .error-msg ~ .el-input .el-input__inner {
+  border-color: #f56c6c;
+}
+</style>
