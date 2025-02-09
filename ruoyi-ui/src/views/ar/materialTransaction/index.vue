@@ -440,8 +440,16 @@ export default {
       const transactionId = row.transactionId || this.ids;
       getMaterialTransaction(transactionId).then((response) => {
         this.form = response.data;
+        // 填充明细表格数据
         this.materialTransactionDetailList =
-          response.data.materialTransactionDetailList;
+          response.data.materialTransactionDetailList.map((item) => ({
+            ...item,
+            errors: {
+              materialId: "",
+              quantity: "",
+              transactionDate: "",
+            },
+          }));
         this.open = true;
         this.title = "修改材料出入库单";
       });
