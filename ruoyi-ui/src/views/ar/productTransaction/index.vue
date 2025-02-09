@@ -208,6 +208,7 @@
           :row-class-name="rowProductTransactionDetailIndex"
           @selection-change="handleProductTransactionDetailSelectionChange"
           ref="productTransactionDetail"
+          class="transactionDetailTable"
         >
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column
@@ -218,12 +219,23 @@
           />
           <el-table-column label="产品名称" prop="productId" width="150">
             <template slot-scope="scope">
+              <div
+                v-if="
+                  productTransactionDetailList[scope.$index].errors.productId
+                "
+                class="error-msg"
+              >
+                {{
+                  productTransactionDetailList[scope.$index].errors.productId
+                }}
+              </div>
               <el-select
                 v-model="scope.row.productId"
                 placeholder="请选择产品名称"
                 filterable
                 clearable
                 allow-create
+                @change="validateProductId(scope.$index)"
               >
                 <el-option
                   v-for="item in productList"
@@ -236,17 +248,42 @@
           </el-table-column>
           <el-table-column label="数量" prop="quantity" width="150">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.quantity" placeholder="请输入数量" />
+              <div
+                v-if="
+                  productTransactionDetailList[scope.$index].errors.quantity
+                "
+                class="error-msg"
+              >
+                {{ productTransactionDetailList[scope.$index].errors.quantity }}
+              </div>
+              <el-input
+                v-model="scope.row.quantity"
+                placeholder="请输入数量"
+                @blur="validateQuantity(scope.$index)"
+              />
             </template>
           </el-table-column>
           <el-table-column label="日期" prop="transactionDate" width="240">
             <template slot-scope="scope">
+              <div
+                v-if="
+                  productTransactionDetailList[scope.$index].errors
+                    .transactionDate
+                "
+                class="error-msg"
+              >
+                {{
+                  productTransactionDetailList[scope.$index].errors
+                    .transactionDate
+                }}
+              </div>
               <el-date-picker
                 clearable
                 v-model="scope.row.transactionDate"
                 type="date"
                 value-format="yyyy-MM-dd"
                 placeholder="请选择日期"
+                @blur="validateTransactionDate(scope.$index)"
               />
             </template>
           </el-table-column>
@@ -326,6 +363,17 @@ export default {
   created() {
     this.getList();
     this.getProductList();
+    // 初始化productTransactionDetailList的数据，添加errors对象
+    this.productTransactionDetailList = this.productTransactionDetailList.map(
+      (item) => ({
+        ...item,
+        errors: {
+          productId: "",
+          quantity: "",
+          transactionDate: "",
+        },
+      })
+    );
   },
   methods: {
     /** 查询产品出入库单列表 */
@@ -387,8 +435,16 @@ export default {
       const transactionId = row.transactionId || this.ids;
       getProductTransaction(transactionId).then((response) => {
         this.form = response.data;
+        // 填充明细表格数据
         this.productTransactionDetailList =
-          response.data.productTransactionDetailList;
+          response.data.productTransactionDetailList.map((item) => ({
+            ...item,
+            errors: {
+              productId: "",
+              quantity: "",
+              transactionDate: "",
+            },
+          }));
         this.open = true;
         this.title = "修改产品出入库单";
       });
@@ -397,6 +453,23 @@ export default {
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
+          let hasError = false;
+          // 遍历所有行的数据，检查是否存在错误信息
+          this.productTransactionDetailList.forEach((row, index) => {
+            this.validateProductId(index);
+            this.validateQuantity(index);
+            this.validateTransactionDate(index);
+            if (
+              row.errors.productId ||
+              row.errors.quantity ||
+              row.errors.transactionDate
+            ) {
+              hasError = true;
+            }
+          });
+          if (hasError) {
+            return;
+          }
           this.form.productTransactionDetailList =
             this.productTransactionDetailList;
           if (this.form.transactionId != null) {
@@ -414,6 +487,35 @@ export default {
           }
         }
       });
+    },
+    // 校验产品名称
+    validateProductId(index) {
+      const row = this.productTransactionDetailList[index];
+      if (!row.productId) {
+        row.errors.productId = "产品名称不能为空";
+      } else {
+        row.errors.productId = "";
+      }
+    },
+    // 校验数量
+    validateQuantity(index) {
+      const row = this.productTransactionDetailList[index];
+      if (!row.quantity) {
+        row.errors.quantity = "数量不能为空";
+      } else if (isNaN(row.quantity) || parseInt(row.quantity) <= 0) {
+        row.errors.quantity = "数量必须为正整数";
+      } else {
+        row.errors.quantity = "";
+      }
+    },
+    // 校验日期
+    validateTransactionDate(index) {
+      const row = this.productTransactionDetailList[index];
+      if (!row.transactionDate) {
+        row.errors.transactionDate = "日期不能为空";
+      } else {
+        row.errors.transactionDate = "";
+      }
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -437,10 +539,16 @@ export default {
     },
     /** 产品清单明细添加按钮操作 */
     handleAddProductTransactionDetail() {
-      let obj = {};
-      obj.productId = "";
-      obj.quantity = "";
-      obj.transactionDate = "";
+      let obj = {
+        productId: "",
+        quantity: "",
+        transactionDate: "",
+        errors: {
+          productId: "",
+          quantity: "",
+          transactionDate: "",
+        },
+      };
       this.productTransactionDetailList.push(obj);
     },
     /** 产品清单明细删除按钮操作 */
@@ -477,3 +585,22 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.error-msg {
+  position: absolute;
+  bottom: 4px;
+  color: #f56c6c;
+  line-height: 1;
+  font-size: 6px;
+}
+.transactionDetailTable ::v-deep .el-table__cell {
+  padding: 20px 0;
+}
+
+/* 选择 .error-msg 前面同一层级的 .el-input__inner */
+::v-deep .error-msg ~ .el-select .el-input .el-input__inner,
+::v-deep .error-msg ~ .el-input .el-input__inner {
+  border-color: #f56c6c;
+}
+</style>
