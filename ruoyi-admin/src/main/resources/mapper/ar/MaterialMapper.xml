@@ -32,8 +32,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             material_transaction_detail md on m.material_id = md.material_id
                 left join
             material_transaction od on md.transaction_id = od.transaction_id
-        group by
-            m.material_id, m.material_name, m.material_model, m.material_description, m.warehouse_zone_id
     </sql>
 
 
@@ -44,11 +42,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="materialModel != null  and materialModel != ''"> and material_model = #{materialModel}</if>
             <if test="warehouseZoneId != null "> and warehouse_zone_id = #{warehouseZoneId}</if>
         </where>
+        group by
+        m.material_id, m.material_name, m.material_model, m.material_description, m.warehouse_zone_id
     </select>
     
     <select id="selectMaterialByMaterialId" parameterType="Long" resultMap="MaterialResult">
         <include refid="selectMaterialVo"/>
-        where material_id = #{materialId}
+        where m.material_id = #{materialId}
+        group by
+        m.material_id, m.material_name, m.material_model, m.material_description, m.warehouse_zone_id
     </select>
 
     <insert id="insertMaterial" parameterType="Material">
@@ -77,7 +79,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="materialName != null and materialName != ''">material_name = #{materialName},</if>
             <if test="materialModel != null and materialModel != ''">material_model = #{materialModel},</if>
             <if test="materialDescription != null and materialDescription != ''">material_description = #{materialDescription},</if>
-            <if test="stockAmount != null">stock_amount = #{stockAmount},</if>
             <if test="warehouseZoneId != null">warehouse_zone_id = #{warehouseZoneId},</if>
         </trim>
         where material_id = #{materialId}
