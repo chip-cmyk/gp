@@ -195,6 +195,22 @@
     <!-- 添加或修改载体对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="展区名称" prop="exhibitZoneId">
+          <el-select
+            v-model="form.exhibitZoneId"
+            placeholder="请选择展区名称"
+            filterable
+            clearable
+            allow-create
+          >
+            <el-option
+              v-for="item in exhibitZoneList"
+              :key="item.exhibitZoneId"
+              :label="item.exhibitZoneName"
+              :value="item.exhibitZoneId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="载体名称" prop="carrierName">
           <el-input v-model="form.carrierName" placeholder="请输入载体名称" />
         </el-form-item>
@@ -236,22 +252,6 @@
               :key="item"
               :label="item"
               :value="item"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="展区名称" prop="exhibitZoneId">
-          <el-select
-            v-model="form.exhibitZoneId"
-            placeholder="请选择展区名称"
-            filterable
-            clearable
-            allow-create
-          >
-            <el-option
-              v-for="item in exhibitZoneList"
-              :key="item.exhibitZoneId"
-              :label="item.exhibitZoneName"
-              :value="item.exhibitZoneId"
             ></el-option>
           </el-select>
         </el-form-item>

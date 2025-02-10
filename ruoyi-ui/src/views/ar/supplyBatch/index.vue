@@ -126,6 +126,11 @@
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="批号" align="center" prop="batchId" />
+      <el-table-column label="材料名称" align="center" prop="materialId">
+        <template slot-scope="scope">
+          <span>{{ getMaterialName(scope.row.materialId) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="数量" align="center" prop="quantity" />
       <el-table-column label="计量单位" align="center" prop="unit" />
       <el-table-column
@@ -140,11 +145,6 @@
       </el-table-column>
       <el-table-column label="保质期" align="center" prop="shelfLife" />
       <el-table-column label="生产厂家" align="center" prop="manufacturer" />
-      <el-table-column label="材料名称" align="center" prop="materialId">
-        <template slot-scope="scope">
-          <span>{{ getMaterialName(scope.row.materialId) }}</span>
-        </template>
-      </el-table-column>
       <el-table-column
         label="操作"
         align="center"
