@@ -13,9 +13,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="warehouseZoneId"    column="warehouse_zone_id"    />
     </resultMap>
 
-    <sql id="selectProductVo">
+    <!--<sql id="selectProductVo">
         select product_id, product_name, product_model, product_description, stock_amount, warehouse_zone_id from product
+    </sql>-->
+
+    <sql id="selectProductVo">
+        select
+            p.product_id,
+            p.product_name,
+            p.product_model,
+            p.product_description,
+            (COALESCE(SUM(CASE WHEN od.transaction_type = 0 THEN md.quantity ELSE 0 END), 0) -
+             COALESCE(SUM(CASE WHEN od.transaction_type = 1 THEN md.quantity ELSE 0 END), 0)) as stock_amount,
+            p.warehouse_zone_id
+        from
+            product p
+                left join
+            product_transaction_detail md on p.product_id = md.product_id
+                left join
+            product_transaction od on md.transaction_id = od.transaction_id
+        group by
+            p.product_id, p.product_name, p.product_model, p.product_description, p.warehouse_zone_id
     </sql>
+
 
     <select id="selectProductList" parameterType="Product" resultMap="ProductResult">
         <include refid="selectProductVo"/>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ProductInventoryMapper">
+    
+    <resultMap type="ProductInventory" id="ProductInventoryResult">
+        <result property="productId"    column="product_id"    />
+        <result property="stockAmount"    column="stock_amount"    />
+    </resultMap>
+
+    <sql id="selectProductInventoryVo">
+        select product_id, stock_amount from product_inventory
+    </sql>
+
+    <select id="selectProductInventoryList" parameterType="ProductInventory" resultMap="ProductInventoryResult">
+        <include refid="selectProductInventoryVo"/>
+        <where>  
+            <if test="productId != null "> and product_id = #{productId}</if>
+            <if test="stockAmount != null "> and stock_amount = #{stockAmount}</if>
+        </where>
+    </select>
+    
+    <select id="selectProductInventoryByProductId" parameterType="Long" resultMap="ProductInventoryResult">
+        <include refid="selectProductInventoryVo"/>
+        where product_id = #{productId}
+    </select>
+
+    <insert id="insertProductInventory" parameterType="ProductInventory">
+        insert into product_inventory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productId != null">product_id,</if>
+            <if test="stockAmount != null">stock_amount,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productId != null">#{productId},</if>
+            <if test="stockAmount != null">#{stockAmount},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProductInventory" parameterType="ProductInventory">
+        update product_inventory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="stockAmount != null">stock_amount = #{stockAmount},</if>
+        </trim>
+        where product_id = #{productId}
+    </update>
+
+    <delete id="deleteProductInventoryByProductId" parameterType="Long">
+        delete from product_inventory where product_id = #{productId}
+    </delete>
+
+    <delete id="deleteProductInventoryByProductIds" parameterType="String">
+        delete from product_inventory where product_id in 
+        <foreach item="productId" collection="array" open="(" separator="," close=")">
+            #{productId}
+        </foreach>
+    </delete>
+</mapper>
