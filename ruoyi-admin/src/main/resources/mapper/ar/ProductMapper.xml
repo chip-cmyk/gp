@@ -32,8 +32,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             product_transaction_detail md on p.product_id = md.product_id
                 left join
             product_transaction od on md.transaction_id = od.transaction_id
-        group by
-            p.product_id, p.product_name, p.product_model, p.product_description, p.warehouse_zone_id
     </sql>
 
 
@@ -45,11 +43,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="stockAmount != null "> and stock_amount = #{stockAmount}</if>
             <if test="warehouseZoneId != null "> and warehouse_zone_id = #{warehouseZoneId}</if>
         </where>
+        group by
+        p.product_id, p.product_name, p.product_model, p.product_description, p.warehouse_zone_id
     </select>
     
     <select id="selectProductByProductId" parameterType="Long" resultMap="ProductResult">
         <include refid="selectProductVo"/>
-        where product_id = #{productId}
+        where p.product_id = #{productId}
+        group by
+        p.product_id, p.product_name, p.product_model, p.product_description, p.warehouse_zone_id
     </select>
 
     <insert id="insertProduct" parameterType="Product">
