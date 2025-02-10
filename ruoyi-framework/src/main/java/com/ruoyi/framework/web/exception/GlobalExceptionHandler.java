@@ -149,7 +149,7 @@ public class GlobalExceptionHandler
     {
         log.error(e.getMessage(), e);
         if(e.getMessage().contains("add")){
-            return AjaxResult.error("操作错误，该展厅不存在");
+            return AjaxResult.error("操作错误，引用的名称不存在");
         }
         if(e.getMessage().contains("delete")){
             return AjaxResult.error("无法删除，有其他数据引用");
