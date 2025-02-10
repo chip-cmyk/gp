@@ -175,7 +175,7 @@ export default {
             .then((res) => {
               const username = this.registerForm.username;
               this.$alert(
-                "<font color='red'>恭喜你，您的账号 " +
+                "<font color='#333'>恭喜你，您的账号 " +
                   username +
                   " 注册成功！</font>",
                 "系统提示",
