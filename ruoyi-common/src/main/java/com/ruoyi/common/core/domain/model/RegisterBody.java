@@ -7,5 +7,13 @@ package com.ruoyi.common.core.domain.model;
  */
 public class RegisterBody extends LoginBody
 {
+    private Long roleType;
 
+    public Long getRoleType() {
+        return roleType;
+    }
+
+    public void setRoleType(Long roleType) {
+        this.roleType = roleType;
+    }
 }

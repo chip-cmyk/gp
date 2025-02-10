@@ -278,7 +278,13 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public boolean registerUser(SysUser user)
     {
-        return userMapper.insertUser(user) > 0;
+//        System.out.println("user.getRoleId = " + user.getRoleId());
+        Boolean total = userMapper.insertUser(user) > 0; //这个是插入到用户表中
+
+        insertUserRole(userMapper.selectUserByUserName(user.getUserName()).getUserId(),new Long[]{user.getRoleId()});
+        //插入到角色表中，注意一下这个new Long[]{2L}，2L代表的含义是2是xx角色的id，L是Long长整型(已自改为user.getRoleId()动态初始化)
+        //在数据表sys_role中可以找到自己创建角色的id
+        return total;
     }
 
     /**

@@ -116,6 +116,8 @@ export default {
         confirmPassword: "",
         code: "",
         uuid: "",
+        //注册时默认分配的角色（1：管理员，2：普通用户。取决于 sys_role 表的 role_id）
+        roleType: 2,
       },
       registerRules: {
         username: [

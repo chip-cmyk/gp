@@ -35,7 +35,6 @@ export default {
     getUser() {
       getUserProfile().then((response) => {
         this.user = response.data;
-        console.log(this.user);
       });
     },
   },
