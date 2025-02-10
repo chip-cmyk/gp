@@ -87,7 +87,7 @@ public class ProductTransactionServiceImpl implements IProductTransactionService
     @Override
     public int deleteProductTransactionByTransactionIds(Long[] transactionIds)
     {
-        productTransactionMapper.deleteProductTransactionDetailByTransactionIds(transactionIds);
+        //productTransactionMapper.deleteProductTransactionDetailByTransactionIds(transactionIds);
         return productTransactionMapper.deleteProductTransactionByTransactionIds(transactionIds);
     }
 
@@ -101,7 +101,7 @@ public class ProductTransactionServiceImpl implements IProductTransactionService
     @Override
     public int deleteProductTransactionByTransactionId(Long transactionId)
     {
-        productTransactionMapper.deleteProductTransactionDetailByTransactionId(transactionId);
+//        productTransactionMapper.deleteProductTransactionDetailByTransactionId(transactionId);
         return productTransactionMapper.deleteProductTransactionByTransactionId(transactionId);
     }
 

@@ -87,7 +87,7 @@ public class MaterialTransactionServiceImpl implements IMaterialTransactionServi
     @Override
     public int deleteMaterialTransactionByTransactionIds(Long[] transactionIds)
     {
-        materialTransactionMapper.deleteMaterialTransactionDetailByTransactionIds(transactionIds);
+//        materialTransactionMapper.deleteMaterialTransactionDetailByTransactionIds(transactionIds);
         return materialTransactionMapper.deleteMaterialTransactionByTransactionIds(transactionIds);
     }
 
@@ -101,7 +101,7 @@ public class MaterialTransactionServiceImpl implements IMaterialTransactionServi
     @Override
     public int deleteMaterialTransactionByTransactionId(Long transactionId)
     {
-        materialTransactionMapper.deleteMaterialTransactionDetailByTransactionId(transactionId);
+//        materialTransactionMapper.deleteMaterialTransactionDetailByTransactionId(transactionId);
         return materialTransactionMapper.deleteMaterialTransactionByTransactionId(transactionId);
     }
 
