@@ -453,6 +453,10 @@ export default {
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
+          if (this.productTransactionDetailList.length === 0) {
+            this.$modal.msgError("请填写清单明细信息");
+            return;
+          }
           let hasError = false;
           // 遍历所有行的数据，检查是否存在错误信息
           this.productTransactionDetailList.forEach((row, index) => {

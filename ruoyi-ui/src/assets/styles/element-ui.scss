@@ -122,3 +122,8 @@
 .el-dialog__wrapper .el-dialog .el-dialog__body {
   padding: 30px 20px 30px 12px;
 }
+
+//主子表对话框样式
+.el-dialog .el-divider.el-divider--horizontal {
+  margin: 32px 0 24px 0;
+}
