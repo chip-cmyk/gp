@@ -208,6 +208,9 @@ export default {
   created() {
     this.getList();
   },
+  activated() {
+    this.getList();
+  },
   methods: {
     /** 查询材料清单明细列表 */
     getList() {

@@ -35,7 +35,7 @@ public class ProductionBatch extends BaseEntity
 
     /** 保质期 */
     @Excel(name = "保质期")
-    private Long shelfLife;
+    private String shelfLife;
 
     /** 产品编号 */
     @Excel(name = "产品编号")
@@ -77,16 +77,16 @@ public class ProductionBatch extends BaseEntity
     {
         return productionDate;
     }
-    public void setShelfLife(Long shelfLife) 
+    public void setShelfLife(String shelfLife)
     {
         this.shelfLife = shelfLife;
     }
 
-    public Long getShelfLife() 
+    public String getShelfLife()
     {
         return shelfLife;
     }
-    public void setProductId(Long productId) 
+    public void setProductId(Long productId)
     {
         this.productId = productId;
     }
