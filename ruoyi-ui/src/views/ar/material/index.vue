@@ -268,6 +268,9 @@ export default {
     this.getList();
     this.getZoneList();
   },
+  activated() {
+    this.getList();
+  },
   methods: {
     /** 查询材料信息列表 */
     getList() {

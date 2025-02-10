@@ -186,9 +186,6 @@
             placeholder="请输入内容"
           />
         </el-form-item>
-        <el-form-item label="库存量" prop="stockAmount">
-          <el-input v-model="form.stockAmount" placeholder="请输入库存量" />
-        </el-form-item>
         <el-form-item label="库区名称" prop="warehouseZoneId">
           <el-select
             v-model="form.warehouseZoneId"
@@ -279,6 +276,9 @@ export default {
   created() {
     this.getList();
     this.getZoneList();
+  },
+  activated() {
+    this.getList();
   },
   methods: {
     /** 查询产品信息列表 */
