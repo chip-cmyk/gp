@@ -133,6 +133,11 @@
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="批号" align="center" prop="batchId" />
+      <el-table-column label="产品名称" align="center" prop="productId">
+        <template slot-scope="scope">
+          <span>{{ getProductName(scope.row.productId) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="数量" align="center" prop="quantity" />
       <el-table-column label="计量单位" align="center" prop="unit" />
       <el-table-column
@@ -146,11 +151,6 @@
         </template>
       </el-table-column>
       <el-table-column label="保质期" align="center" prop="shelfLife" />
-      <el-table-column label="产品名称" align="center" prop="productId">
-        <template slot-scope="scope">
-          <span>{{ getProductName(scope.row.productId) }}</span>
-        </template>
-      </el-table-column>
       <el-table-column
         label="操作"
         align="center"
