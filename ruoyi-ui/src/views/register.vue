@@ -6,7 +6,7 @@
       :rules="registerRules"
       class="register-form"
     >
-      <h3 class="title">合作创新管理系统</h3>
+      <h3 class="title">{{ title }}</h3>
       <el-form-item prop="username">
         <el-input
           v-model="registerForm.username"
@@ -89,7 +89,7 @@
     </el-form>
     <!--  底部  -->
     <div class="el-register-footer">
-      <span>Copyright © 2018-2024 ruoyi.vip All Rights Reserved.</span>
+      <span>Copyright © 2024-2025</span>
     </div>
   </div>
 </template>
@@ -108,6 +108,7 @@ export default {
       }
     };
     return {
+      title: process.env.VUE_APP_TITLE,
       codeUrl: "",
       registerForm: {
         username: "",

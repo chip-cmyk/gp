@@ -3,7 +3,7 @@
     <el-row :gutter="20">
       <el-col :sm="24" :lg="24" style="padding-left: 20px">
         <!-- <h2>尊敬的{{ user.nickName }}</h2> -->
-        <h2>您好，欢迎来到合作创新管理系统！</h2>
+        <h2>您好，欢迎来到{{ title }}！</h2>
         <p></p>
       </el-col>
     </el-row>
@@ -22,6 +22,7 @@ export default {
   data() {
     return {
       user: {},
+      title: process.env.VUE_APP_TITLE,
     };
   },
   created() {
