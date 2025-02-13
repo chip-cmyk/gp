@@ -6,7 +6,9 @@
       :rules="registerRules"
       class="register-form"
     >
-      <h3 class="title">{{ title }}</h3>
+      <h3 class="title">
+        <img v-if="logo" :src="logo" class="register-logo" />{{ title }}
+      </h3>
       <el-form-item prop="username">
         <el-input
           v-model="registerForm.username"
@@ -96,6 +98,7 @@
 
 <script>
 import { getCodeImg, register } from "@/api/login";
+import logoImg from "@/assets/logo/logo.png";
 
 export default {
   name: "Register",
@@ -109,6 +112,7 @@ export default {
     };
     return {
       title: process.env.VUE_APP_TITLE,
+      logo: logoImg,
       codeUrl: "",
       registerForm: {
         username: "",
@@ -262,5 +266,11 @@ export default {
 }
 .register-code-img {
   height: 38px;
+}
+.register-logo {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+  margin-right: 12px;
 }
 </style>
