@@ -1,5 +1,7 @@
 import defaultSettings from "@/settings";
 
+// this.$store.state.settings.appTitle
+
 const {
   sideTheme,
   showSettings,
@@ -12,6 +14,7 @@ const {
 
 const storageSetting = JSON.parse(localStorage.getItem("layout-setting")) || "";
 const state = {
+  appTitle: process.env.VUE_APP_TITLE || "合作创新平台",
   title: "",
   theme: storageSetting.theme || "#13C2C2",
   sideTheme: storageSetting.sideTheme || sideTheme,
@@ -40,6 +43,20 @@ const mutations = {
   },
 };
 
+const getters = {
+  // 根据用户角色动态计算标题
+  appTitle: (state, getters, rootState, rootGetters) => {
+    const roles = rootGetters.roles; // 从根级别的 getters 中获取 roles
+    if (roles.includes("admin")) {
+      return `${state.appTitle} - 管理端`;
+    } else if (roles.includes("common") || roles.includes("research")) {
+      return `${state.appTitle} - 应用端`;
+    }
+    // 根据 roles 动态计算标题
+    return state.appTitle;
+  },
+};
+
 const actions = {
   // 修改布局设置
   changeSetting({ commit }, data) {
@@ -55,5 +72,6 @@ export default {
   namespaced: true,
   state,
   mutations,
+  getters,
   actions,
 };

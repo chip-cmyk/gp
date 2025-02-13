@@ -70,7 +70,7 @@ export default {
   },
   data() {
     return {
-      title: process.env.VUE_APP_TITLE,
+      title: this.$store.getters["settings/appTitle"],
       logo: logoImg,
     };
   },
