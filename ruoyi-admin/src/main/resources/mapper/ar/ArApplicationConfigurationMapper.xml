@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.ar.mapper.ArApplicationConfigurationMapper">
+    
+    <resultMap type="ArApplicationConfiguration" id="ArApplicationConfigurationResult">
+        <result property="id"    column="id"    />
+        <result property="triggerMethod"    column="trigger_method"    />
+        <result property="displayMethod"    column="display_method"    />
+        <result property="screenResolution"    column="screen_resolution"    />
+        <result property="videoResolution"    column="video_resolution"    />
+        <result property="privacySettings"    column="privacy_settings"    />
+        <result property="appId"    column="app_id"    />
+        <result property="createdAt"    column="created_at"    />
+    </resultMap>
+
+    <sql id="selectArApplicationConfigurationVo">
+        select id, trigger_method, display_method, screen_resolution, video_resolution, privacy_settings, app_id, created_at from ar_application_configuration
+    </sql>
+
+    <select id="selectArApplicationConfigurationList" parameterType="ArApplicationConfiguration" resultMap="ArApplicationConfigurationResult">
+        <include refid="selectArApplicationConfigurationVo"/>
+        <where>  
+            <if test="triggerMethod != null  and triggerMethod != ''"> and trigger_method = #{triggerMethod}</if>
+            <if test="displayMethod != null  and displayMethod != ''"> and display_method = #{displayMethod}</if>
+            <if test="screenResolution != null  and screenResolution != ''"> and screen_resolution = #{screenResolution}</if>
+            <if test="videoResolution != null  and videoResolution != ''"> and video_resolution = #{videoResolution}</if>
+            <if test="privacySettings != null  and privacySettings != ''"> and privacy_settings = #{privacySettings}</if>
+            <if test="appId != null "> and app_id = #{appId}</if>
+        </where>
+    </select>
+    
+    <select id="selectArApplicationConfigurationById" parameterType="Long" resultMap="ArApplicationConfigurationResult">
+        <include refid="selectArApplicationConfigurationVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertArApplicationConfiguration" parameterType="ArApplicationConfiguration" useGeneratedKeys="true" keyProperty="id">
+        insert into ar_application_configuration
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="triggerMethod != null and triggerMethod != ''">trigger_method,</if>
+            <if test="displayMethod != null and displayMethod != ''">display_method,</if>
+            <if test="screenResolution != null and screenResolution != ''">screen_resolution,</if>
+            <if test="videoResolution != null and videoResolution != ''">video_resolution,</if>
+            <if test="privacySettings != null and privacySettings != ''">privacy_settings,</if>
+            <if test="appId != null">app_id,</if>
+            <if test="createdAt != null">created_at,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="triggerMethod != null and triggerMethod != ''">#{triggerMethod},</if>
+            <if test="displayMethod != null and displayMethod != ''">#{displayMethod},</if>
+            <if test="screenResolution != null and screenResolution != ''">#{screenResolution},</if>
+            <if test="videoResolution != null and videoResolution != ''">#{videoResolution},</if>
+            <if test="privacySettings != null and privacySettings != ''">#{privacySettings},</if>
+            <if test="appId != null">#{appId},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateArApplicationConfiguration" parameterType="ArApplicationConfiguration">
+        update ar_application_configuration
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="triggerMethod != null and triggerMethod != ''">trigger_method = #{triggerMethod},</if>
+            <if test="displayMethod != null and displayMethod != ''">display_method = #{displayMethod},</if>
+            <if test="screenResolution != null and screenResolution != ''">screen_resolution = #{screenResolution},</if>
+            <if test="videoResolution != null and videoResolution != ''">video_resolution = #{videoResolution},</if>
+            <if test="privacySettings != null and privacySettings != ''">privacy_settings = #{privacySettings},</if>
+            <if test="appId != null">app_id = #{appId},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteArApplicationConfigurationById" parameterType="Long">
+        delete from ar_application_configuration where id = #{id}
+    </delete>
+
+    <delete id="deleteArApplicationConfigurationByIds" parameterType="String">
+        delete from ar_application_configuration where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

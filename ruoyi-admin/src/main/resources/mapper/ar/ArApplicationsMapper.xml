@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.ar.mapper.ArApplicationsMapper">
+    
+    <resultMap type="ArApplications" id="ArApplicationsResult">
+        <result property="ApplicationID"    column="ApplicationID"    />
+        <result property="Name"    column="Name"    />
+        <result property="Description"    column="Description"    />
+        <result property="Version"    column="Version"    />
+        <result property="ReleaseDate"    column="ReleaseDate"    />
+    </resultMap>
+
+    <sql id="selectArApplicationsVo">
+        select ApplicationID, Name, Description, Version, ReleaseDate from ar_applications
+    </sql>
+
+    <select id="selectArApplicationsList" parameterType="ArApplications" resultMap="ArApplicationsResult">
+        <include refid="selectArApplicationsVo"/>
+        <where>  
+            <if test="Name != null  and Name != ''"> and Name like concat('%', #{Name}, '%')</if>
+            <if test="Description != null  and Description != ''"> and Description = #{Description}</if>
+            <if test="Version != null  and Version != ''"> and Version = #{Version}</if>
+            <if test="ReleaseDate != null "> and ReleaseDate = #{ReleaseDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectArApplicationsByApplicationID" parameterType="Long" resultMap="ArApplicationsResult">
+        <include refid="selectArApplicationsVo"/>
+        where ApplicationID = #{ApplicationID}
+    </select>
+
+    <insert id="insertArApplications" parameterType="ArApplications" useGeneratedKeys="true" keyProperty="ApplicationID">
+        insert into ar_applications
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="Name != null and Name != ''">Name,</if>
+            <if test="Description != null and Description != ''">Description,</if>
+            <if test="Version != null and Version != ''">Version,</if>
+            <if test="ReleaseDate != null">ReleaseDate,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="Name != null and Name != ''">#{Name},</if>
+            <if test="Description != null and Description != ''">#{Description},</if>
+            <if test="Version != null and Version != ''">#{Version},</if>
+            <if test="ReleaseDate != null">#{ReleaseDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateArApplications" parameterType="ArApplications">
+        update ar_applications
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="Name != null and Name != ''">Name = #{Name},</if>
+            <if test="Description != null and Description != ''">Description = #{Description},</if>
+            <if test="Version != null and Version != ''">Version = #{Version},</if>
+            <if test="ReleaseDate != null">ReleaseDate = #{ReleaseDate},</if>
+        </trim>
+        where ApplicationID = #{ApplicationID}
+    </update>
+
+    <delete id="deleteArApplicationsByApplicationID" parameterType="Long">
+        delete from ar_applications where ApplicationID = #{ApplicationID}
+    </delete>
+
+    <delete id="deleteArApplicationsByApplicationIDs" parameterType="String">
+        delete from ar_applications where ApplicationID in 
+        <foreach item="ApplicationID" collection="array" open="(" separator="," close=")">
+            #{ApplicationID}
+        </foreach>
+    </delete>
+</mapper>

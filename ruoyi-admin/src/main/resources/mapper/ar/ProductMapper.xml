@@ -18,6 +18,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>-->
 
     <sql id="selectProductVo">
+
         select
             p.product_id,
             p.product_name,
