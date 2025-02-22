@@ -6,7 +6,11 @@
       :rules="loginRules"
       class="login-form"
     >
-      <h3 class="title">{{ title }}</h3>
+      <div>
+        <h3 class="title">
+          <img v-if="logo" :src="logo" class="login-logo" />{{ title }}
+        </h3>
+      </div>
       <el-form-item prop="username">
         <el-input
           v-model="loginForm.username"
@@ -88,12 +92,14 @@
 import { getCodeImg } from "@/api/login";
 import Cookies from "js-cookie";
 import { encrypt, decrypt } from "@/utils/jsencrypt";
+import logoImg from "@/assets/logo/logo.png";
 
 export default {
   name: "Login",
   data() {
     return {
       title: process.env.VUE_APP_TITLE,
+      logo: logoImg,
       codeUrl: "",
       loginForm: {
         username: "admin",
@@ -248,5 +254,11 @@ export default {
 }
 .login-code-img {
   height: 38px;
+}
+.login-logo {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+  margin-right: 12px;
 }
 </style>
