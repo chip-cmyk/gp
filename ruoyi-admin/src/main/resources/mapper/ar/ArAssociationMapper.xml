@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.ar.mapper.ArAssociationMapper">
+    
+    <resultMap type="ArAssociation" id="ArAssociationResult">
+        <result property="qrCodeId"    column="qr_code_id"    />
+        <result property="qrCodeName"    column="qr_code_name"    />
+        <result property="qrCode"    column="qr_code"    />
+        <result property="usageStatus"    column="usage_status"    />
+    </resultMap>
+
+    <resultMap id="ArAssociationArContentResult" type="ArAssociation" extends="ArAssociationResult">
+        <collection property="arContentList" ofType="ArContent" column="qr_code_id" select="selectArContentList" />
+    </resultMap>
+
+    <resultMap type="ArContent" id="ArContentResult">
+        <result property="arContentId"    column="ar_content_id"    />
+        <result property="name"    column="name"    />
+        <result property="category"    column="category"    />
+        <result property="fileUrl"    column="file_url"    />
+        <result property="description"    column="description"    />
+        <result property="usageStatus"    column="usage_status"    />
+        <result property="qrCodeId"    column="qr_code_id"    />
+    </resultMap>
+
+    <sql id="selectArAssociationVo">
+        select qr_code_id, qr_code_name, qr_code, usage_status from qr_code
+    </sql>
+
+    <select id="selectArAssociationList" parameterType="ArAssociation" resultMap="ArAssociationResult">
+        <include refid="selectArAssociationVo"/>
+        <where>  
+            <if test="qrCodeName != null  and qrCodeName != ''"> and qr_code_name like concat('%', #{qrCodeName}, '%')</if>
+            <if test="qrCode != null  and qrCode != ''"> and qr_code = #{qrCode}</if>
+            <if test="usageStatus != null  and usageStatus != ''"> and usage_status = #{usageStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectArAssociationByQrCodeId" parameterType="Long" resultMap="ArAssociationArContentResult">
+        select qr_code_id, qr_code_name, qr_code, usage_status
+        from qr_code
+        where qr_code_id = #{qrCodeId}
+    </select>
+
+    <select id="selectArContentList" resultMap="ArContentResult">
+        select ar_content_id, name, category, file_url, description, usage_status, qr_code_id
+        from ar_content
+        where qr_code_id = #{qr_code_id}
+    </select>
+
+    <insert id="insertArAssociation" parameterType="ArAssociation" useGeneratedKeys="true" keyProperty="qrCodeId">
+        insert into qr_code
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="qrCodeName != null and qrCodeName != ''">qr_code_name,</if>
+            <if test="qrCode != null and qrCode != ''">qr_code,</if>
+            <if test="usageStatus != null">usage_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="qrCodeName != null and qrCodeName != ''">#{qrCodeName},</if>
+            <if test="qrCode != null and qrCode != ''">#{qrCode},</if>
+            <if test="usageStatus != null">#{usageStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updateArAssociation" parameterType="ArAssociation">
+        update qr_code
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="qrCodeName != null and qrCodeName != ''">qr_code_name = #{qrCodeName},</if>
+            <if test="qrCode != null and qrCode != ''">qr_code = #{qrCode},</if>
+            <if test="usageStatus != null">usage_status = #{usageStatus},</if>
+        </trim>
+        where qr_code_id = #{qrCodeId}
+    </update>
+
+    <delete id="deleteArAssociationByQrCodeId" parameterType="Long">
+        delete from qr_code where qr_code_id = #{qrCodeId}
+    </delete>
+
+    <delete id="deleteArAssociationByQrCodeIds" parameterType="String">
+        delete from qr_code where qr_code_id in
+        <foreach item="qrCodeId" collection="array" open="(" separator="," close=")">
+            #{qrCodeId}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteArContentByQrCodeIds" parameterType="String">
+        delete from ar_content where qr_code_id in 
+        <foreach item="qrCodeId" collection="array" open="(" separator="," close=")">
+            #{qrCodeId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteArContentByQrCodeId" parameterType="Long">
+        delete from ar_content where qr_code_id = #{qrCodeId}
+    </delete>
+
+    <insert id="batchArContent">
+        insert into ar_content( ar_content_id, name, category, file_url, description, usage_status, qr_code_id) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.arContentId}, #{item.name}, #{item.category}, #{item.fileUrl}, #{item.description}, #{item.usageStatus}, #{item.qrCodeId})
+        </foreach>
+    </insert>
+</mapper>

@@ -1,0 +1,52 @@
+{
+  "msg": "操作成功",
+  "code": 200,
+  "data": [
+    {
+      "qrCodeId": 3,
+      "qrCodeName": "原料区",
+      "qrCode": "https://schoolworkweb.oss-cn-beijing.aliyuncs.com/school-images/2025/02/07/67a58442555494c5a76e8776.png",
+      "children": [
+        {
+          "arContentId": 31,
+          "name": "虚拟现实体验",
+          "category": "纯文本",
+          "fileUrl": "http://example.com/vr_experience",
+          "description": "这是一个虚拟现实体验的内容。",
+          "usageStatus": 1
+        },
+        {
+          "arContentId": 31,
+          "name": "增强现实教育",
+          "category": "纯文本",
+          "fileUrl": "http://example.com/ar_education",
+          "description": "基于AR技术的互动教育应用。",
+          "usageStatus": 0
+        }
+      ]
+    },
+    {
+      "qrCodeId": 4,
+      "qrCodeName": "生产区",
+      "qrCode": "https://schoolworkweb.oss-cn-beijing.aliyuncs.com/school-images/2025/02/07/67a58442555494c5a76e8776.png",
+      "children": [
+        {
+          "arContentId": 31,
+          "name": "虚拟现实体验",
+          "category": "纯文本",
+          "fileUrl": "http://example.com/vr_experience",
+          "description": "这是一个虚拟现实体验的内容。",
+          "usageStatus": 1
+        },
+        {
+          "arContentId": 31,
+          "name": "增强现实教育",
+          "category": "纯文本",
+          "fileUrl": "http://example.com/ar_education",
+          "description": "基于AR技术的互动教育应用。",
+          "usageStatus": 0
+        }
+      ]
+    }
+  ]
+}
