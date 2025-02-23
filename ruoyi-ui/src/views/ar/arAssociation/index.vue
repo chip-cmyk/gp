@@ -88,16 +88,19 @@
       :data="arAssociationList"
       @selection-change="handleSelectionChange"
       @expand-change="handleExpandChange"
+      row-key="qrCodeId"
+      ref="qrCodeTable"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column type="expand">
         <template slot-scope="scope">
           <el-table
-            :data="scope.row.children"
+            :data="scope.row.associationList"
             :row-class-name="rowArContentIndex"
             @selection-change="handleArContentSelectionChange"
-            ref="arContent"
             class="sub-table"
+            row-key="arContentId"
+            v-loading="subLoading"
           >
             <!-- 子表格缩进 -->
             <el-table-column width="80" />
@@ -127,20 +130,6 @@
               width="220"
               align="center"
             />
-            <el-table-column
-              label="图片"
-              prop="image"
-              width="150"
-              align="center"
-            >
-              <template slot-scope="scope">
-                <image-preview
-                  :src="scope.row.image"
-                  :width="50"
-                  :height="50"
-                />
-              </template>
-            </el-table-column>
             <el-table-column
               label="使用情况"
               prop="usageStatus"
@@ -329,6 +318,10 @@ export default {
     return {
       // 遮罩层
       loading: true,
+      // 子表遮罩层
+      subLoading: false,
+      // 缓存展开行的key
+      cacheExpandedKeys: new Set(),
       // 选中数组
       ids: [],
       // 子表选中数据
@@ -376,21 +369,38 @@ export default {
   methods: {
     /** 查询AR内容关联列表 */
     getList() {
+      // 折叠所有行
+      this.arAssociationList.forEach((item) => {
+        this.$refs.qrCodeTable.toggleRowExpansion(item, false);
+      });
       this.loading = true;
       listArAssociation(this.queryParams).then((response) => {
         this.arAssociationList = response.rows;
+        // 增加associationList属性
+        this.arAssociationList.forEach((item) => {
+          item.associationList = [];
+        });
         this.total = response.total;
         this.loading = false;
       });
     },
     handleExpandChange(row, expandedRows) {
       console.log(row, expandedRows, "expandedRows");
-      if (expandedRows.length > 0) {
+      if (
+        expandedRows.length > 0 &&
+        !this.cacheExpandedKeys.has(row.qrCodeId)
+      ) {
+        this.subLoading = true;
+        this.cacheExpandedKeys.add(row.qrCodeId);
         getArAssociation(row.qrCodeId).then((response) => {
-          // 把AR内容数据赋值给当前行的children属性
+          // 把AR内容数据赋值给当前行的associationList属性
           const index = this.arAssociationList.indexOf(row);
-          this.arAssociationList[index].children = response.data.arContentList;
+          this.arAssociationList[index].associationList =
+            response.data.arContentList;
+          // this.arAssociationList.push({}); //触发vue更新视图
+          // this.arAssociationList.pop(); //把最后添加的空对象删除掉
           console.log(this.arAssociationList, "this.arAssociationList");
+          this.subLoading = false;
         });
       }
     },
@@ -541,24 +551,6 @@ export default {
   padding: 0 0 12px 0;
 }
 
-#app
-  > div.app-wrapper.openSidebar
-  > div.main-container.hasTagsView
-  > section
-  > div
-  > div.el-table.el-table--fit.el-table--enable-row-hover.el-table--enable-row-transition.el-table--default
-  > div.el-table__body-wrapper.is-scrolling-none
-  > table
-  > tbody
-  > tr:nth-child(2)
-  > td
-  > div
-  > div.el-table__header-wrapper
-  > table
-  > thead
-  > tr
-  > th.el-table_6_column_40.is-center.el-table-column--selection.is-leaf.el-table__cell {
-}
 .sub-table ::v-deep tr .th.el-table__cell {
   padding-left: 80px;
   background-color: bule;
