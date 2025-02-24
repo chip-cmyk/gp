@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.school.mapper.SchoolApplicationsMapper">
+    
+    <resultMap type="SchoolApplications" id="SchoolApplicationsResult">
+        <result property="appId"    column="app_id"    />
+        <result property="appName"    column="app_name"    />
+        <result property="description"    column="description"    />
+        <result property="version"    column="version"    />
+        <result property="releaseDate"    column="release_date"    />
+    </resultMap>
+
+    <sql id="selectSchoolApplicationsVo">
+        select app_id, app_name, description, version, release_date from school_applications
+    </sql>
+
+    <select id="selectSchoolApplicationsList" parameterType="SchoolApplications" resultMap="SchoolApplicationsResult">
+        <include refid="selectSchoolApplicationsVo"/>
+        <where>  
+            <if test="appName != null  and appName != ''"> and app_name like concat('%', #{appName}, '%')</if>
+            <if test="description != null  and description != ''"> and description like concat('%', #{description}, '%')</if>
+            <if test="version != null  and version != ''"> and version = #{version}</if>
+            <if test="releaseDate != null "> and release_date = #{releaseDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectSchoolApplicationsByAppId" parameterType="Long" resultMap="SchoolApplicationsResult">
+        <include refid="selectSchoolApplicationsVo"/>
+        where app_id = #{appId}
+    </select>
+
+    <insert id="insertSchoolApplications" parameterType="SchoolApplications" useGeneratedKeys="true" keyProperty="appId">
+        insert into school_applications
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="appName != null and appName != ''">app_name,</if>
+            <if test="description != null">description,</if>
+            <if test="version != null and version != ''">version,</if>
+            <if test="releaseDate != null">release_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="appName != null and appName != ''">#{appName},</if>
+            <if test="description != null">#{description},</if>
+            <if test="version != null and version != ''">#{version},</if>
+            <if test="releaseDate != null">#{releaseDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSchoolApplications" parameterType="SchoolApplications">
+        update school_applications
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="appName != null and appName != ''">app_name = #{appName},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="version != null and version != ''">version = #{version},</if>
+            <if test="releaseDate != null">release_date = #{releaseDate},</if>
+        </trim>
+        where app_id = #{appId}
+    </update>
+
+    <delete id="deleteSchoolApplicationsByAppId" parameterType="Long">
+        delete from school_applications where app_id = #{appId}
+    </delete>
+
+    <delete id="deleteSchoolApplicationsByAppIds" parameterType="String">
+        delete from school_applications where app_id in 
+        <foreach item="appId" collection="array" open="(" separator="," close=")">
+            #{appId}
+        </foreach>
+    </delete>
+</mapper>
