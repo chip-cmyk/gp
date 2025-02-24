@@ -54,18 +54,18 @@
       <!-- >修改</el-button -->
       <!-- > -->
       <!-- </el-col> -->
-      <!-- <el-col :span="1.5"> -->
-      <!-- <el-button -->
-      <!-- type="danger" -->
-      <!-- plain -->
-      <!-- icon="el-icon-delete" -->
-      <!-- size="mini" -->
-      <!-- :disabled="multiple" -->
-      <!-- @click="handleDelete" -->
-      <!-- v-hasPermi="['ar:arAssociation:remove']" -->
-      <!-- >删除</el-button -->
-      <!-- > -->
-      <!-- </el-col> -->
+      <el-col :span="1.5">
+        <el-button
+          type="danger"
+          plain
+          icon="el-icon-delete"
+          size="mini"
+          :disabled="!hasSubSelection"
+          @click="handleDelete"
+          v-hasPermi="['ar:arAssociation:remove']"
+          >删除关联</el-button
+        >
+      </el-col>
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -86,7 +86,6 @@
     <el-table
       v-loading="loading"
       :data="arAssociationList"
-      @selection-change="handleSelectionChange"
       @expand-change="handleExpandChange"
       row-key="qrCodeId"
       ref="qrCodeTable"
@@ -98,7 +97,7 @@
           <el-table
             :data="scope.row.associationList"
             :row-class-name="rowArContentIndex"
-            @selection-change="handleArContentSelectionChange"
+            @selection-change="(sel) => handleSelectionChange(sel, scope.row)"
             class="sub-table"
             row-key="arContentId"
             v-loading="subLoading"
@@ -329,6 +328,8 @@ export default {
       subLoading: false,
       // 缓存展开行的key
       cacheExpandedKeys: new Set(),
+      // 存储所有子表格选中数据（
+      allSelectedSubRows: {}, // key: qrCodeId, value: selectedRows
       // 选中数组
       ids: [],
       // 子表选中数据
@@ -378,7 +379,7 @@ export default {
     getList() {
       // 折叠所有行
       this.arAssociationList.forEach((item) => {
-        this.$refs.qrCodeTable.toggleRowExpansion(item, false);
+        this.$refs.qrCodeTable?.toggleRowExpansion(item, false);
       });
       // 清空缓存
       this.cacheExpandedKeys.clear();
@@ -394,6 +395,7 @@ export default {
       });
     },
     handleExpandChange(row, expandedRows) {
+      // console.log(row, expandedRows, "handleExpandChange");
       if (
         expandedRows.length > 0 &&
         !this.cacheExpandedKeys.has(row.qrCodeId)
@@ -416,7 +418,7 @@ export default {
       this.$modal
         .confirm("是否确认删除AR内容名称为【" + row.name + "】的数据项？")
         .then(() => {
-          updateContent({ arContentId: row.arContentId, qrCodeId: "" }).then(
+          updateContent({ arContentId: row.arContentId, qrCodeId: null }).then(
             (response) => {
               console.log(response);
               this.$modal.msgSuccess("删除关联成功");
@@ -439,7 +441,7 @@ export default {
                 this.arAssociationList[parentIndex].associationList.length === 0
               ) {
                 // 折叠父级行
-                this.$refs.qrCodeTable.toggleRowExpansion(
+                this.$refs.qrCodeTable?.toggleRowExpansion(
                   this.arAssociationList[parentIndex],
                   false
                 );
@@ -482,10 +484,10 @@ export default {
       this.handleQuery();
     },
     // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.ids = selection.map((item) => item.qrCodeId);
-      this.single = selection.length !== 1;
-      this.multiple = !selection.length;
+    handleSelectionChange(selection, parentRow) {
+      // 使用Map存储每个父级对应的选中项
+      this.$set(this.allSelectedSubRows, parentRow.qrCodeId, selection);
+      console.log(this.hasSubSelection, "real hasSubSelection");
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -526,18 +528,53 @@ export default {
       });
     },
     /** 删除按钮操作 */
-    handleDelete(row) {
-      const qrCodeIds = row.qrCodeId || this.ids;
-      this.$modal
-        .confirm('是否确认删除AR内容关联编号为"' + qrCodeIds + '"的数据项？')
-        .then(function () {
-          return delArAssociation(qrCodeIds);
-        })
-        .then(() => {
-          this.getList();
-          this.$modal.msgSuccess("删除成功");
-        })
-        .catch(() => {});
+    async handleDelete() {
+      // 正确遍历对象的方式
+      const allSelected = [];
+
+      // 使用 Object.entries 遍历对象
+      Object.entries(this.allSelectedSubRows).forEach(
+        ([qrCodeId, selectedRows]) => {
+          selectedRows.forEach((row) => {
+            allSelected.push({
+              ...row,
+              qrCodeId,
+            });
+          });
+        }
+      );
+
+      if (allSelected.length === 0) {
+        this.$message.warning("请先选择要删除的关联项");
+        return;
+      }
+
+      try {
+        await this.$confirm("确定删除选中的关联项吗？", "警告", {
+          type: "warning",
+        });
+
+        const deleteRequests = allSelected.map((item) =>
+          updateContent({
+            arContentId: item.arContentId,
+            qrCodeId: "",
+          })
+        );
+
+        await Promise.all(deleteRequests);
+        this.$message.success("删除成功");
+
+        // 清空选中状态（对象用赋值方式）
+        this.allSelectedSubRows = {};
+        // 清除表格选中状态
+        this.$refs.qrCodeTable?.clearSelection();
+
+        await this.getList();
+      } catch (error) {
+        if (error !== "cancel") {
+          this.$message.error("删除失败");
+        }
+      }
     },
     /** AR内容序号 */
     rowArContentIndex({ row, rowIndex }) {
@@ -555,19 +592,25 @@ export default {
     },
     /** AR内容删除按钮操作 */
     handleDeleteArContent() {
-      if (this.checkedArContent.length == 0) {
-        this.$modal.msgError("请先选择要删除的AR内容数据");
-      } else {
-        const arContentList = this.arContentList;
-        const checkedArContent = this.checkedArContent;
-        this.arContentList = arContentList.filter(function (item) {
-          return checkedArContent.indexOf(item.index) == -1;
-        });
-      }
+      // if (this.checkedArContent.length == 0) {
+      //   this.$modal.msgError("请先选择要删除的AR内容数据");
+      // } else {
+      //   const arContentList = this.arContentList;
+      //   const checkedArContent = this.checkedArContent;
+      //   this.arContentList = arContentList.filter(function (item) {
+      //     return checkedArContent.indexOf(item.index) == -1;
+      //   });
+      // }
     },
     /** 复选框选中数据 */
     handleArContentSelectionChange(selection) {
       this.checkedArContent = selection.map((item) => item.index);
+      console.log(
+        selection,
+        this.checkedArContent,
+        "selection",
+        this.checkedArContent
+      );
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -577,6 +620,13 @@ export default {
           ...this.queryParams,
         },
         `arAssociation_${new Date().getTime()}.xlsx`
+      );
+    },
+  },
+  computed: {
+    hasSubSelection() {
+      return Object.values(this.allSelectedSubRows).some(
+        (selection) => selection?.length > 0
       );
     },
   },
