@@ -62,6 +62,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="description != null">description = #{description},</if>
             <if test="usageStatus != null">usage_status = #{usageStatus},</if>
             <if test="qrCodeId != null">qr_code_id = #{qrCodeId},</if>
+            <if test="qrCodeId == null">qr_code_id = NULL,</if>
         </trim>
         where ar_content_id = #{arContentId}
     </update>

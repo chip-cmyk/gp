@@ -6,7 +6,8 @@
       "qrCodeId": 3,
       "qrCodeName": "原料区",
       "qrCode": "https://schoolworkweb.oss-cn-beijing.aliyuncs.com/school-images/2025/02/07/67a58442555494c5a76e8776.png",
-      "children": [
+      "usageStatus": 1,
+      "associationList": [
         {
           "arContentId": 31,
           "name": "虚拟现实体验",
@@ -29,7 +30,8 @@
       "qrCodeId": 4,
       "qrCodeName": "生产区",
       "qrCode": "https://schoolworkweb.oss-cn-beijing.aliyuncs.com/school-images/2025/02/07/67a58442555494c5a76e8776.png",
-      "children": [
+      "usageStatus": 1,
+      "associationList": [
         {
           "arContentId": 31,
           "name": "虚拟现实体验",

@@ -31,41 +31,41 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['ar:arAssociation:add']"
-          >新增</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['ar:arAssociation:edit']"
-          >修改</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['ar:arAssociation:remove']"
-          >删除</el-button
-        >
-      </el-col>
+      <!-- <el-col :span="1.5"> -->
+      <!-- <el-button -->
+      <!-- type="primary" -->
+      <!-- plain -->
+      <!-- icon="el-icon-plus" -->
+      <!-- size="mini" -->
+      <!-- @click="handleAdd" -->
+      <!-- v-hasPermi="['ar:arAssociation:add']" -->
+      <!-- >新增</el-button -->
+      <!-- > -->
+      <!-- </el-col> -->
+      <!-- <el-col :span="1.5"> -->
+      <!-- <el-button -->
+      <!-- type="success" -->
+      <!-- plain -->
+      <!-- icon="el-icon-edit" -->
+      <!-- size="mini" -->
+      <!-- :disabled="single" -->
+      <!-- @click="handleUpdate" -->
+      <!-- v-hasPermi="['ar:arAssociation:edit']" -->
+      <!-- >修改</el-button -->
+      <!-- > -->
+      <!-- </el-col> -->
+      <!-- <el-col :span="1.5"> -->
+      <!-- <el-button -->
+      <!-- type="danger" -->
+      <!-- plain -->
+      <!-- icon="el-icon-delete" -->
+      <!-- size="mini" -->
+      <!-- :disabled="multiple" -->
+      <!-- @click="handleDelete" -->
+      <!-- v-hasPermi="['ar:arAssociation:remove']" -->
+      <!-- >删除</el-button -->
+      <!-- > -->
+      <!-- </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -90,8 +90,9 @@
       @expand-change="handleExpandChange"
       row-key="qrCodeId"
       ref="qrCodeTable"
+      :row-class-name="tableRowClassName"
     >
-      <el-table-column type="selection" width="55" align="center" />
+      <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <el-table-column type="expand">
         <template slot-scope="scope">
           <el-table
@@ -162,12 +163,12 @@
               align="center"
               class-name="small-padding fixed-width"
             >
-              <template slot-scope="scope">
+              <template slot-scope="subScope">
                 <el-button
                   size="mini"
                   type="text"
                   icon="el-icon-delete"
-                  @click="handleDeleteAssociation(scope.row)"
+                  @click="handleDeleteAssociation(subScope.row, scope.$index)"
                   v-hasPermi="['ar:arAssociation:remove']"
                   >删除关联</el-button
                 >
@@ -176,7 +177,12 @@
           </el-table>
         </template>
       </el-table-column>
-      <el-table-column label="二维码编号" align="center" prop="qrCodeId" />
+      <el-table-column
+        label="二维码编号"
+        align="center"
+        prop="qrCodeId"
+        :width="120"
+      />
       <el-table-column label="二维码名称" align="center" prop="qrCodeName" />
       <el-table-column label="二维码" align="center" prop="qrCode">
         <template slot-scope="scope">
@@ -202,16 +208,16 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['ar:arAssociation:edit']"
-            >修改</el-button
+            >添加关联</el-button
           >
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['ar:arAssociation:remove']"
-            >删除</el-button
-          >
+          <!-- <el-button -->
+          <!-- size="mini" -->
+          <!-- type="text" -->
+          <!-- icon="el-icon-delete" -->
+          <!-- @click="handleDelete(scope.row)" -->
+          <!-- v-hasPermi="['ar:arAssociation:remove']" -->
+          <!-- >删除</el-button -->
+          <!-- > -->
         </template>
       </el-table-column>
     </el-table>
@@ -310,6 +316,7 @@ import {
   addArAssociation,
   updateArAssociation,
 } from "@/api/ar/arAssociation";
+import { updateContent } from "@/api/ar/content";
 
 export default {
   name: "ArAssociation",
@@ -373,6 +380,8 @@ export default {
       this.arAssociationList.forEach((item) => {
         this.$refs.qrCodeTable.toggleRowExpansion(item, false);
       });
+      // 清空缓存
+      this.cacheExpandedKeys.clear();
       this.loading = true;
       listArAssociation(this.queryParams).then((response) => {
         this.arAssociationList = response.rows;
@@ -385,7 +394,6 @@ export default {
       });
     },
     handleExpandChange(row, expandedRows) {
-      console.log(row, expandedRows, "expandedRows");
       if (
         expandedRows.length > 0 &&
         !this.cacheExpandedKeys.has(row.qrCodeId)
@@ -399,10 +407,53 @@ export default {
             response.data.arContentList;
           // this.arAssociationList.push({}); //触发vue更新视图
           // this.arAssociationList.pop(); //把最后添加的空对象删除掉
-          console.log(this.arAssociationList, "this.arAssociationList");
+          // console.log(this.arAssociationList, "this.arAssociationList");
           this.subLoading = false;
         });
       }
+    },
+    handleDeleteAssociation(row, parentIndex) {
+      this.$modal
+        .confirm("是否确认删除AR内容名称为【" + row.name + "】的数据项？")
+        .then(() => {
+          updateContent({ arContentId: row.arContentId, qrCodeId: "" }).then(
+            (response) => {
+              console.log(response);
+              this.$modal.msgSuccess("删除关联成功");
+              // 找到需要删除的元素的索引
+              const index = this.arAssociationList[
+                parentIndex
+              ].associationList.findIndex(
+                (item) => item.arContentId === row.arContentId
+              );
+              // 使用 splice 方法删除元素
+              if (index !== -1) {
+                this.arAssociationList[parentIndex].associationList.splice(
+                  index,
+                  1
+                );
+              }
+
+              // 如果删除后没有关联的AR内容，则将关联的二维码状态设置为未使用
+              if (
+                this.arAssociationList[parentIndex].associationList.length === 0
+              ) {
+                // 折叠父级行
+                this.$refs.qrCodeTable.toggleRowExpansion(
+                  this.arAssociationList[parentIndex],
+                  false
+                );
+                this.arAssociationList[parentIndex].usageStatus = 0;
+              }
+            }
+          );
+        });
+    },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.usageStatus == 0) {
+        return "hide-arrow";
+      }
+      return "";
     },
     // 取消按钮
     cancel() {
@@ -554,5 +605,9 @@ export default {
 .sub-table ::v-deep tr .th.el-table__cell {
   padding-left: 80px;
   background-color: bule;
+}
+
+::v-deep .hide-arrow .el-table__expand-icon {
+  visibility: hidden;
 }
 </style>
