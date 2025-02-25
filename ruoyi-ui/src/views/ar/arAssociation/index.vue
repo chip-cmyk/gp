@@ -31,29 +31,6 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <!-- <el-col :span="1.5"> -->
-      <!-- <el-button -->
-      <!-- type="primary" -->
-      <!-- plain -->
-      <!-- icon="el-icon-plus" -->
-      <!-- size="mini" -->
-      <!-- @click="handleAdd" -->
-      <!-- v-hasPermi="['ar:arAssociation:add']" -->
-      <!-- >新增</el-button -->
-      <!-- > -->
-      <!-- </el-col> -->
-      <!-- <el-col :span="1.5"> -->
-      <!-- <el-button -->
-      <!-- type="success" -->
-      <!-- plain -->
-      <!-- icon="el-icon-edit" -->
-      <!-- size="mini" -->
-      <!-- :disabled="single" -->
-      <!-- @click="handleUpdate" -->
-      <!-- v-hasPermi="['ar:arAssociation:edit']" -->
-      <!-- >修改</el-button -->
-      <!-- > -->
-      <!-- </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="danger"
@@ -136,19 +113,6 @@
               width="150"
               align="center"
             >
-              <!-- <template slot-scope="scope"> -->
-              <!-- <el-select -->
-              <!-- v-model="scope.row.usageStatus" -->
-              <!-- placeholder="请选择使用情况" -->
-              <!-- > -->
-              <!-- <el-option -->
-              <!-- v-for="dict in dict.type.use_status" -->
-              <!-- :key="dict.value" -->
-              <!-- :label="dict.label" -->
-              <!-- :value="dict.value" -->
-              <!-- ></el-option> -->
-              <!-- </el-select> -->
-              <!-- </template> -->
               <template slot-scope="scope">
                 <dict-tag
                   :options="dict.type.use_status"
@@ -205,7 +169,7 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
+            @click="handleAddAssociation(scope.row)"
             v-hasPermi="['ar:arAssociation:edit']"
             >添加关联</el-button
           >
@@ -232,33 +196,25 @@
     <!-- 添加或修改AR内容关联对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="二维码名称" prop="qrCodeName">
-          <el-input v-model="form.qrCodeName" placeholder="请输入二维码名称" />
+        <!-- 添加AR内容下拉框 -->
+        <el-form-item label="AR内容" prop="arContentId">
+          <el-select
+            v-model="form.arContentId"
+            placeholder="请选择AR内容"
+            filterable
+            clearable
+          >
+            <el-option
+              v-for="item in noQrCodeSubList"
+              :key="item.arContentId"
+              :label="item.name"
+              :value="item.arContentId"
+            ></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="二维码" prop="qrCode">
-          <el-input v-model="form.qrCode" placeholder="请输入二维码" />
-        </el-form-item>
-        <el-divider content-position="center">AR内容信息</el-divider>
-        <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
-            <el-button
-              type="primary"
-              icon="el-icon-plus"
-              size="mini"
-              @click="handleAddArContent"
-              >添加</el-button
-            >
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-              type="danger"
-              icon="el-icon-delete"
-              size="mini"
-              @click="handleDeleteArContent"
-              >删除</el-button
-            >
-          </el-col>
-        </el-row>
+
+        <el-divider content-position="center">已关联AR内容</el-divider>
+
         <el-table
           :data="arContentList"
           :row-class-name="rowArContentIndex"
@@ -272,29 +228,14 @@
             prop="index"
             width="50"
           />
-          <el-table-column label="名称" prop="name" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.name" placeholder="请输入名称" />
-            </template>
-          </el-table-column>
-          <el-table-column label="类别" prop="category" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.category" placeholder="请输入类别" />
-            </template>
-          </el-table-column>
+          <el-table-column label="名称" prop="name" width="150" />
+          <el-table-column label="类别" prop="category" width="150" />
           <el-table-column label="使用情况" prop="usageStatus" width="150">
             <template slot-scope="scope">
-              <el-select
-                v-model="scope.row.usageStatus"
-                placeholder="请选择使用情况"
-              >
-                <el-option
-                  v-for="dict in dict.type.use_status"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                ></el-option>
-              </el-select>
+              <dict-tag
+                :options="dict.type.use_status"
+                :value="scope.row.usageStatus"
+              />
             </template>
           </el-table-column>
         </el-table>
@@ -315,7 +256,7 @@ import {
   addArAssociation,
   updateArAssociation,
 } from "@/api/ar/arAssociation";
-import { updateContent } from "@/api/ar/content";
+import { listContent, updateContent } from "@/api/ar/content";
 
 export default {
   name: "ArAssociation",
@@ -330,6 +271,8 @@ export default {
       cacheExpandedKeys: new Set(),
       // 存储所有子表格选中数据（
       allSelectedSubRows: {}, // key: qrCodeId, value: selectedRows
+      // qrCodeId字段为null，即为还未关联二维码的子表列表
+      noQrCodeSubList: [],
       // 选中数组
       ids: [],
       // 子表选中数据
@@ -362,11 +305,8 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        qrCodeName: [
-          { required: true, message: "二维码名称不能为空", trigger: "blur" },
-        ],
-        qrCode: [
-          { required: true, message: "二维码不能为空", trigger: "blur" },
+        arContentId: [
+          { required: true, message: "AR内容不能为空", trigger: "change" },
         ],
       },
     };
@@ -420,15 +360,13 @@ export default {
         .then(() => {
           updateContent({ arContentId: row.arContentId, qrCodeId: null }).then(
             (response) => {
-              console.log(response);
               this.$modal.msgSuccess("删除关联成功");
-              // 找到需要删除的元素的索引
               const index = this.arAssociationList[
                 parentIndex
               ].associationList.findIndex(
                 (item) => item.arContentId === row.arContentId
               );
-              // 使用 splice 方法删除元素
+              // 不知道为什么使用 splice 方法删除元素才能触发视图更新
               if (index !== -1) {
                 this.arAssociationList[parentIndex].associationList.splice(
                   index,
@@ -487,41 +425,56 @@ export default {
     handleSelectionChange(selection, parentRow) {
       // 使用Map存储每个父级对应的选中项
       this.$set(this.allSelectedSubRows, parentRow.qrCodeId, selection);
-      console.log(this.hasSubSelection, "real hasSubSelection");
     },
-    /** 新增按钮操作 */
-    handleAdd() {
+    /** 添加关联按钮操作 */
+    handleAddAssociation(row) {
       this.reset();
-      this.open = true;
-      this.title = "添加AR内容关联";
-    },
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
+      // 获取还未关联二维码的子表列表
       const qrCodeId = row.qrCodeId || this.ids;
-      getArAssociation(qrCodeId).then((response) => {
-        this.form = response.data;
-        this.arContentList = response.data.arContentList;
+      Promise.all([
+        listContent({ qrCodeId: null }),
+        getArAssociation(qrCodeId),
+      ]).then(([listContentResponse, getArAssociationResponse]) => {
+        this.noQrCodeSubList = listContentResponse.rows;
+        this.form = getArAssociationResponse.data;
+        this.arContentList = getArAssociationResponse.data.arContentList;
         this.open = true;
-        this.title = "修改AR内容关联";
+        this.title = "添加AR内容关联";
       });
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          this.form.arContentList = this.arContentList;
           if (this.form.qrCodeId != null) {
-            updateArAssociation(this.form).then((response) => {
-              this.$modal.msgSuccess("修改成功");
+            updateContent({
+              arContentId: this.form.arContentId,
+              qrCodeId: this.form.qrCodeId,
+            }).then((response) => {
+              this.$modal.msgSuccess("添加关联成功");
+              // 如果使用情况为未使用，则设为已使用
+              if (this.form.usageStatus == 0) {
+                this.arAssociationList.find(
+                  (item) => item.qrCodeId === this.form.qrCodeId
+                ).usageStatus = 1;
+              }
               this.open = false;
-              this.getList();
-            });
-          } else {
-            addArAssociation(this.form).then((response) => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
+              // this.getList();
+              this.subLoading = true;
+              getArAssociation(this.form.qrCodeId).then((response) => {
+                // 把AR内容数据赋值给当前行的associationList属性
+                this.arAssociationList.find(
+                  (item) => item.qrCodeId === this.form.qrCodeId
+                ).associationList = response.data.arContentList;
+                this.subLoading = false;
+                // 展开父级行
+                this.$refs.qrCodeTable?.toggleRowExpansion(
+                  this.arAssociationList.find(
+                    (item) => item.qrCodeId === this.form.qrCodeId
+                  ),
+                  true
+                );
+              });
             });
           }
         }
@@ -548,7 +501,7 @@ export default {
         this.$message.warning("请先选择要删除的关联项");
         return;
       }
-
+      this.loading = true;
       try {
         await this.$confirm("确定删除选中的关联项吗？", "警告", {
           type: "warning",
@@ -574,6 +527,8 @@ export default {
         if (error !== "cancel") {
           this.$message.error("删除失败");
         }
+      } finally {
+        this.loading = false;
       }
     },
     /** AR内容序号 */
@@ -590,18 +545,6 @@ export default {
       obj.usageStatus = "";
       this.arContentList.push(obj);
     },
-    /** AR内容删除按钮操作 */
-    handleDeleteArContent() {
-      // if (this.checkedArContent.length == 0) {
-      //   this.$modal.msgError("请先选择要删除的AR内容数据");
-      // } else {
-      //   const arContentList = this.arContentList;
-      //   const checkedArContent = this.checkedArContent;
-      //   this.arContentList = arContentList.filter(function (item) {
-      //     return checkedArContent.indexOf(item.index) == -1;
-      //   });
-      // }
-    },
     /** 复选框选中数据 */
     handleArContentSelectionChange(selection) {
       this.checkedArContent = selection.map((item) => item.index);
@@ -609,7 +552,7 @@ export default {
         selection,
         this.checkedArContent,
         "selection",
-        this.checkedArContent
+        "this.checkedArContent"
       );
     },
     /** 导出按钮操作 */
@@ -636,15 +579,11 @@ export default {
 <style scoped>
 .sub-table {
   width: 100%;
-  /* background: #f8f9fa !important; */
-  border-radius: 4px;
 }
 .sub-table ::v-deep th.el-table__cell {
-  /* background-color: #f8f9fa !important; */
   font-size: 0.9em;
 }
 .sub-table ::v-deep td.el-table__cell .cell {
-  /* background-color: #f8f9fa !important; */
   font-size: 13px;
 }
 

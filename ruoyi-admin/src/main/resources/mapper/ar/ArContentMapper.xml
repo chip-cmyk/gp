@@ -25,6 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="category != null  and category != ''"> and category = #{category}</if>
             <if test="usageStatus != null  and usageStatus != ''"> and usage_status = #{usageStatus}</if>
             <if test="qrCodeId != null "> and qr_code_id = #{qrCodeId}</if>
+            <if test="qrCodeId == null"> and qr_code_id is null</if>
         </where>
     </select>
     

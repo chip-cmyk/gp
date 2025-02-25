@@ -439,7 +439,7 @@ export default {
       // this.$nextTick才能取出this.dict.type.ar_content_category的值(ob_observer只能异步取值)
       this.$nextTick(() => {
         const categorySet = new Set();
-        console.log(this.dict.type.ar_content_category);
+        // console.log(this.dict.type.ar_content_category);
         this.dict.type.ar_content_category.forEach((item) => {
           categorySet.add(item.value);
         });
