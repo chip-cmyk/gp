@@ -173,14 +173,6 @@
             v-hasPermi="['ar:arAssociation:edit']"
             >添加关联</el-button
           >
-          <!-- <el-button -->
-          <!-- size="mini" -->
-          <!-- type="text" -->
-          <!-- icon="el-icon-delete" -->
-          <!-- @click="handleDelete(scope.row)" -->
-          <!-- v-hasPermi="['ar:arAssociation:remove']" -->
-          <!-- >删除</el-button -->
-          <!-- > -->
         </template>
       </el-table-column>
     </el-table>
@@ -218,10 +210,8 @@
         <el-table
           :data="arContentList"
           :row-class-name="rowArContentIndex"
-          @selection-change="handleArContentSelectionChange"
           ref="arContent"
         >
-          <el-table-column type="selection" width="50" align="center" />
           <el-table-column
             label="序号"
             align="center"
@@ -249,13 +239,7 @@
 </template>
 
 <script>
-import {
-  listArAssociation,
-  getArAssociation,
-  delArAssociation,
-  addArAssociation,
-  updateArAssociation,
-} from "@/api/ar/arAssociation";
+import { listArAssociation, getArAssociation } from "@/api/ar/arAssociation";
 import { listContent, updateContent } from "@/api/ar/content";
 
 export default {
@@ -277,10 +261,6 @@ export default {
       ids: [],
       // 子表选中数据
       checkedArContent: [],
-      // 非单个禁用
-      single: true,
-      // 非多个禁用
-      multiple: true,
       // 显示搜索条件
       showSearch: true,
       // 总条数
@@ -432,7 +412,7 @@ export default {
       // 获取还未关联二维码的子表列表
       const qrCodeId = row.qrCodeId || this.ids;
       Promise.all([
-        listContent({ qrCodeId: null }),
+        listContent({ qrCodeId: 0 }),
         getArAssociation(qrCodeId),
       ]).then(([listContentResponse, getArAssociationResponse]) => {
         this.noQrCodeSubList = listContentResponse.rows;
@@ -534,26 +514,6 @@ export default {
     /** AR内容序号 */
     rowArContentIndex({ row, rowIndex }) {
       row.index = rowIndex + 1;
-    },
-    /** AR内容添加按钮操作 */
-    handleAddArContent() {
-      let obj = {};
-      obj.name = "";
-      obj.category = "";
-      obj.fileUrl = "";
-      obj.description = "";
-      obj.usageStatus = "";
-      this.arContentList.push(obj);
-    },
-    /** 复选框选中数据 */
-    handleArContentSelectionChange(selection) {
-      this.checkedArContent = selection.map((item) => item.index);
-      console.log(
-        selection,
-        this.checkedArContent,
-        "selection",
-        "this.checkedArContent"
-      );
     },
     /** 导出按钮操作 */
     handleExport() {

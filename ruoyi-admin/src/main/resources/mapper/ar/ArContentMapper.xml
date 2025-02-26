@@ -24,8 +24,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="category != null  and category != ''"> and category = #{category}</if>
             <if test="usageStatus != null  and usageStatus != ''"> and usage_status = #{usageStatus}</if>
-            <if test="qrCodeId != null "> and qr_code_id = #{qrCodeId}</if>
-            <if test="qrCodeId == null"> and qr_code_id is null</if>
+            <if test="qrCodeId != null">
+                <choose>
+                    <!-- 当传入 qrCodeId=0 时，查询 qr_code_id 为 null 的记录 -->
+                    <when test="qrCodeId == 0">
+                        and qr_code_id is null
+                    </when>
+                    <!-- 其他值时查询等于该值的记录 -->
+                    <otherwise>
+                        and qr_code_id = #{qrCodeId}
+                    </otherwise>
+                </choose>
+            </if>
         </where>
     </select>
     
