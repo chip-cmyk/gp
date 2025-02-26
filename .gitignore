@@ -46,9 +46,3 @@ nbdist/
 !*/build/*.html
 !*/build/*.xml
 
-# 下面是个人配置, 暂不提交避免配置冲突
-ruoyi-ui/.eslintignore
-ruoyi-ui/.eslintrc.js
-ruoyi-ui/vue.config.js
-ruoyi-admin/src/main/resources/application-druid.yml
-ruoyi-ui/package.json
