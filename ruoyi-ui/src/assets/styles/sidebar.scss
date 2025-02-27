@@ -92,7 +92,9 @@
 
     & .nest-menu .el-submenu > .el-submenu__title,
     & .el-submenu .el-menu-item {
-      min-width: $base-sidebar-width !important;
+      // 菜单项宽度
+      // min-width: $base-sidebar-width !important;
+      // min-width: 100% !important;
 
       &:hover {
         background-color: rgba(0, 0, 0, 0.06);
@@ -224,6 +226,38 @@
     &::-webkit-scrollbar-thumb {
       background: #99a9bf;
       border-radius: 20px;
+    }
+  }
+}
+
+.openSidebar {
+  .el-menu {
+    .el-menu-item,
+    .el-submenu__title {
+      display: flex;
+      align-items: center;
+      height: 50px;
+      border-radius: 10px;
+    }
+
+    .el-submenu__title {
+      margin: 3px 8px;
+    }
+
+    .el-menu-item.submenu-title-noDropdown {
+      margin: 3px 8px;
+    }
+  }
+
+  .sidebar-container {
+    .el-scrollbar__thumb {
+      opacity: 50%;
+    }
+    .nest-menu a {
+      padding: 3px 8px;
+    }
+    .svg-icon {
+      min-width: 14px;
     }
   }
 }
