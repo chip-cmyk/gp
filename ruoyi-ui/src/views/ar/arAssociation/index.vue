@@ -490,7 +490,7 @@ export default {
         const deleteRequests = allSelected.map((item) =>
           updateContent({
             arContentId: item.arContentId,
-            qrCodeId: "",
+            qrCodeId: 0,
           })
         );
 

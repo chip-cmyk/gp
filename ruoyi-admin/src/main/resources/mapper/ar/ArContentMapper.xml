@@ -72,8 +72,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="fileUrl != null and fileUrl != ''">file_url = #{fileUrl},</if>
             <if test="description != null">description = #{description},</if>
             <if test="usageStatus != null">usage_status = #{usageStatus},</if>
-            <if test="qrCodeId != null">qr_code_id = #{qrCodeId},</if>
-            <if test="qrCodeId == null">qr_code_id = NULL,</if>
+            <choose>
+                <when test="qrCodeId == 0">
+                    qr_code_id = NULL,
+                </when>
+                <!-- 允许 qrCodeId 为 null 时也清空 -->
+                <otherwise>
+                    qr_code_id = #{qrCodeId},
+                </otherwise>
+            </choose>
         </trim>
         where ar_content_id = #{arContentId}
     </update>
