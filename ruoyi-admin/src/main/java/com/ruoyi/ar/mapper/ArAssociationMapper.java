@@ -84,4 +84,11 @@ public interface ArAssociationMapper
      * @return 结果
      */
     public int deleteArContentByQrCodeId(Long qrCodeId);
+
+    /**
+     * 检查二维码ID是否有关联的AR内容
+     * @param qrCodeId 二维码ID
+     * @return 关联的AR内容数量
+     */
+    int hasArAssociation(Long qrCodeId);
 }

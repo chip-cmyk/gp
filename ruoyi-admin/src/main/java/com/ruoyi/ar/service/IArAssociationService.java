@@ -58,4 +58,6 @@ public interface IArAssociationService
      * @return 结果
      */
     public int deleteArAssociationByQrCodeId(Long qrCodeId);
+
+    boolean hasArAssociation(Long qrCodeId);
 }

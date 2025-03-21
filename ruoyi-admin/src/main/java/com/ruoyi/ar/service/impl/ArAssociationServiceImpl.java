@@ -106,6 +106,16 @@ public class ArAssociationServiceImpl implements IArAssociationService
     }
 
     /**
+     * 检查二维码ID是否有关联的AR内容
+     * @param qrCodeId 二维码ID
+     * @return 是否有关联的AR内容
+     */
+    @Override
+    public boolean hasArAssociation(Long qrCodeId) {
+        return arAssociationMapper.hasArAssociation(qrCodeId) > 0;
+    }
+
+    /**
      * 新增AR内容信息
      * 
      * @param arAssociation AR内容关联对象
