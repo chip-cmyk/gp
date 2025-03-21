@@ -43,7 +43,8 @@ public class SysRegisterService
         String msg = "", username = registerBody.getUsername(), password = registerBody.getPassword();
         SysUser sysUser = new SysUser();
         sysUser.setUserName(username);
-        sysUser.setRoleId(registerBody.getRoleType());
+        // 下面一句用来注册时分配默认角色，如果在登录时才根据用户选择的应用动态调整角色的话，就关闭注册默认分配
+//        sysUser.setRoleId(registerBody.getRoleType());
 
         // 验证码开关
         boolean captchaEnabled = configService.selectCaptchaEnabled();

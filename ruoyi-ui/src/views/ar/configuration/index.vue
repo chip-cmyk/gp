@@ -1,178 +1,13 @@
-<!-- <template>
-  <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="触发方式" prop="triggerMethod">
-        <el-input
-          v-model="queryParams.triggerMethod"
-          placeholder="请输入触发方式"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="呈现方式" prop="displayMethod">
-        <el-input
-          v-model="queryParams.displayMethod"
-          placeholder="请输入呈现方式"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="屏幕分辨率" prop="screenResolution">
-        <el-input
-          v-model="queryParams.screenResolution"
-          placeholder="请输入屏幕分辨率"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="视频分辨率" prop="videoResolution">
-        <el-input
-          v-model="queryParams.videoResolution"
-          placeholder="请输入视频分辨率"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="隐私设置" prop="privacySettings">
-        <el-input
-          v-model="queryParams.privacySettings"
-          placeholder="请输入隐私设置"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="应用ID" prop="appId">
-        <el-input
-          v-model="queryParams.appId"
-          placeholder="请输入应用ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['ar:configuration:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['ar:configuration:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['ar:configuration:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['ar:configuration:export']"
-        >导出</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
-
-    <el-table v-loading="loading" :data="configurationList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="编号" align="center" prop="id" />
-      <el-table-column label="触发方式" align="center" prop="triggerMethod" />
-      <el-table-column label="呈现方式" align="center" prop="displayMethod" />
-      <el-table-column label="屏幕分辨率" align="center" prop="screenResolution" />
-      <el-table-column label="视频分辨率" align="center" prop="videoResolution" />
-      <el-table-column label="隐私设置" align="center" prop="privacySettings" />
-      <el-table-column label="应用ID" align="center" prop="appId" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['ar:configuration:edit']"
-          >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['ar:configuration:remove']"
-          >删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
--->
-    
-    <!-- 添加或修改出厂配置对话框 -->
-    <!--
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="触发方式" prop="triggerMethod">
-          <el-input v-model="form.triggerMethod" placeholder="请输入触发方式" />
-        </el-form-item>
-        <el-form-item label="呈现方式" prop="displayMethod">
-          <el-input v-model="form.displayMethod" placeholder="请输入呈现方式" />
-        </el-form-item>
-        <el-form-item label="屏幕分辨率" prop="screenResolution">
-          <el-input v-model="form.screenResolution" placeholder="请输入屏幕分辨率" />
-        </el-form-item>
-        <el-form-item label="视频分辨率" prop="videoResolution">
-          <el-input v-model="form.videoResolution" placeholder="请输入视频分辨率" />
-        </el-form-item>
-        <el-form-item label="隐私设置" prop="privacySettings">
-          <el-input v-model="form.privacySettings" placeholder="请输入隐私设置" />
-        </el-form-item>
-        <el-form-item label="应用ID" prop="appId">
-          <el-input v-model="form.appId" placeholder="请输入应用ID" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
-  </div>
-</template>
--->
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      size="small"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
       <el-form-item label="触发方式" prop="triggerMethod">
         <el-select
           v-model="queryParams.triggerMethod"
@@ -254,8 +89,16 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          size="mini"
+          @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -268,7 +111,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['ar:configuration:add']"
-        >新增</el-button>
+          >新增</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -279,7 +123,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['ar:configuration:edit']"
-        >修改</el-button>
+          >修改</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -290,7 +135,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['ar:configuration:remove']"
-        >删除</el-button>
+          >删除</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -300,21 +146,41 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['ar:configuration:export']"
-        >导出</el-button>
+          >导出</el-button
+        >
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar
+        :showSearch.sync="showSearch"
+        @queryTable="getList"
+      ></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="configurationList" @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="loading"
+      :data="configurationList"
+      @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="编号" align="center" prop="id" />
       <el-table-column label="触发方式" align="center" prop="triggerMethod" />
       <el-table-column label="呈现方式" align="center" prop="displayMethod" />
-      <el-table-column label="屏幕分辨率" align="center" prop="screenResolution" />
-      <el-table-column label="视频分辨率" align="center" prop="videoResolution" />
+      <el-table-column
+        label="屏幕分辨率"
+        align="center"
+        prop="screenResolution"
+      />
+      <el-table-column
+        label="视频分辨率"
+        align="center"
+        prop="videoResolution"
+      />
       <el-table-column label="隐私设置" align="center" prop="privacySettings" />
       <el-table-column label="应用ID" align="center" prop="appId" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -322,20 +188,22 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['ar:configuration:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['ar:configuration:remove']"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -366,8 +234,11 @@
           </el-select>
         </el-form-item>
         <el-form-item label="屏幕分辨率" prop="screenResolution">
-          <el-select v-model="form.screenResolution" placeholder="请选择屏幕分辨率" 
-          filterable allow-create
+          <el-select
+            v-model="form.screenResolution"
+            placeholder="请选择屏幕分辨率"
+            filterable
+            allow-create
           >
             <el-option
               v-for="item in screenResolutions"
@@ -378,7 +249,10 @@
           </el-select>
         </el-form-item>
         <el-form-item label="视频分辨率" prop="videoResolution">
-          <el-select v-model="form.videoResolution" placeholder="请选择视频分辨率">
+          <el-select
+            v-model="form.videoResolution"
+            placeholder="请选择视频分辨率"
+          >
             <el-option
               v-for="item in videoResolutions"
               :key="item"
@@ -388,7 +262,10 @@
           </el-select>
         </el-form-item>
         <el-form-item label="隐私设置" prop="privacySettings">
-          <el-select v-model="form.privacySettings" placeholder="请选择隐私设置">
+          <el-select
+            v-model="form.privacySettings"
+            placeholder="请选择隐私设置"
+          >
             <el-option
               v-for="item in privacySettings"
               :key="item"
@@ -408,8 +285,14 @@
     </el-dialog>
   </div>
 </template>
-<script> 
-import { listConfiguration, getConfiguration, delConfiguration, addConfiguration, updateConfiguration } from "@/api/ar/configuration";
+<script>
+import {
+  listConfiguration,
+  getConfiguration,
+  delConfiguration,
+  addConfiguration,
+  updateConfiguration,
+} from "@/api/ar/configuration";
 
 export default {
   name: "Configuration",
@@ -449,39 +332,28 @@ export default {
       // 表单校验
       rules: {
         triggerMethod: [
-          { required: true, message: "触发方式不能为空", trigger: "blur" }
+          { required: true, message: "触发方式不能为空", trigger: "blur" },
         ],
         displayMethod: [
-          { required: true, message: "呈现方式不能为空", trigger: "blur" }
+          { required: true, message: "呈现方式不能为空", trigger: "blur" },
         ],
         screenResolution: [
-          { required: true, message: "屏幕分辨率不能为空", trigger: "blur" }
+          { required: true, message: "屏幕分辨率不能为空", trigger: "blur" },
         ],
         videoResolution: [
-          { required: true, message: "视频分辨率不能为空", trigger: "blur" }
+          { required: true, message: "视频分辨率不能为空", trigger: "blur" },
         ],
         privacySettings: [
-          { required: true, message: "隐私设置不能为空", trigger: "blur" }
+          { required: true, message: "隐私设置不能为空", trigger: "blur" },
         ],
-        appId: [
-          { required: true, message: "应用ID不能为空", trigger: "blur" }
-        ],
+        appId: [{ required: true, message: "应用ID不能为空", trigger: "blur" }],
       },
       // 选项数据
-      triggerMethods: ['二维码扫描', 'AI识别'],
-      displayMethods: ['纯文本', '图文', '视频'],
-      screenResolutions: ['2800x1840', '2560x1440', '1920x1080', '1280x720', '自定义'],
-      videoResolutions: ['480p', '720p', '1080p', '1440p', '2160p'],
-      privacySettings: ['自动开启相机服务', '询问是否开启相机服务'],
-      // 其他数据
-      showSearch: true,
-      loading: false,
-      configurationList: [],
-      total: 0,
-      open: false,
-      title: '',
-      single: true,
-      multiple: true,
+      triggerMethods: ["二维码扫描", "AI识别"],
+      displayMethods: ["纯文本", "图文", "视频"],
+      screenResolutions: ["2800x1840", "2560x1440", "1920x1080", "1280x720"],
+      videoResolutions: ["480p", "720p", "1080p", "1440p", "2160p"],
+      privacySettings: ["自动开启相机服务", "询问是否开启相机服务"],
     };
   },
   created() {
@@ -491,7 +363,7 @@ export default {
     /** 查询出厂配置列表 */
     getList() {
       this.loading = true;
-      listConfiguration(this.queryParams).then(response => {
+      listConfiguration(this.queryParams).then((response) => {
         this.configurationList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -512,7 +384,7 @@ export default {
         videoResolution: null,
         privacySettings: null,
         appId: null,
-        createdAt: null
+        createdAt: null,
       };
       this.resetForm("form");
     },
@@ -528,9 +400,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.id);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -541,8 +413,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
-      getConfiguration(id).then(response => {
+      const id = row.id || this.ids;
+      getConfiguration(id).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改出厂配置";
@@ -550,16 +422,16 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
-            updateConfiguration(this.form).then(response => {
+            updateConfiguration(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addConfiguration(this.form).then(response => {
+            addConfiguration(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -571,19 +443,27 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除出厂配置编号为"' + ids + '"的数据项？').then(function() {
-        return delConfiguration(ids);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm('是否确认删除出厂配置编号为"' + ids + '"的数据项？')
+        .then(function () {
+          return delConfiguration(ids);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('ar/configuration/export', {
-        ...this.queryParams
-      }, `configuration_${new Date().getTime()}.xlsx`)
-    }
-  }
+      this.download(
+        "ar/configuration/export",
+        {
+          ...this.queryParams,
+        },
+        `configuration_${new Date().getTime()}.xlsx`
+      );
+    },
+  },
 };
 </script>

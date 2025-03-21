@@ -230,14 +230,14 @@
   }
 }
 
-.openSidebar {
+.openSidebar .theme-light {
   .el-menu {
     .el-menu-item,
     .el-submenu__title {
       display: flex;
       align-items: center;
       height: 50px;
-      border-radius: 10px;
+      border-radius: 6px;
     }
 
     .el-submenu__title {
@@ -247,14 +247,15 @@
     .el-menu-item.submenu-title-noDropdown {
       margin: 3px 8px;
     }
+
+    .nest-menu a {
+      padding: 3px 8px;
+    }
   }
 
   .sidebar-container {
     .el-scrollbar__thumb {
       opacity: 50%;
-    }
-    .nest-menu a {
-      padding: 3px 8px;
     }
     .svg-icon {
       min-width: 14px;
