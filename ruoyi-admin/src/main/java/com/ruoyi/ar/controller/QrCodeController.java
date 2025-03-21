@@ -111,7 +111,7 @@ public class QrCodeController extends BaseController {
                 return false;
             }
         }
-        return false; // 如果所有二维码都没有关联，返回false
+        return false; // 如果所有二维码都没有关联，返回false。
     }
 
 
