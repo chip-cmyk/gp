@@ -49,6 +49,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from ar_content
         where qr_code_id = #{qr_code_id}
     </select>
+    <select id="hasArAssociation" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM ar_association
+        WHERE qr_code_id = #{qrCodeId}
+    </select>
 
     <insert id="insertArAssociation" parameterType="ArAssociation" useGeneratedKeys="true" keyProperty="qrCodeId">
         insert into qr_code
