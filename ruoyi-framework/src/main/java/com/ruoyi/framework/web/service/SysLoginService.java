@@ -98,26 +98,25 @@ public class SysLoginService {
         //如果用户原本的roleIds包含管理员角色，则不允许修改
         //目前的管理员角色id: [1]
         //目前的普通用户角色id: [2，100]
-
-        if (roleIds != null && roleIds.length > 0) {
-            // 定义管理员角色ID数组和普通用户角色ID数组(暂时定死，后改为动态获取)
-            Long[] adminRoleIds = new Long[]{1L};
-            Long[] userRoleIds = new Long[]{2L, 100L};
-
-//            System.out.println("LOG: roleIds = " + Arrays.toString(roleIds));
-            //拿到 user 对象
-            SysUser user = userService.selectUserById(loginUser.getUserId());
-            Long[] existingRoleIds = roleService.selectRoleListByUserId(user.getUserId()).toArray(new Long[0]);
-
+        //拿到 user 对象
+        // 定义管理员角色ID数组和普通用户角色ID数组(暂时定死，后改为动态获取计算)
+        Long[] adminRoleIds = new Long[]{1L};
+        Long[] userRoleIds = new Long[]{2L, 100L};
+        SysUser user = userService.selectUserById(loginUser.getUserId());
+        Long[] existingRoleIds = roleService.selectRoleListByUserId(user.getUserId()).toArray(new Long[0]);
 //            System.out.println("LOG: existingRoleIds = " + Arrays.toString(existingRoleIds));
-
-            boolean hasAdminRole = false;
-            if (existingRoleIds != null && existingRoleIds.length > 0) {
-                hasAdminRole = Arrays.stream(existingRoleIds).anyMatch(id -> Arrays.asList(adminRoleIds).contains(id));
-            }
-
+        boolean hasAdminRole = false;
+        //判断用户是否有管理员角色
+        if (existingRoleIds != null && existingRoleIds.length > 0) {
+            hasAdminRole = Arrays.stream(existingRoleIds).anyMatch(id -> Arrays.asList(adminRoleIds).contains(id));
+        }
+        if (!hasAdminRole && (roleIds == null || roleIds.length == 0)) {
+            throw new ServiceException("用户请点左下用户登录");
+        }
+        if (roleIds != null && roleIds.length > 0) {
+//            System.out.println("LOG: roleIds = " + Arrays.toString(roleIds));
             if (hasAdminRole) {
-                throw new ServiceException("管理员请从管理员界面登录");
+                throw new ServiceException("管理员请点左下管理员登录");
             } else {
                 for (Long roleId : roleIds) {
                     if (!Arrays.asList(userRoleIds).contains(roleId)) {
@@ -127,14 +126,10 @@ public class SysLoginService {
                 //更新用户信息（角色组）
                 user.setRoleIds(roleIds);
                 userService.updateUser(user);
-
 //                existingRoleIds = roleService.selectRoleListByUserId(user.getUserId()).toArray(new Long[0]);
 //                System.out.println("LOG: existingRoleIds (changed) = " + Arrays.toString(existingRoleIds));
             }
-
-
         }
-
 
         // 生成token
         return tokenService.createToken(loginUser);

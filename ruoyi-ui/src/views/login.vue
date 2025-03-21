@@ -148,7 +148,7 @@ export default {
           { required: true, trigger: "blur", message: "请输入您的密码" },
         ],
         code: [{ required: true, trigger: "change", message: "请输入验证码" }],
-        // roleIds: [{ required: true, trigger: "blur", message: "请选择应用端" }],
+        roleIds: [{ required: true, trigger: "blur", message: "请选择应用端" }],
       },
       loading: false,
       // 验证码开关
@@ -187,8 +187,6 @@ export default {
       } else {
         this.loginForm.roleIds = [val];
       }
-      console.log(val);
-      console.log(this.loginForm.roleIds, "this.loginForm.roleIds");
     },
     handleLoginType() {
       this.isAdmin = !this.isAdmin;
@@ -217,7 +215,6 @@ export default {
     },
     handleLogin() {
       this.$refs.loginForm.validate((valid) => {
-        console.log(this.loginForm);
         if (valid) {
           this.loading = true;
           if (this.loginForm.rememberMe) {
@@ -233,8 +230,6 @@ export default {
             Cookies.remove("password");
             Cookies.remove("rememberMe");
           }
-          console.log(this.loginForm, "2");
-
           this.$store
             .dispatch("Login", this.loginForm)
             .then(() => {
