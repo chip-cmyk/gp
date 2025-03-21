@@ -1,6 +1,8 @@
 package com.ruoyi.framework.web.service;
 
 import javax.annotation.Resource;
+
+import com.ruoyi.system.service.ISysRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -29,14 +31,15 @@ import com.ruoyi.framework.security.context.AuthenticationContextHolder;
 import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysUserService;
 
+import java.util.Arrays;
+
 /**
  * 登录校验方法
- * 
+ *
  * @author ruoyi
  */
 @Component
-public class SysLoginService
-{
+public class SysLoginService {
     @Autowired
     private TokenService tokenService;
 
@@ -45,84 +48,117 @@ public class SysLoginService
 
     @Autowired
     private RedisCache redisCache;
-    
+
     @Autowired
     private ISysUserService userService;
 
     @Autowired
     private ISysConfigService configService;
 
+    @Autowired
+    private ISysRoleService roleService;
+
     /**
      * 登录验证
-     * 
+     *
      * @param username 用户名
      * @param password 密码
-     * @param code 验证码
-     * @param uuid 唯一标识
+     * @param code     验证码
+     * @param uuid     唯一标识
      * @return 结果
      */
-    public String login(String username, String password, String code, String uuid)
-    {
+    public String login(String username, String password, String code, String uuid, Long[] roleIds) {
         // 验证码校验
         validateCaptcha(username, code, uuid);
         // 登录前置校验
         loginPreCheck(username, password);
         // 用户验证
         Authentication authentication = null;
-        try
-        {
+        try {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
             AuthenticationContextHolder.setContext(authenticationToken);
             // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
             authentication = authenticationManager.authenticate(authenticationToken);
-        }
-        catch (Exception e)
-        {
-            if (e instanceof BadCredentialsException)
-            {
+        } catch (Exception e) {
+            if (e instanceof BadCredentialsException) {
                 AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.password.not.match")));
                 throw new UserPasswordNotMatchException();
-            }
-            else
-            {
+            } else {
                 AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, e.getMessage()));
                 throw new ServiceException(e.getMessage());
             }
-        }
-        finally
-        {
+        } finally {
             AuthenticationContextHolder.clearContext();
         }
         AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success")));
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         recordLoginInfo(loginUser.getUserId());
+
+        //如果roleIds合理，更新用户角色(roleIds中的角色ID必顽在数据库中存在，并且不能包含管理员角色)
+        //如果用户原本的roleIds包含管理员角色，则不允许修改
+        //目前的管理员角色id: [1]
+        //目前的普通用户角色id: [2，100]
+
+        if (roleIds != null && roleIds.length > 0) {
+            // 定义管理员角色ID数组和普通用户角色ID数组(暂时定死，后改为动态获取)
+            Long[] adminRoleIds = new Long[]{1L};
+            Long[] userRoleIds = new Long[]{2L, 100L};
+
+//            System.out.println("LOG: roleIds = " + Arrays.toString(roleIds));
+            //拿到 user 对象
+            SysUser user = userService.selectUserById(loginUser.getUserId());
+            Long[] existingRoleIds = roleService.selectRoleListByUserId(user.getUserId()).toArray(new Long[0]);
+
+//            System.out.println("LOG: existingRoleIds = " + Arrays.toString(existingRoleIds));
+
+            boolean hasAdminRole = false;
+            if (existingRoleIds != null && existingRoleIds.length > 0) {
+                hasAdminRole = Arrays.stream(existingRoleIds).anyMatch(id -> Arrays.asList(adminRoleIds).contains(id));
+            }
+
+            if (hasAdminRole) {
+                throw new ServiceException("管理员请从管理员界面登录");
+            } else {
+                for (Long roleId : roleIds) {
+                    if (!Arrays.asList(userRoleIds).contains(roleId)) {
+                        throw new ServiceException("角色 ID 不合法");
+                    }
+                }
+                //更新用户信息（角色组）
+                user.setRoleIds(roleIds);
+                userService.updateUser(user);
+
+//                existingRoleIds = roleService.selectRoleListByUserId(user.getUserId()).toArray(new Long[0]);
+//                System.out.println("LOG: existingRoleIds (changed) = " + Arrays.toString(existingRoleIds));
+            }
+
+
+        }
+
+
         // 生成token
         return tokenService.createToken(loginUser);
     }
 
     /**
      * 校验验证码
-     * 
+     *
      * @param username 用户名
-     * @param code 验证码
-     * @param uuid 唯一标识
+     * @param code     验证码
+     * @param uuid     唯一标识
      * @return 结果
      */
-    public void validateCaptcha(String username, String code, String uuid)
-    {
+    public void validateCaptcha(String username, String code, String uuid) {
         boolean captchaEnabled = configService.selectCaptchaEnabled();
-        if (captchaEnabled)
-        {
+        if (captchaEnabled) {
             String verifyKey = CacheConstants.CAPTCHA_CODE_KEY + StringUtils.nvl(uuid, "");
             String captcha = redisCache.getCacheObject(verifyKey);
-            if (captcha == null)
-            {
+            if (captcha == null) {
                 AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.expire")));
                 throw new CaptchaExpireException();
             }
             redisCache.deleteObject(verifyKey);
-            if (!code.equalsIgnoreCase(captcha))
-            {
+            if (!code.equalsIgnoreCase(captcha)) {
                 AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.error")));
                 throw new CaptchaException();
             }
@@ -131,35 +167,31 @@ public class SysLoginService
 
     /**
      * 登录前置校验
+     *
      * @param username 用户名
      * @param password 用户密码
      */
-    public void loginPreCheck(String username, String password)
-    {
+    public void loginPreCheck(String username, String password) {
         // 用户名或密码为空 错误
-        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password))
-        {
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("not.null")));
             throw new UserNotExistsException();
         }
         // 密码如果不在指定范围内 错误
         if (password.length() < UserConstants.PASSWORD_MIN_LENGTH
-                || password.length() > UserConstants.PASSWORD_MAX_LENGTH)
-        {
+                || password.length() > UserConstants.PASSWORD_MAX_LENGTH) {
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.password.not.match")));
             throw new UserPasswordNotMatchException();
         }
         // 用户名不在指定范围内 错误
         if (username.length() < UserConstants.USERNAME_MIN_LENGTH
-                || username.length() > UserConstants.USERNAME_MAX_LENGTH)
-        {
+                || username.length() > UserConstants.USERNAME_MAX_LENGTH) {
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.password.not.match")));
             throw new UserPasswordNotMatchException();
         }
         // IP黑名单校验
         String blackStr = configService.selectConfigByKey("sys.login.blackIPList");
-        if (IpUtils.isMatchedIp(blackStr, IpUtils.getIpAddr()))
-        {
+        if (IpUtils.isMatchedIp(blackStr, IpUtils.getIpAddr())) {
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("login.blocked")));
             throw new BlackListException();
         }
@@ -170,8 +202,7 @@ public class SysLoginService
      *
      * @param userId 用户ID
      */
-    public void recordLoginInfo(Long userId)
-    {
+    public void recordLoginInfo(Long userId) {
         SysUser sysUser = new SysUser();
         sysUser.setUserId(userId);
         sysUser.setLoginIp(IpUtils.getIpAddr());

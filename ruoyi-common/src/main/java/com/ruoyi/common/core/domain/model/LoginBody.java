@@ -27,6 +27,11 @@ public class LoginBody
      */
     private String uuid;
 
+    /**
+     * 唯一标识
+     */
+    private Long[] roleIds;
+
     public String getUsername()
     {
         return username;
@@ -66,4 +71,8 @@ public class LoginBody
     {
         this.uuid = uuid;
     }
+
+    public Long[] getRoleIds() { return roleIds;}
+
+    public void setRoleIds(Long[] roleIds) { this.roleIds = roleIds; }
 }

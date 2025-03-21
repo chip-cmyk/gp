@@ -40,6 +40,29 @@
           />
         </el-input>
       </el-form-item>
+      <el-form-item prop="roleIds" v-if="!isAdmin">
+        <el-select
+          v-model="roleIds"
+          placeholder="请选择应用端"
+          :multiple="false"
+          @change="handleRoleChange"
+          style="width: 100%"
+        >
+          <!-- 前缀图标 -->
+          <template slot="prefix">
+            <span style="margin-left: 2px; vertical-align: -0.1em">
+              <i class="el-icon-menu"></i>
+            </span>
+          </template>
+          <el-option
+            v-for="item in appOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
+          </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item prop="code" v-if="captchaEnabled">
         <el-input
           v-model="loginForm.code"
@@ -74,6 +97,11 @@
           <span v-if="!loading">登 录</span>
           <span v-else>登 录 中...</span>
         </el-button>
+        <div style="float: left" v-if="register">
+          <el-button type="text" @click="handleLoginType">{{
+            `${isAdmin ? "用户" : "管理员"}登录`
+          }}</el-button>
+        </div>
         <div style="float: right" v-if="register">
           <router-link class="link-type" :to="'/register'"
             >立即注册</router-link
@@ -101,12 +129,16 @@ export default {
       title: process.env.VUE_APP_TITLE,
       logo: logoImg,
       codeUrl: "",
+      roleIds: null,
+      //是否为管理员登录
+      isAdmin: true,
       loginForm: {
         username: "admin",
         password: "admin123",
         rememberMe: false,
         code: "",
         uuid: "",
+        roleIds: [],
       },
       loginRules: {
         username: [
@@ -116,6 +148,7 @@ export default {
           { required: true, trigger: "blur", message: "请输入您的密码" },
         ],
         code: [{ required: true, trigger: "change", message: "请输入验证码" }],
+        // roleIds: [{ required: true, trigger: "blur", message: "请选择应用端" }],
       },
       loading: false,
       // 验证码开关
@@ -123,6 +156,16 @@ export default {
       // 注册开关
       register: true,
       redirect: undefined,
+      appOptions: [
+        {
+          value: 2,
+          label: "普通角色",
+        },
+        {
+          value: 100,
+          label: "课研人员",
+        },
+      ],
     };
   },
   watch: {
@@ -138,6 +181,18 @@ export default {
     this.getCookie();
   },
   methods: {
+    handleRoleChange(val) {
+      if (Array.isArray(val)) {
+        this.loginForm.roleIds = val;
+      } else {
+        this.loginForm.roleIds = [val];
+      }
+      console.log(val);
+      console.log(this.loginForm.roleIds, "this.loginForm.roleIds");
+    },
+    handleLoginType() {
+      this.isAdmin = !this.isAdmin;
+    },
     getCode() {
       getCodeImg().then((res) => {
         this.captchaEnabled =
@@ -157,10 +212,12 @@ export default {
         password:
           password === undefined ? this.loginForm.password : decrypt(password),
         rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
+        roleIds: this.loginForm.roleIds,
       };
     },
     handleLogin() {
       this.$refs.loginForm.validate((valid) => {
+        console.log(this.loginForm);
         if (valid) {
           this.loading = true;
           if (this.loginForm.rememberMe) {
@@ -176,6 +233,8 @@ export default {
             Cookies.remove("password");
             Cookies.remove("rememberMe");
           }
+          console.log(this.loginForm, "2");
+
           this.$store
             .dispatch("Login", this.loginForm)
             .then(() => {
@@ -260,5 +319,11 @@ export default {
   height: 24px;
   vertical-align: middle;
   margin-right: 12px;
+}
+</style>
+
+<style scoped>
+.el-button.el-button--text {
+  color: #337ab7;
 }
 </style>
