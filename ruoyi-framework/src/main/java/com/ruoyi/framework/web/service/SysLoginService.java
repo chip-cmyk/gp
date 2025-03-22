@@ -2,6 +2,8 @@ package com.ruoyi.framework.web.service;
 
 import javax.annotation.Resource;
 
+import com.ruoyi.common.core.domain.entity.SysRole;
+import com.ruoyi.system.mapper.SysRoleMapper;
 import com.ruoyi.system.service.ISysRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,7 +33,9 @@ import com.ruoyi.framework.security.context.AuthenticationContextHolder;
 import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysUserService;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 登录校验方法
@@ -57,6 +61,9 @@ public class SysLoginService {
 
     @Autowired
     private ISysRoleService roleService;
+
+    @Autowired
+    private SysRoleMapper roleMapper;
 
     /**
      * 登录验证
@@ -94,17 +101,24 @@ public class SysLoginService {
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         recordLoginInfo(loginUser.getUserId());
 
-        //如果roleIds合理，更新用户角色(roleIds中的角色ID必顽在数据库中存在，并且不能包含管理员角色)
-        //如果用户原本的roleIds包含管理员角色，则不允许修改
-        //目前的管理员角色id: [1]
-        //目前的普通用户角色id: [2，100]
-        //拿到 user 对象
-        // 定义管理员角色ID数组和普通用户角色ID数组(暂时定死，后改为动态获取计算)
-        Long[] adminRoleIds = new Long[]{1L};
-        Long[] userRoleIds = new Long[]{2L, 100L};
+        //获取所有的角色ID,动态计算出管理员角色ID数组和普通用户角色ID数组（管理员的ID的role_name字段含有“管理员”）
+        //查询所有角色(这里获取的是所有字段，要根据roleName来筛出roleId)
+        List<SysRole> allRoles = roleMapper.selectRoleAll();
+        List<Long> adminRoleIdsList = new ArrayList<>();
+        List<Long> userRoleIdsList = new ArrayList<>();
+        for (SysRole role : allRoles) {
+            if (role.getRoleName().contains("管理员")) {
+                adminRoleIdsList.add(role.getRoleId());
+            } else {
+                userRoleIdsList.add(role.getRoleId());
+            }
+        }
+        //管理员角色ID数组和普通用户角色ID数组
+        Long[] adminRoleIds = adminRoleIdsList.toArray(new Long[0]);
+        Long[] userRoleIds = userRoleIdsList.toArray(new Long[0]);
+        //获取 user 对象
         SysUser user = userService.selectUserById(loginUser.getUserId());
         Long[] existingRoleIds = roleService.selectRoleListByUserId(user.getUserId()).toArray(new Long[0]);
-//            System.out.println("LOG: existingRoleIds = " + Arrays.toString(existingRoleIds));
         boolean hasAdminRole = false;
         //判断用户是否有管理员角色
         if (existingRoleIds != null && existingRoleIds.length > 0) {
@@ -113,8 +127,9 @@ public class SysLoginService {
         if (!hasAdminRole && (roleIds == null || roleIds.length == 0)) {
             throw new ServiceException("用户请点左下用户登录");
         }
+        //如果roleIds合理，更新用户角色(roleIds中的角色ID必顽在数据库中存在，并且不能包含管理员角色)
+        //如果用户原本的roleIds包含管理员角色，则不允许修改
         if (roleIds != null && roleIds.length > 0) {
-//            System.out.println("LOG: roleIds = " + Arrays.toString(roleIds));
             if (hasAdminRole) {
                 throw new ServiceException("管理员请点左下管理员登录");
             } else {
@@ -126,8 +141,6 @@ public class SysLoginService {
                 //更新用户信息（角色组）
                 user.setRoleIds(roleIds);
                 userService.updateUser(user);
-//                existingRoleIds = roleService.selectRoleListByUserId(user.getUserId()).toArray(new Long[0]);
-//                System.out.println("LOG: existingRoleIds (changed) = " + Arrays.toString(existingRoleIds));
             }
         }
 
