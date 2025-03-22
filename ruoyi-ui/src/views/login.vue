@@ -8,7 +8,8 @@
     >
       <div>
         <h3 class="title">
-          <img v-if="logo" :src="logo" class="login-logo" />{{ title }}
+          <img v-if="logo" :src="logo" class="login-logo" />{{ title }} -
+          {{ isAdmin ? "管理端" : "应用端" }}
         </h3>
       </div>
       <el-form-item prop="username">

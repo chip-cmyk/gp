@@ -432,11 +432,28 @@ export default {
               qrCodeId: this.form.qrCodeId,
             }).then((response) => {
               this.$modal.msgSuccess("添加关联成功");
-              // 如果使用情况为未使用，则设为已使用
-              if (this.form.usageStatus == 0) {
+              console.log(
                 this.arAssociationList.find(
                   (item) => item.qrCodeId === this.form.qrCodeId
-                ).usageStatus = 1;
+                )
+              );
+              const item = this.arAssociationList.find(
+                (item) => item.qrCodeId === this.form.qrCodeId
+              );
+              console.log(item.usageStatus == 0, "item");
+              // 如果使用情况为未使用，则设为已使用
+              if (item.usageStatus == 0) {
+                // this.arAssociationList.find(
+                //   (item) => item.qrCodeId === this.form.qrCodeId
+                // ).usageStatus = 1;
+                // 触发视图更新
+                this.$set(item, "usageStatus", 1);
+                console.log(
+                  this.arAssociationList.find(
+                    (item) => item.qrCodeId === this.form.qrCodeId
+                  ).usageStatus,
+                  "after set"
+                );
               }
               this.open = false;
               // this.getList();
