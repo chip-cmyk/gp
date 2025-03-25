@@ -29,8 +29,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         qc.qr_code_name,
         qc.qr_code,
         <!-- 动态计算字段名保持为 usage_status --> CASE
-        WHEN EXISTS (SELECT 1 FROM ar_content ac WHERE
-        ac.qr_code_id = qc.qr_code_id)
+        WHEN EXISTS (SELECT 1 FROM sandbox_zone sz WHERE
+        sz.qr_code_id = qc.qr_code_id)
         THEN '1'
         ELSE '0'
         END AS usage_status <!-- 直接覆盖原表字段 -->

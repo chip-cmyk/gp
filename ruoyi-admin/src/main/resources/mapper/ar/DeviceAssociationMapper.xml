@@ -49,8 +49,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="usageStatus != null and usageStatus != ''">
                 AND (
                 CASE
-                WHEN EXISTS (SELECT 1 FROM ar_content ac WHERE
-                ac.qr_code_id = qc.qr_code_id)
+                WHEN EXISTS (SELECT 1 FROM device WHERE
+                device.qr_code_number = qc.qr_code_id)
                 THEN '1' ELSE '0'
                 END = #{usageStatus}
                 )
