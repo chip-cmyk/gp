@@ -24,6 +24,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="description != null  and description != ''"> and description = #{description}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
             <if test="qrCodeNumber != null  and qrCodeNumber != ''"> and qr_code_number = #{qrCodeNumber}</if>
+            <choose>
+                <!-- 当传入 qrCodeNumber=0 时，查询 qr_code_id 为
+               null 的记录 -->
+                <when test="qrCodeNumber == 0">
+                    and qr_code_number is null
+                </when>
+                <!-- 其他值时查询等于该值的记录 -->
+                <otherwise>
+                    and qr_code_number = #{qrCodeNumber}
+                </otherwise>
+            </choose>
             <if test="factoryNumber != null  and factoryNumber != ''"> and factory_number = #{factoryNumber}</if>
         </where>
     </select>
@@ -64,6 +75,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 qr_code_number = null,
             </if>
             <if test="factoryNumber != null">factory_number = #{factoryNumber},</if>
+            <choose>
+                <when test="qrCodeId == 0">
+                    qr_code_id = NULL,
+                </when>
+                <!-- 允许 qrCodeId 为 null 时也清空 -->
+                <otherwise>
+                    qr_code_id = #{qrCodeId},
+                </otherwise>
+            </choose>
         </trim>
         where device_number = #{deviceNumber}
     </update>
