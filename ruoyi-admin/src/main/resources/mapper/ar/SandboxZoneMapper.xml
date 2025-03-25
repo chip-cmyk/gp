@@ -18,11 +18,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSandboxZoneList" parameterType="SandboxZone" resultMap="SandboxZoneResult">
         <include refid="selectSandboxZoneVo"/>
-        <where>  
-            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
-            <if test="description != null  and description != ''"> and description = #{description}</if>
-            <if test="qrCodeId != null "> and qr_code_id = #{qrCodeId}</if>
-            <if test="factoryId != null "> and factory_id = #{factoryId}</if>
+        <where>
+            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
+            <if test="description != null  and description != ''">and description = #{description}</if>
+            <if test="qrCodeId != null ">
+                <choose>
+                    <!-- 当传入 qrCodeId=0 时，查询 qr_code_id 为
+                   null 的记录 -->
+                    <when test="qrCodeId == 0">
+                        and qr_code_id is null
+                    </when>
+                    <!-- 其他值时查询等于该值的记录 -->
+                    <otherwise>
+                        and qr_code_id = #{qrCodeId}
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="factoryId != null ">and factory_id = #{factoryId}</if>
         </where>
     </select>
     

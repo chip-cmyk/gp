@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.ar.mapper.SandAssociationMapper">
+    
+    <resultMap type="SandAssociation" id="SandAssociationResult">
+        <result property="qrCodeId"    column="qr_code_id"    />
+        <result property="qrCodeName"    column="qr_code_name"    />
+        <result property="qrCode"    column="qr_code"    />
+        <result property="usageStatus"    column="usage_status"    />
+    </resultMap>
+
+    <resultMap id="SandAssociationSandboxZoneResult" type="SandAssociation" extends="SandAssociationResult">
+        <collection property="sandboxZoneList" ofType="SandboxZone" column="qr_code_id" select="selectSandboxZoneList" />
+    </resultMap>
+
+    <resultMap type="SandboxZone" id="SandboxZoneResult">
+        <result property="zoneId"    column="zone_id"    />
+        <result property="name"    column="name"    />
+        <result property="description"    column="description"    />
+        <result property="qrCodeId"    column="qr_code_id"    />
+        <result property="factoryId"    column="factory_id"    />
+    </resultMap>
+
+    <sql id="selectSandAssociationVo">
+        SELECT
+        qc.qr_code_id,
+        qc.qr_code_name,
+        qc.qr_code,
+        <!-- 动态计算字段名保持为 usage_status --> CASE
+        WHEN EXISTS (SELECT 1 FROM ar_content ac WHERE
+        ac.qr_code_id = qc.qr_code_id)
+        THEN '1'
+        ELSE '0'
+        END AS usage_status <!-- 直接覆盖原表字段 -->
+        FROM qr_code qc
+    </sql>
+
+    <select id="selectSandAssociationList" parameterType="SandAssociation" resultMap="SandAssociationResult">
+        <include refid="selectSandAssociationVo"/>
+        <where>
+            <if test="qrCodeName != null  and qrCodeName != ''">and qr_code_name like concat('%', #{qrCodeName}, '%')
+            </if>
+            <if test="qrCode != null  and qrCode != ''">and qr_code = #{qrCode}</if>
+            <if test="usageStatus != null  and usageStatus != ''">and usage_status = #{usageStatus}</if>
+            <!-- 直接使用动态计算结果过滤 -->
+            <if test="usageStatus != null and usageStatus != ''">
+                AND (
+                CASE
+                WHEN EXISTS (SELECT 1 FROM ar_content ac WHERE
+                ac.qr_code_id = qc.qr_code_id)
+                THEN '1' ELSE '0'
+                END = #{usageStatus}
+                )
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectSandAssociationByQrCodeId" parameterType="Long" resultMap="SandAssociationSandboxZoneResult">
+        select qr_code_id, qr_code_name, qr_code, usage_status
+        from sand_association
+        where qr_code_id = #{qrCodeId}
+    </select>
+
+    <select id="selectSandboxZoneList" resultMap="SandboxZoneResult">
+        select zone_id, name, description, qr_code_id, factory_id
+        from sandbox_zone
+        where qr_code_id = #{qr_code_id}
+    </select>
+
+    <insert id="insertSandAssociation" parameterType="SandAssociation" useGeneratedKeys="true" keyProperty="qrCodeId">
+        insert into sand_association
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="qrCodeName != null and qrCodeName != ''">qr_code_name,</if>
+            <if test="qrCode != null and qrCode != ''">qr_code,</if>
+            <if test="usageStatus != null">usage_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="qrCodeName != null and qrCodeName != ''">#{qrCodeName},</if>
+            <if test="qrCode != null and qrCode != ''">#{qrCode},</if>
+            <if test="usageStatus != null">#{usageStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSandAssociation" parameterType="SandAssociation">
+        update sand_association
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="qrCodeName != null and qrCodeName != ''">qr_code_name = #{qrCodeName},</if>
+            <if test="qrCode != null and qrCode != ''">qr_code = #{qrCode},</if>
+            <if test="usageStatus != null">usage_status = #{usageStatus},</if>
+            <choose>
+                <when test="qrCodeId == 0">
+                    qr_code_id = NULL,
+                </when>
+                <!-- 允许 qrCodeId 为 null 时也清空 -->
+                <otherwise>
+                    qr_code_id = #{qrCodeId},
+                </otherwise>
+            </choose>
+        </trim>
+        where qr_code_id = #{qrCodeId}
+    </update>
+
+    <delete id="deleteSandAssociationByQrCodeId" parameterType="Long">
+        delete from sand_association where qr_code_id = #{qrCodeId}
+    </delete>
+
+    <delete id="deleteSandAssociationByQrCodeIds" parameterType="String">
+        delete from sand_association where qr_code_id in 
+        <foreach item="qrCodeId" collection="array" open="(" separator="," close=")">
+            #{qrCodeId}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteSandboxZoneByQrCodeIds" parameterType="String">
+        delete from sandbox_zone where qr_code_id in 
+        <foreach item="qrCodeId" collection="array" open="(" separator="," close=")">
+            #{qrCodeId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteSandboxZoneByQrCodeId" parameterType="Long">
+        delete from sandbox_zone where qr_code_id = #{qrCodeId}
+    </delete>
+
+    <insert id="batchSandboxZone">
+        insert into sandbox_zone( zone_id, name, description, qr_code_id, factory_id) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.zoneId}, #{item.name}, #{item.description}, #{item.qrCodeId}, #{item.factoryId})
+        </foreach>
+    </insert>
+</mapper>

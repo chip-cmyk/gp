@@ -9,7 +9,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 沙盘分区对象 sandbox_zone
  * 
  * @author lazy
- * @date 2025-01-24
+ * @date 2025-03-25
  */
 public class SandboxZone extends BaseEntity
 {
