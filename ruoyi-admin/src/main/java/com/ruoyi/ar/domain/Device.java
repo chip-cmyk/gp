@@ -9,7 +9,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 设备对象 device
  * 
  * @author lazy
- * @date 2025-01-22
+ * @date 2025-03-25
  */
 public class Device extends BaseEntity
 {
@@ -32,7 +32,7 @@ public class Device extends BaseEntity
 
     /** 二维码编号 */
     @Excel(name = "二维码编号")
-    private String qrCodeNumber;
+    private Long qrCodeNumber;
 
     /** 工厂编号 */
     @Excel(name = "工厂编号")
@@ -74,12 +74,12 @@ public class Device extends BaseEntity
     {
         return status;
     }
-    public void setQrCodeNumber(String qrCodeNumber) 
+    public void setQrCodeNumber(Long qrCodeNumber)
     {
         this.qrCodeNumber = qrCodeNumber;
     }
 
-    public String getQrCodeNumber() 
+    public Long getQrCodeNumber()
     {
         return qrCodeNumber;
     }
