@@ -41,13 +41,13 @@
           />
         </el-input>
       </el-form-item>
-      <el-form-item prop="roleIds" v-show="!isAdmin">
+      <el-form-item prop="roleIds" v-if="!isAdmin" class="selectApp">
         <el-select
           v-model="roleIds"
           placeholder="请选择应用端"
           :multiple="isMultiple"
           @change="handleRoleChange"
-          style="width: 100%"
+          style="flex: 1"
         >
           <!-- 前缀图标 -->
           <template slot="prefix">
@@ -211,7 +211,6 @@ export default {
       const roleIds = Cookies.get("roleIds");
       const isAdmin = Cookies.get("isAdmin");
       const isMultiple = Cookies.get("isMultiple");
-      console.log(roleIds, "roleIds");
       this.loginForm = {
         username: username === undefined ? this.loginForm.username : username,
         password:
@@ -223,8 +222,6 @@ export default {
       this.isMultiple =
         isMultiple === undefined ? false : isMultiple === "true";
       // 如果是管理员登录，清空应用端
-      console.log(this.isAdmin, "this.isAdmin");
-      console.log(this.isMultiple, "this.isMultiple");
       if (this.isAdmin) {
         this.loginForm.roleIds = [];
       }
@@ -234,13 +231,20 @@ export default {
       } else {
         this.roleIds = this.loginForm.roleIds[0];
       }
-      console.log(this.loginForm.roleIds, "this.loginForm.roleIds");
-      console.log(this.roleIds, "this.roleIds");
     },
     handleLogin() {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.loading = true;
+          if (this.isAdmin) {
+            this.loginForm.roleIds = [];
+          } else {
+            if (this.isMultiple) {
+              this.loginForm.roleIds = this.roleIds;
+            } else {
+              this.loginForm.roleIds = [this.roleIds];
+            }
+          }
           if (this.loginForm.rememberMe) {
             Cookies.set("username", this.loginForm.username, { expires: 30 });
             Cookies.set("password", encrypt(this.loginForm.password), {
@@ -249,7 +253,9 @@ export default {
             Cookies.set("rememberMe", this.loginForm.rememberMe, {
               expires: 30,
             });
-            Cookies.set("roleIds", this.loginForm.roleIds, { expires: 30 });
+            if (!this.isAdmin) {
+              Cookies.set("roleIds", this.loginForm.roleIds, { expires: 30 });
+            }
             Cookies.set("isAdmin", this.isAdmin, { expires: 30 });
             Cookies.set("isMultiple", this.isMultiple, { expires: 30 });
           } else {
@@ -350,5 +356,11 @@ export default {
 <style scoped>
 .el-button.el-button--text {
   color: #337ab7;
+}
+.selectApp /deep/ .el-form-item__content {
+  display: flex;
+  justify-content: space-between;
+  align-self: center;
+  width: 100%;
 }
 </style>
