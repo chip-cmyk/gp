@@ -41,11 +41,11 @@
           />
         </el-input>
       </el-form-item>
-      <el-form-item prop="roleIds" v-if="!isAdmin">
+      <el-form-item prop="roleIds" v-show="!isAdmin">
         <el-select
           v-model="roleIds"
           placeholder="请选择应用端"
-          :multiple="false"
+          :multiple="isMultiple"
           @change="handleRoleChange"
           style="width: 100%"
         >
@@ -133,6 +133,8 @@ export default {
       roleIds: null,
       //是否为管理员登录
       isAdmin: true,
+      // 是否多选应用端
+      isMultiple: false,
       loginForm: {
         username: "admin",
         password: "admin123",
@@ -206,13 +208,34 @@ export default {
       const username = Cookies.get("username");
       const password = Cookies.get("password");
       const rememberMe = Cookies.get("rememberMe");
+      const roleIds = Cookies.get("roleIds");
+      const isAdmin = Cookies.get("isAdmin");
+      const isMultiple = Cookies.get("isMultiple");
+      console.log(roleIds, "roleIds");
       this.loginForm = {
         username: username === undefined ? this.loginForm.username : username,
         password:
           password === undefined ? this.loginForm.password : decrypt(password),
         rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
-        roleIds: this.loginForm.roleIds,
+        roleIds: roleIds === undefined ? [] : roleIds.split(",").map(Number),
       };
+      this.isAdmin = isAdmin === undefined ? true : isAdmin === "true";
+      this.isMultiple =
+        isMultiple === undefined ? false : isMultiple === "true";
+      // 如果是管理员登录，清空应用端
+      console.log(this.isAdmin, "this.isAdmin");
+      console.log(this.isMultiple, "this.isMultiple");
+      if (this.isAdmin) {
+        this.loginForm.roleIds = [];
+      }
+      // 如果允许多选应用端，this.roleId转换为数组,否则转换为数字
+      if (this.isMultiple) {
+        this.roleIds = this.loginForm.roleIds;
+      } else {
+        this.roleIds = this.loginForm.roleIds[0];
+      }
+      console.log(this.loginForm.roleIds, "this.loginForm.roleIds");
+      console.log(this.roleIds, "this.roleIds");
     },
     handleLogin() {
       this.$refs.loginForm.validate((valid) => {
@@ -226,10 +249,16 @@ export default {
             Cookies.set("rememberMe", this.loginForm.rememberMe, {
               expires: 30,
             });
+            Cookies.set("roleIds", this.loginForm.roleIds, { expires: 30 });
+            Cookies.set("isAdmin", this.isAdmin, { expires: 30 });
+            Cookies.set("isMultiple", this.isMultiple, { expires: 30 });
           } else {
             Cookies.remove("username");
             Cookies.remove("password");
             Cookies.remove("rememberMe");
+            Cookies.remove("roleIds");
+            Cookies.remove("isAdmin");
+            Cookies.remove("isMultiple");
           }
           this.$store
             .dispatch("Login", this.loginForm)
