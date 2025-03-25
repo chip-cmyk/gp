@@ -112,7 +112,7 @@
     </el-form>
     <!--  底部  -->
     <div class="el-login-footer">
-      <span>Copyright © 2024-2025</span>
+      <!-- <span>Copyright © 2024-2025</span> -->
     </div>
   </div>
 </template>

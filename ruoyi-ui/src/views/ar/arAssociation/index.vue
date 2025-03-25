@@ -443,10 +443,7 @@ export default {
               console.log(item.usageStatus == 0, "item");
               // 如果使用情况为未使用，则设为已使用
               if (item.usageStatus == 0) {
-                // this.arAssociationList.find(
-                //   (item) => item.qrCodeId === this.form.qrCodeId
-                // ).usageStatus = 1;
-                // 触发视图更新
+                // this.$set触发视图更新
                 this.$set(item, "usageStatus", 1);
                 console.log(
                   this.arAssociationList.find(
