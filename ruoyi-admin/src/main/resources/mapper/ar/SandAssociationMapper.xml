@@ -48,7 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="usageStatus != null and usageStatus != ''">
                 AND (
                 CASE
-                WHEN EXISTS (SELECT 1 FROM ar_content ac WHERE
+                WHEN EXISTS (SELECT 1 FROM sandbox_zone ac WHERE
                 ac.qr_code_id = qc.qr_code_id)
                 THEN '1' ELSE '0'
                 END = #{usageStatus}
@@ -59,7 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectSandAssociationByQrCodeId" parameterType="Long" resultMap="SandAssociationSandboxZoneResult">
         select qr_code_id, qr_code_name, qr_code, usage_status
-        from sand_association
+        from qr_code
         where qr_code_id = #{qrCodeId}
     </select>
 
@@ -70,7 +70,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <insert id="insertSandAssociation" parameterType="SandAssociation" useGeneratedKeys="true" keyProperty="qrCodeId">
-        insert into sand_association
+        insert into qr_code
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="qrCodeName != null and qrCodeName != ''">qr_code_name,</if>
             <if test="qrCode != null and qrCode != ''">qr_code,</if>
@@ -84,7 +84,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 
     <update id="updateSandAssociation" parameterType="SandAssociation">
-        update sand_association
+        update qr_code
         <trim prefix="SET" suffixOverrides=",">
             <if test="qrCodeName != null and qrCodeName != ''">qr_code_name = #{qrCodeName},</if>
             <if test="qrCode != null and qrCode != ''">qr_code = #{qrCode},</if>
@@ -103,11 +103,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteSandAssociationByQrCodeId" parameterType="Long">
-        delete from sand_association where qr_code_id = #{qrCodeId}
+        delete from qr_code where qr_code_id = #{qrCodeId}
     </delete>
 
     <delete id="deleteSandAssociationByQrCodeIds" parameterType="String">
-        delete from sand_association where qr_code_id in 
+        delete from qr_code where qr_code_id in 
         <foreach item="qrCodeId" collection="array" open="(" separator="," close=")">
             #{qrCodeId}
         </foreach>
