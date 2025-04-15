@@ -43,9 +43,9 @@
       </el-form-item>
       <el-form-item prop="roleIds" v-if="!isAdmin" class="selectApp">
         <el-select
+          v-if="!isMultiple"
           v-model="roleIds"
           placeholder="请选择应用端"
-          :multiple="isMultiple"
           @change="handleRoleChange"
           style="flex: 1"
         >
@@ -63,6 +63,46 @@
           >
           </el-option>
         </el-select>
+        <el-select
+          v-else
+          multiple
+          v-model="roleIds"
+          placeholder="请选择应用端"
+          @change="handleRoleChange"
+          style="flex: 1"
+        >
+          <!-- 前缀图标 -->
+          <template slot="prefix">
+            <span style="margin-left: 2px; vertical-align: -0.1em">
+              <i class="el-icon-menu"></i>
+            </span>
+          </template>
+          <el-option
+            v-for="item in appOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
+          </el-option>
+        </el-select>
+        <el-checkbox style="padding-left: 12px" v-model="isMultiple"
+          >是否多选</el-checkbox
+        >
+        <!-- <div -->
+        <!-- style=" -->
+        <!-- display: inline-block; -->
+        <!-- height: 100%; -->
+        <!-- padding-left: 10px; -->
+        <!-- vertical-align: middle; -->
+        <!-- " -->
+        <!-- > -->
+        <!-- <el-switch -->
+        <!-- v-model="isMultiple" -->
+        <!-- active-icon-class="el-icon-s-grid" -->
+        <!-- inactive-icon-class="el-icon-s-custom" -->
+        <!-- @change="handleIsMultiple" -->
+        <!-- /> -->
+        <!-- </div> -->
       </el-form-item>
       <el-form-item prop="code" v-if="captchaEnabled">
         <el-input
@@ -131,7 +171,7 @@ export default {
       logo: logoImg,
       codeUrl: "",
       roleIds: null,
-      //是否为管理员登录
+      //默认是否为管理员登录
       isAdmin: true,
       // 是否多选应用端
       isMultiple: false,
@@ -194,6 +234,20 @@ export default {
     handleLoginType() {
       this.isAdmin = !this.isAdmin;
     },
+    handleIsMultiple() {
+      if (this.isMultiple) {
+        // 如果切换到多选模式，确保 roleIds 是数组
+        this.roleIds = Array.isArray(this.roleIds)
+          ? this.roleIds
+          : [this.roleIds];
+      } else {
+        // 如果切换到单选模式，确保 roleIds 是单个值
+        this.roleIds = Array.isArray(this.roleIds)
+          ? this.roleIds[0]
+          : this.roleIds;
+      }
+    },
+
     getCode() {
       getCodeImg().then((res) => {
         this.captchaEnabled =
@@ -218,9 +272,9 @@ export default {
         rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
         roleIds: roleIds === undefined ? [] : roleIds.split(",").map(Number),
       };
-      this.isAdmin = isAdmin === undefined ? true : isAdmin === "true";
+      this.isAdmin = isAdmin === undefined ? this.isAdmin : isAdmin === "true";
       this.isMultiple =
-        isMultiple === undefined ? false : isMultiple === "true";
+        isMultiple === undefined ? this.isMultiple : isMultiple === "true";
       // 如果是管理员登录，清空应用端
       if (this.isAdmin) {
         this.loginForm.roleIds = [];
