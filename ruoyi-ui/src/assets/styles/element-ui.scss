@@ -127,3 +127,18 @@
 .el-dialog .el-divider.el-divider--horizontal {
   margin: 32px 0 24px 0;
 }
+
+.el-date-editor.el-input,
+.el-date-editor.el-input__inner {
+  width: 205px;
+}
+
+// 确保右侧按钮在移动端正常显示
+.mb8.el-row {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 16px;
+  .top-right-btn {
+    margin-left: auto;
+  }
+}

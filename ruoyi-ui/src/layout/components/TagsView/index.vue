@@ -17,11 +17,17 @@
         @click.middle.native="!isAffix(tag) ? closeSelectedTag(tag) : ''"
         @contextmenu.prevent.native="openMenu(tag, $event)"
       >
-        {{ tag.title }}
+        <span class="tag-title">{{ tag.title }}</span>
         <span
           v-if="!isAffix(tag)"
           class="el-icon-close"
           @click.prevent.stop="closeSelectedTag(tag)"
+        />
+        <ChromeTabBg
+          class="chrome-tab-bg"
+          :class="{ affix: isAffix(tag) }"
+          :style="activeBgStyle(tag)"
+          v-if="isActive(tag)"
         />
       </router-link>
     </scroll-pane>
@@ -54,10 +60,11 @@
 
 <script>
 import ScrollPane from "./ScrollPane";
+import ChromeTabBg from "./ChromeTabBg";
 import path from "path";
 
 export default {
-  components: { ScrollPane },
+  components: { ScrollPane, ChromeTabBg },
   data() {
     return {
       visible: false,
@@ -102,8 +109,13 @@ export default {
     activeStyle(tag) {
       if (!this.isActive(tag)) return {};
       return {
-        "background-color": this.theme,
-        "border-color": this.theme,
+        color: this.theme,
+      };
+    },
+    activeBgStyle(tag) {
+      if (!this.isActive(tag)) return {};
+      return {
+        color: this.get10PercentBlend(this.theme),
       };
     },
     isAffix(tag) {
@@ -259,6 +271,22 @@ export default {
     handleScroll() {
       this.closeMenu();
     },
+    get10PercentBlend(hexColor) {
+      // 1. 解析 HEX 颜色
+      const r = parseInt(hexColor.slice(1, 3), 16);
+      const g = parseInt(hexColor.slice(3, 5), 16);
+      const b = parseInt(hexColor.slice(5, 7), 16);
+
+      // 2. 计算混合后的 RGB（10% 颜色 + 90% 白色）
+      const blendR = Math.round(r * 0.1 + 255 * 0.9);
+      const blendG = Math.round(g * 0.1 + 255 * 0.9);
+      const blendB = Math.round(b * 0.1 + 255 * 0.9);
+
+      // 3. 转回 HEX
+      return `#${blendR.toString(16).padStart(2, "0")}${blendG
+        .toString(16)
+        .padStart(2, "0")}${blendB.toString(16).padStart(2, "0")}`;
+    },
   },
 };
 </script>
@@ -272,15 +300,16 @@ export default {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 0 3px 0 rgba(0, 0, 0, 0.04);
   .tags-view-wrapper {
     .tags-view-item {
+      box-sizing: border-box;
       display: inline-block;
       position: relative;
       cursor: pointer;
-      height: 26px;
-      line-height: 26px;
-      border: 1px solid #d8dce5;
+      height: 30px;
+      line-height: 30px;
+      // border: 1px solid #d8dce5;
       color: #495060;
-      background: #fff;
-      padding: 0 8px;
+      // background: #fff;
+      padding: 0 12px;
       font-size: 12px;
       margin-left: 5px;
       margin-top: 4px;
@@ -292,9 +321,9 @@ export default {
         margin-right: 15px;
       }
       &.active {
-        background-color: #42b983;
-        color: #fff;
-        border-color: #42b983;
+        // background-color: #42b983;
+        color: #42b983;
+        // border-color: #42b983;
         // &::before {
         //   content: "";
         //   background: #fff;
@@ -329,6 +358,23 @@ export default {
       }
     }
   }
+  .tag-title {
+    position: relative;
+    z-index: 100;
+  }
+}
+.router-link-active .chrome-tab-bg {
+  position: absolute;
+  top: -1px;
+  left: -12%;
+  width: 118%;
+  height: 32px;
+  // color: #e7f9f9;
+  transform: scaleY(0.9);
+  &.affix {
+    left: -20%;
+    width: 140%;
+  }
 }
 </style>
 
@@ -337,6 +383,8 @@ export default {
 .tags-view-wrapper {
   .tags-view-item {
     .el-icon-close {
+      position: relative;
+      z-index: 100;
       width: 16px;
       height: 16px;
       vertical-align: middle;
