@@ -5,6 +5,27 @@ src/assets
 # 忽略public目录下文件的语法检查
 public
 # 忽略当前目录下为js的文件的语法检查
-*.js
+# *.js
 # 忽略当前目录下为vue的文件的语法检查
-*.vue
+# *.vue
+"!src/api/**", // 排除除 src/components 之外的所有文件
+"!src/components/**",
+"!src/views/**",
+"node_modules/**", // 通常还需排除 node_modules
+
+.eslintrc.js
+
+tool
+system
+monitor
+register
+utils
+plugins
+Crontab
+DictTag
+RightToolbar
+directive
+Sidebar
+
+modules
+vue.config.js
