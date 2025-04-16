@@ -107,7 +107,7 @@ public class SysLoginService {
         List<Long> adminRoleIdsList = new ArrayList<>();
         List<Long> userRoleIdsList = new ArrayList<>();
         for (SysRole role : allRoles) {
-            if (role.getRoleName().contains("管理员")) {
+            if (role.getRoleKey().toLowerCase().contains("admin")) {
                 adminRoleIdsList.add(role.getRoleId());
             } else {
                 userRoleIdsList.add(role.getRoleId());

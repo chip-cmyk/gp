@@ -184,7 +184,7 @@ public class SysRoleController extends BaseController {
 
         List<SysRole> roles = roleService.selectRoleAllSimple();
         ajax.put("roles", roles.stream()
-                .filter(r -> !r.isAdmin())
+                .filter(r -> !r.getRoleKey().toLowerCase().contains("admin"))
                 .map(r -> {
                     Map<String, Object> roleMap = new HashMap<>();
                     roleMap.put("roleId", r.getRoleId());
