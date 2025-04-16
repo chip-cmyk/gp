@@ -8,6 +8,12 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.ar.domain.ArContent;
+import com.ruoyi.ar.service.IArContentService;
+import com.ruoyi.school.domain.CooperationCase;
+import com.ruoyi.school.service.ICooperationCaseService;
+import com.ruoyi.vr.domain.VrContent;
+import com.ruoyi.vr.service.IVrContentService;
 import org.dromara.x.file.storage.core.FileInfo;
 import org.dromara.x.file.storage.core.FileStorageService;
 import org.slf4j.Logger;
@@ -44,6 +50,34 @@ public class CommonController {
     private FileStorageService fileStorageService;//注入实列
 
     private static final String FILE_DELIMETER = ",";
+
+    @Autowired
+    private IArContentService arContentService;
+
+    @Autowired
+    private IVrContentService vrContentService;
+
+    @Autowired
+    private ICooperationCaseService cooperationCaseService;
+
+    @GetMapping("/getHomeData")
+    public AjaxResult getHomeData() {
+//        public List<ArContent> selectArContentList(ArContent arContent)
+//         public List<VrContent> selectVrContentList(VrContent vrContent)
+//         public List<CooperationCase> selectCooperationCaseList(CooperationCase cooperationCase)
+        //查询AR内容
+        List<ArContent> arContentList = arContentService.selectArContentList(null);
+        //查询VR内容
+        List<VrContent> vrContentList = vrContentService.selectVrContentList(null);
+        //查询合作案例
+        List<CooperationCase> cooperationCaseList = cooperationCaseService.selectCooperationCaseList(null);
+
+        AjaxResult ajax = AjaxResult.success();
+        ajax.put("arContentCount", arContentList.size());
+        ajax.put("vrContentCount", vrContentList.size());
+        ajax.put("cooperationCaseCount", cooperationCaseList.size());
+        return ajax;
+    }
 
     /**
      * 通用下载请求
