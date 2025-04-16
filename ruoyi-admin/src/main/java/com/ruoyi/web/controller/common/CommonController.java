@@ -12,6 +12,8 @@ import com.ruoyi.ar.domain.ArContent;
 import com.ruoyi.ar.service.IArContentService;
 import com.ruoyi.school.domain.CooperationCase;
 import com.ruoyi.school.service.ICooperationCaseService;
+import com.ruoyi.system.domain.dto.MonthlyRegistrationsDTO;
+import com.ruoyi.system.service.IUserStatisticsService;
 import com.ruoyi.vr.domain.VrContent;
 import com.ruoyi.vr.service.IVrContentService;
 import org.dromara.x.file.storage.core.FileInfo;
@@ -19,11 +21,10 @@ import org.dromara.x.file.storage.core.FileStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.constant.Constants;
@@ -60,11 +61,12 @@ public class CommonController {
     @Autowired
     private ICooperationCaseService cooperationCaseService;
 
+    @Autowired
+    private IUserStatisticsService userStatisticsService;
+
+
     @GetMapping("/getHomeData")
     public AjaxResult getHomeData() {
-//        public List<ArContent> selectArContentList(ArContent arContent)
-//         public List<VrContent> selectVrContentList(VrContent vrContent)
-//         public List<CooperationCase> selectCooperationCaseList(CooperationCase cooperationCase)
         //查询AR内容
         List<ArContent> arContentList = arContentService.selectArContentList(null);
         //查询VR内容
@@ -77,6 +79,24 @@ public class CommonController {
         ajax.put("vrContentCount", vrContentList.size());
         ajax.put("cooperationCaseCount", cooperationCaseList.size());
         return ajax;
+    }
+
+//    @GetMapping("/monthly-registrations")
+//    public ResponseEntity<List<MonthlyRegistrationsDTO>> getMonthlyRegistrations(
+//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+//
+//        return ResponseEntity.ok(
+//                userStatisticsService.getMonthlyRegistrations(startDate, endDate)
+//        );
+//    }
+
+    @GetMapping("/monthly-registrations")
+    public AjaxResult getMonthlyRegistrations(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        List<MonthlyRegistrationsDTO> monthlyRegistrations = userStatisticsService.getMonthlyRegistrations(startDate, endDate);
+        return AjaxResult.success(monthlyRegistrations);
     }
 
     /**

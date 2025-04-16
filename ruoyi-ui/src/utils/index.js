@@ -1,5 +1,51 @@
 import { parseTime } from "./ruoyi";
 
+// 根据当前时间返回近12个月时段
+export function getLast12Months() {
+  // 获取当前日期（假设今天是2025-04-16,则应返回2024-05-01,2025-04-30 ）
+  const now = new Date(); // 月份是0-based，3表示4月
+
+  // 1. 计算endDate（当前月份的最后一天）
+  let endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+  // 2. 计算startDate（12个月前的第一天）
+  let startDate = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+
+  // 格式化为YYYY-MM-DD
+  const format = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+  startDate = format(startDate);
+  endDate = format(endDate);
+  return { startDate, endDate };
+}
+
+// 根据当前时间返回近6个月时段
+export function getLast6Months() {
+  // 获取当前日期（假设今天是2025-04-16,则应返回2024-11-01,2025-04-30 ）
+  const now = new Date(); // 月份是0-based，3表示4月
+
+  // 1. 计算endDate（当前月份的最后一天）
+  let endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+  // 2. 计算startDate（6个月前的第一天）
+  let startDate = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+
+  // 格式化为YYYY-MM-DD
+  const format = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+  startDate = format(startDate);
+  endDate = format(endDate);
+  return { startDate, endDate };
+}
+
 // 根据当前时间返回时段
 export function getTimeSlot() {
   const date = new Date();

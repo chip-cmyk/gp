@@ -4,7 +4,9 @@
       <div class="data-card__title">{{ item.title }}</div>
       <div class="data-card__content">
         <svgIcon :icon-class="item.icon" class="data-card__icon" />
-        <div class="data-card__value">{{ item.value }}</div>
+        <div class="data-card__value">
+          <ICountUp :delay="delay" :endVal="item.value" :options="options" />
+        </div>
       </div>
     </div>
   </div>
@@ -12,15 +14,17 @@
 
 <script>
 import SvgIcon from "@/components/SvgIcon/index.vue";
+import ICountUp from 'vue-countup-v2';
 // import { listContent as listArContent } from "@/api/ar/content.js";
 // import { listContent as listVrContent } from "@/api/vr/content.js";
 // import { listCase } from "@/api/school/case.js";
 import { getHomeData } from "@/api/home";
 
 export default {
-  name: "dataCard",
+  name: "DataCard",
   components: {
     SvgIcon,
+    ICountUp
   },
   data() {
     return {
@@ -41,12 +45,19 @@ export default {
           icon: "color",
         },
       ],
+      delay: 1000,
+      endVal: 100,
+      options: {
+        useEasing: true,
+        useGrouping: true,
+        separator: ',',
+        decimal: '.',
+        prefix: '',
+        suffix: ''
+      }
     };
   },
   computed: {
-  },
-  created() {
-    this.getData();
   },
   methods: {
     getData() {
@@ -60,12 +71,14 @@ export default {
       //   this.cardData[2].value = response.total;
       // });
       getHomeData().then((response) => {
-        console.log(response, "response");
         this.cardData[0].value = response.arContentCount;
         this.cardData[1].value = response.vrContentCount;
         this.cardData[2].value = response.cooperationCaseCount;
       });
     },
+  },
+  created() {
+    this.getData();
   },
 };
 </script>
@@ -87,7 +100,6 @@ export default {
   background: #fff;
   border-radius: 8px;
   padding: 20px;
-  /* 参考图中的彩色背景 */
   background: linear-gradient(135deg, var(--card-color), var(--card-color-dark));
   transition: transform 0.3s ease;
 }
@@ -108,7 +120,7 @@ export default {
 }
 
 .data-card-item:hover {
-  transform: scale(1.01);
+  transform: scale(1.02);
 }
 
 .data-card__content {
@@ -127,12 +139,11 @@ export default {
 .data-card__title {
   font-size: 16px;
   font-weight: 500;
-  margin-bottom: 8px;
   color: #fff;
 }
 
 .data-card__value {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: bold;
   color: #fff;
 }
