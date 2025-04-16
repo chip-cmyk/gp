@@ -85,9 +85,8 @@
           >
           </el-option>
         </el-select>
-        <el-checkbox style="padding-left: 12px" v-model="isMultiple"
-          >是否多选</el-checkbox
-        >
+        <!-- <el-checkbox style="padding-left: 12px" v-model="isMultiple" -->
+        <!-- >是否多选</el-checkbox> -->
         <!-- <div -->
         <!-- style=" -->
         <!-- display: inline-block; -->
