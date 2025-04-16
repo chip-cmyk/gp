@@ -59,3 +59,11 @@ export function getCodeImg() {
     timeout: 20000,
   });
 }
+
+//获取登录页角色选择框列表
+export function getoptionselect() {
+  return request({
+    url: "/system/role/loginOptionselect",
+    method: "get",
+  });
+}
