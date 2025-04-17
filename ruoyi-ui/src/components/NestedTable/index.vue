@@ -108,14 +108,6 @@
         </template>
       </el-table-column>
     </el-table>
-
-    <pagination
-      v-show="total > 0"
-      :total="total"
-      :page.sync="currentPage"
-      :limit.sync="pageSize"
-      @pagination="$emit('pagination', $event)"
-    />
   </div>
 </template>
 
@@ -142,11 +134,10 @@ export default {
       type: Function,
       default: () => [],
     },
-    rowClassName: Function,
+    rowClassName: {
+      type: Function,
+    },
     subRowClassName: Function,
-    total: Number,
-    currentPage: Number,
-    pageSize: Number,
     mainColumns: {
       type: Array,
       default: () => [],

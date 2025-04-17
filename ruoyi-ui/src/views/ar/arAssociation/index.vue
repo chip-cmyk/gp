@@ -39,7 +39,7 @@
           size="mini"
           :disabled="!hasSubSelection"
           @click="handleDelete"
-          v-hasPermi="['ar:arAssociation:remove']"
+          :v-hasPermi="`['${moduleKey}:remove']`"
           >删除关联</el-button
         >
       </el-col>
@@ -50,7 +50,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['ar:arAssociation:export']"
+          :v-hasPermi="`['${moduleKey}:export']`"
           >导出</el-button
         >
       </el-col>
@@ -62,50 +62,56 @@
 
     <nested-table
       ref="nestedTable"
-      :data="arAssociationList"
+      :data="mainList"
       :loading="loading"
       :sub-loading="subLoading"
-      row-key="qrCodeId"
+      :row-key="mainId"
       :row-class-name="tableRowClassName"
       :get-sub-data="getSubData"
-      :total="total"
-      :current-page="queryParams.pageNum"
-      :page-size="queryParams.pageSize"
       :main-columns="mainColumns"
       :sub-columns="subColumns"
       :main-actions="mainActions"
       :sub-actions="subActions"
       @expand-change="handleExpandChange"
       @sub-selection-change="handleSelectionChange"
-      @pagination="handlePagination"
       @add-association="handleAddAssociation"
       @delete-association="handleDeleteAssociation"
     />
 
-    <!-- 添加或修改AR内容关联对话框 -->
+    <pagination
+      v-show="total > 0"
+      :total="total"
+      :page.sync="queryParams.pageNum"
+      :limit.sync="queryParams.pageSize"
+      @pagination="getList"
+    />
+
+    <!-- 添加或修改${this.associationName}关联对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <!-- 添加AR内容下拉框 -->
-        <el-form-item label="AR内容" prop="arContentId">
+        <!-- 添加${this.associationName}下拉框 -->
+        <el-form-item :label="`${associationName}`" :prop="subId">
           <el-select
-            v-model="form.arContentId"
-            placeholder="请选择AR内容"
+            v-model="form[subId]"
+            :placeholder="`请选择${associationName}`"
             filterable
             clearable
           >
             <el-option
               v-for="item in noQrCodeSubList"
-              :key="item.arContentId"
+              :key="item[subId]"
               :label="item.name"
-              :value="item.arContentId"
+              :value="item[subId]"
             ></el-option>
           </el-select>
         </el-form-item>
 
-        <el-divider content-position="center">已关联AR内容</el-divider>
+        <el-divider content-position="center"
+          >已关联{{ associationName }}</el-divider
+        >
 
         <el-table
-          :data="arContentList"
+          :data="subList"
           :row-class-name="rowArContentIndex"
           ref="arContent"
         >
@@ -148,7 +154,12 @@ export default {
   },
   data() {
     return {
+      mainListName: "arAssociationList",
+      subListName: "arContentList",
       moduleKey: "ar:arAssociation",
+      associationName: "AR内容",
+      mainId: "qrCodeId",
+      subId: "arContentId",
       // 遮罩层
       loading: true,
       // 子表遮罩层
@@ -167,10 +178,10 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // AR内容关联表格数据
-      arAssociationList: [],
-      // AR内容表格数据
-      arContentList: [],
+      // ${this.associationName}关联表格数据
+      mainList: [],
+      // ${this.associationName}表格数据
+      subList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -187,8 +198,12 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        arContentId: [
-          { required: true, message: "AR内容不能为空", trigger: "change" },
+        [this.subId]: [
+          {
+            required: true,
+            message: `${this.associationName}不能为空`,
+            trigger: "change",
+          },
         ],
       },
       mainColumns: [
@@ -267,10 +282,22 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询AR内容关联列表 */
+    listMain(params) {
+      return listArAssociation(params);
+    },
+    getMainInfo(id) {
+      return getArAssociation(id);
+    },
+    listSub(params) {
+      return listContent(params);
+    },
+    updateSub(params) {
+      return updateContent(params);
+    },
+    /** 查询${this.associationName}关联列表 */
     getList() {
       // 折叠所有行
-      this.arAssociationList.forEach((item) => {
+      this.mainList.forEach((item) => {
         this.$refs?.nestedTable?.$refs?.mainTable.toggleRowExpansion(
           item,
           false
@@ -279,11 +306,11 @@ export default {
       // 清空缓存
       this.cacheExpandedKeys.clear();
       this.loading = true;
-      listArAssociation(this.queryParams).then((response) => {
-        this.arAssociationList = response.rows;
+      this.listMain(this.queryParams).then((response) => {
+        this.mainList = response.rows;
         // 增加associationList属性
-        this.arAssociationList.forEach((item) => {
-          item.associationList = [];
+        this.mainList.forEach((item) => {
+          item[this.mainListName] = [];
         });
         this.total = response.total;
         this.loading = false;
@@ -293,55 +320,49 @@ export default {
       // console.log(row, expandedRows, "handleExpandChange");
       if (
         expandedRows.length > 0 &&
-        !this.cacheExpandedKeys.has(row.qrCodeId)
+        !this.cacheExpandedKeys.has(row[this.mainId])
       ) {
         this.subLoading = true;
-        this.cacheExpandedKeys.add(row.qrCodeId);
-        getArAssociation(row.qrCodeId).then((response) => {
-          // 把AR内容数据赋值给当前行的associationList属性
-          const index = this.arAssociationList.indexOf(row);
-          this.arAssociationList[index].associationList =
-            response.data.arContentList;
-          // this.arAssociationList.push({}); //触发vue更新视图
-          // this.arAssociationList.pop(); //把最后添加的空对象删除掉
-          // console.log(this.arAssociationList, "this.arAssociationList");
+        this.cacheExpandedKeys.add(row[this.mainId]);
+        this.getMainInfo(row[this.mainId]).then((response) => {
+          // 把${this.associationName}数据赋值给当前行的associationList属性
+          const index = this.mainList.indexOf(row);
+          this.mainList[index][this.mainListName] =
+            response.data[this.subListName];
+
           this.subLoading = false;
         });
       }
     },
     handleDeleteAssociation(row, parentIndex) {
       this.$modal
-        .confirm("是否确认删除AR内容名称为【" + row.name + "】的数据项？")
+        .confirm(
+          `是否确认删除${this.associationName}名称为【${row.name}】的数据项？`
+        )
         .then(() => {
-          updateContent({ arContentId: row.arContentId, qrCodeId: null }).then(
-            (response) => {
-              this.$modal.msgSuccess("删除关联成功");
-              const index = this.arAssociationList[
-                parentIndex
-              ].associationList.findIndex(
-                (item) => item.arContentId === row.arContentId
-              );
-              // 不知道为什么使用 splice 方法删除元素才能触发视图更新
-              if (index !== -1) {
-                this.arAssociationList[parentIndex].associationList.splice(
-                  index,
-                  1
-                );
-              }
+          this.updateSub({
+            [this.subId]: row[this.subId],
+            [this.mainId]: null,
+          }).then((response) => {
+            this.$modal.msgSuccess("删除关联成功");
+            const index = this.mainList[parentIndex][
+              this.mainListName
+            ].findIndex((item) => item[this.subId] === row[this.subId]);
 
-              // 如果删除后没有关联的AR内容，则将关联的二维码状态设置为未使用
-              if (
-                this.arAssociationList[parentIndex].associationList.length === 0
-              ) {
-                // 折叠父级行
-                this.$refs?.nestedTable?.$refs?.mainTable.toggleRowExpansion(
-                  this.arAssociationList[parentIndex],
-                  false
-                );
-                this.arAssociationList[parentIndex].usageStatus = 0;
-              }
+            if (index !== -1) {
+              this.mainList[parentIndex][this.mainListName].splice(index, 1);
             }
-          );
+
+            // 如果删除后没有关联的${this.associationName}，则将关联的二维码状态设置为未使用
+            if (this.mainList[parentIndex][this.mainListName].length === 0) {
+              // 折叠父级行
+              this.$refs?.nestedTable?.$refs?.mainTable.toggleRowExpansion(
+                this.mainList[parentIndex],
+                false
+              );
+              this.mainList[parentIndex].usageStatus = 0;
+            }
+          });
         });
     },
     tableRowClassName({ row, rowIndex }) {
@@ -363,7 +384,7 @@ export default {
         qrCode: null,
         usageStatus: null,
       };
-      this.arContentList = [];
+      this.subList = [];
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -379,67 +400,55 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection, parentRow) {
       // 使用Map存储每个父级对应的选中项
-      this.$set(this.allSelectedSubRows, parentRow.qrCodeId, selection);
+      this.$set(this.allSelectedSubRows, parentRow[this.mainId], selection);
     },
     /** 添加关联按钮操作 */
     handleAddAssociation(row) {
       this.reset();
       // 获取还未关联二维码的子表列表
-      const qrCodeId = row.qrCodeId || this.ids;
+      const mainId = row[this.mainId] || this.ids;
       Promise.all([
-        listContent({ qrCodeId: 0 }),
-        getArAssociation(qrCodeId),
-      ]).then(([listContentResponse, getArAssociationResponse]) => {
-        this.noQrCodeSubList = listContentResponse.rows;
-        this.form = getArAssociationResponse.data;
-        this.arContentList = getArAssociationResponse.data.arContentList;
+        this.listSub({ [this.mainId]: 0 }),
+        this.getMainInfo(mainId),
+      ]).then(([listMainRes, getMainInfoRes]) => {
+        this.noQrCodeSubList = listMainRes.rows;
+        this.form = getMainInfoRes.data;
+        this.subList = getMainInfoRes.data[this.subListName];
         this.open = true;
-        this.title = "添加AR内容关联";
+        this.title = `添加${this.associationName}关联`;
       });
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          if (this.form.qrCodeId != null) {
-            updateContent({
-              arContentId: this.form.arContentId,
-              qrCodeId: this.form.qrCodeId,
+          if (this.form[this.mainId] != null) {
+            this.updateSub({
+              [this.subId]: this.form[this.subId],
+              [this.mainId]: this.form[this.mainId],
             }).then((response) => {
               this.$modal.msgSuccess("添加关联成功");
-              console.log(
-                this.arAssociationList.find(
-                  (item) => item.qrCodeId === this.form.qrCodeId
-                )
+              const item = this.mainList.find(
+                (item) => item[this.mainId] === this.form[this.mainId]
               );
-              const item = this.arAssociationList.find(
-                (item) => item.qrCodeId === this.form.qrCodeId
-              );
-              console.log(item.usageStatus == 0, "item");
               // 如果使用情况为未使用，则设为已使用
               if (item.usageStatus == 0) {
                 // this.$set触发视图更新
                 this.$set(item, "usageStatus", 1);
-                console.log(
-                  this.arAssociationList.find(
-                    (item) => item.qrCodeId === this.form.qrCodeId
-                  ).usageStatus,
-                  "after set"
-                );
               }
               this.open = false;
               // this.getList();
               this.subLoading = true;
-              getArAssociation(this.form.qrCodeId).then((response) => {
-                // 把AR内容数据赋值给当前行的associationList属性
-                this.arAssociationList.find(
-                  (item) => item.qrCodeId === this.form.qrCodeId
-                ).associationList = response.data.arContentList;
+              this.getMainInfo(this.form[this.mainId]).then((response) => {
+                // 把${this.associationName}数据赋值给当前行的associationList属性
+                this.mainList.find(
+                  (item) => item[this.mainId] === this.form[this.mainId]
+                )[this.mainListName] = response.data[this.subListName];
                 this.subLoading = false;
                 // 展开父级行
                 this.$refs?.nestedTable?.$refs?.mainTable.toggleRowExpansion(
-                  this.arAssociationList.find(
-                    (item) => item.qrCodeId === this.form.qrCodeId
+                  this.mainList.find(
+                    (item) => item[this.mainId] === this.form[this.mainId]
                   ),
                   true
                 );
@@ -456,11 +465,11 @@ export default {
 
       // 使用 Object.entries 遍历对象
       Object.entries(this.allSelectedSubRows).forEach(
-        ([qrCodeId, selectedRows]) => {
+        ([mainId, selectedRows]) => {
           selectedRows.forEach((row) => {
             allSelected.push({
               ...row,
-              qrCodeId,
+              mainId,
             });
           });
         }
@@ -470,16 +479,16 @@ export default {
         this.$message.warning("请先选择要删除的关联项");
         return;
       }
-      this.loading = true;
       try {
         await this.$confirm("确定删除选中的关联项吗？", "警告", {
           type: "warning",
         });
+        this.loading = true;
 
         const deleteRequests = allSelected.map((item) =>
-          updateContent({
-            arContentId: item.arContentId,
-            qrCodeId: 0,
+          this.updateSub({
+            [this.subId]: item[this.subId],
+            [this.mainId]: 0,
           })
         );
 
@@ -500,7 +509,7 @@ export default {
         this.loading = false;
       }
     },
-    /** AR内容序号 */
+    /** ${this.associationName}序号 */
     rowArContentIndex({ row, rowIndex }) {
       row.index = rowIndex + 1;
     },
@@ -514,11 +523,8 @@ export default {
         `arAssociation_${new Date().getTime()}.xlsx`
       );
     },
-    handlePagination() {
-      this.getList();
-    },
     getSubData(row) {
-      return row.associationList || [];
+      return row[this.mainListName] || [];
     },
   },
   computed: {
