@@ -60,129 +60,26 @@
       ></right-toolbar>
     </el-row>
 
-    <el-table
-      v-loading="loading"
+    <nested-table
+      ref="nestedTable"
       :data="arAssociationList"
-      @expand-change="handleExpandChange"
+      :loading="loading"
+      :sub-loading="subLoading"
       row-key="qrCodeId"
-      ref="qrCodeTable"
       :row-class-name="tableRowClassName"
-    >
-      <!-- <el-table-column type="selection" width="55" align="center" /> -->
-      <el-table-column type="expand">
-        <template slot-scope="scope">
-          <el-table
-            :data="scope.row.associationList"
-            :row-class-name="rowArContentIndex"
-            @selection-change="(sel) => handleSelectionChange(sel, scope.row)"
-            class="sub-table"
-            row-key="arContentId"
-            v-loading="subLoading"
-          >
-            <!-- 子表格缩进 -->
-            <el-table-column width="80" />
-            <el-table-column type="selection" width="50" align="center" />
-            <el-table-column
-              label="序号"
-              align="center"
-              prop="index"
-              width="50"
-            />
-            <el-table-column
-              label="名称"
-              prop="name"
-              width="150"
-              align="center"
-            />
-            <el-table-column
-              label="类别"
-              prop="category"
-              width="150"
-              align="center"
-            />
-            <!-- 描述 -->
-            <el-table-column
-              label="描述"
-              prop="description"
-              width="220"
-              align="center"
-            />
-            <el-table-column
-              label="使用情况"
-              prop="usageStatus"
-              width="150"
-              align="center"
-            >
-              <template slot-scope="scope">
-                <dict-tag
-                  :options="dict.type.use_status"
-                  :value="scope.row.usageStatus"
-                />
-              </template>
-            </el-table-column>
-            <!-- 操作 删除关联 -->
-            <el-table-column
-              label="操作"
-              align="center"
-              class-name="small-padding fixed-width"
-            >
-              <template slot-scope="subScope">
-                <el-button
-                  size="mini"
-                  type="text"
-                  icon="el-icon-delete"
-                  @click="handleDeleteAssociation(subScope.row, scope.$index)"
-                  v-hasPermi="['ar:arAssociation:remove']"
-                  >删除关联</el-button
-                >
-              </template>
-            </el-table-column>
-          </el-table>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="二维码编号"
-        align="center"
-        prop="qrCodeId"
-        :width="120"
-      />
-      <el-table-column label="二维码名称" align="center" prop="qrCodeName" />
-      <el-table-column label="二维码" align="center" prop="qrCode">
-        <template slot-scope="scope">
-          <image-preview :src="scope.row.qrCode" :width="50" :height="50" />
-        </template>
-      </el-table-column>
-      <el-table-column label="使用情况" align="center" prop="usageStatus"
-        ><template slot-scope="scope">
-          <dict-tag
-            :options="dict.type.use_status"
-            :value="scope.row.usageStatus"
-          /> </template
-      ></el-table-column>
-      <el-table-column
-        label="操作"
-        align="center"
-        class-name="small-padding fixed-width"
-      >
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleAddAssociation(scope.row)"
-            v-hasPermi="['ar:arAssociation:edit']"
-            >添加关联</el-button
-          >
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <pagination
-      v-show="total > 0"
+      :get-sub-data="getSubData"
       :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
+      :current-page="queryParams.pageNum"
+      :page-size="queryParams.pageSize"
+      :main-columns="mainColumns"
+      :sub-columns="subColumns"
+      :main-actions="mainActions"
+      :sub-actions="subActions"
+      @expand-change="handleExpandChange"
+      @sub-selection-change="handleSelectionChange"
+      @pagination="handlePagination"
+      @add-association="handleAddAssociation"
+      @delete-association="handleDeleteAssociation"
     />
 
     <!-- 添加或修改AR内容关联对话框 -->
@@ -239,14 +136,19 @@
 </template>
 
 <script>
+import NestedTable from "@/components/NestedTable";
 import { listArAssociation, getArAssociation } from "@/api/ar/arAssociation";
 import { listContent, updateContent } from "@/api/ar/content";
 
 export default {
   name: "ArAssociation",
   dicts: ["use_status"],
+  components: {
+    NestedTable,
+  },
   data() {
     return {
+      moduleKey: "ar:arAssociation",
       // 遮罩层
       loading: true,
       // 子表遮罩层
@@ -289,6 +191,76 @@ export default {
           { required: true, message: "AR内容不能为空", trigger: "change" },
         ],
       },
+      mainColumns: [
+        {
+          prop: "qrCodeId",
+          props: { label: "二维码编号", align: "center", width: "120" },
+        },
+        {
+          prop: "qrCodeName",
+          props: { label: "二维码名称", align: "center" },
+        },
+        {
+          prop: "qrCode",
+          props: { label: "二维码", align: "center" },
+          render: {
+            component: "ImagePreview",
+            props: (row) => ({ src: row.qrCode, width: 50, height: 50 }),
+          },
+        },
+        {
+          prop: "usageStatus",
+          props: { label: "使用情况", align: "center" },
+          render: {
+            component: "dict-tag",
+            props: (row) => ({
+              options: this.dict.type.use_status,
+              value: row.usageStatus,
+            }),
+          },
+        },
+      ],
+      subColumns: [
+        {
+          prop: "name",
+          props: { label: "名称" },
+        },
+        {
+          prop: "category",
+          props: { label: "类别", width: "150" },
+        },
+        {
+          prop: "description",
+          props: { label: "描述", width: "220" },
+        },
+        {
+          prop: "usageStatus",
+          props: { label: "使用情况", width: "150" },
+          render: {
+            component: "dict-tag",
+            props: (row) => ({
+              options: this.dict.type.use_status,
+              value: row.usageStatus,
+            }),
+          },
+        },
+      ],
+      mainActions: [
+        {
+          label: "添加关联",
+          props: { type: "text", icon: "el-icon-edit", size: "mini" },
+          event: "add-association",
+          "v-hasPermi": `['${this.moduleKey}:edit']`,
+        },
+      ],
+      subActions: [
+        {
+          label: "删除关联",
+          props: { type: "text", icon: "el-icon-delete", size: "mini" },
+          event: "delete-association",
+          "v-hasPermi": `['${this.moduleKey}:remove']`,
+        },
+      ],
     };
   },
   created() {
@@ -299,7 +271,10 @@ export default {
     getList() {
       // 折叠所有行
       this.arAssociationList.forEach((item) => {
-        this.$refs.qrCodeTable?.toggleRowExpansion(item, false);
+        this.$refs?.nestedTable?.$refs?.mainTable.toggleRowExpansion(
+          item,
+          false
+        );
       });
       // 清空缓存
       this.cacheExpandedKeys.clear();
@@ -359,7 +334,7 @@ export default {
                 this.arAssociationList[parentIndex].associationList.length === 0
               ) {
                 // 折叠父级行
-                this.$refs.qrCodeTable?.toggleRowExpansion(
+                this.$refs?.nestedTable?.$refs?.mainTable.toggleRowExpansion(
                   this.arAssociationList[parentIndex],
                   false
                 );
@@ -462,7 +437,7 @@ export default {
                 ).associationList = response.data.arContentList;
                 this.subLoading = false;
                 // 展开父级行
-                this.$refs.qrCodeTable?.toggleRowExpansion(
+                this.$refs?.nestedTable?.$refs?.mainTable.toggleRowExpansion(
                   this.arAssociationList.find(
                     (item) => item.qrCodeId === this.form.qrCodeId
                   ),
@@ -514,7 +489,7 @@ export default {
         // 清空选中状态（对象用赋值方式）
         this.allSelectedSubRows = {};
         // 清除表格选中状态
-        this.$refs.qrCodeTable?.clearSelection();
+        this.$refs?.nestedTable?.$refs?.mainTable.clearSelection();
 
         await this.getList();
       } catch (error) {
@@ -539,6 +514,12 @@ export default {
         `arAssociation_${new Date().getTime()}.xlsx`
       );
     },
+    handlePagination() {
+      this.getList();
+    },
+    getSubData(row) {
+      return row.associationList || [];
+    },
   },
   computed: {
     hasSubSelection() {
@@ -549,28 +530,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.sub-table {
-  width: 100%;
-}
-.sub-table ::v-deep th.el-table__cell {
-  font-size: 0.9em;
-}
-.sub-table ::v-deep td.el-table__cell .cell {
-  font-size: 13px;
-}
-
-::v-deep td.el-table__cell.el-table__expanded-cell {
-  padding: 0 0 12px 0;
-}
-
-.sub-table ::v-deep tr .th.el-table__cell {
-  padding-left: 80px;
-  background-color: bule;
-}
-
-::v-deep .hide-arrow .el-table__expand-icon {
-  visibility: hidden;
-}
-</style>

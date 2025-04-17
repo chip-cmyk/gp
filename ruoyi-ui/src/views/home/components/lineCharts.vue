@@ -98,11 +98,9 @@ export default {
     monthlyRegistrations() {
       const { startDate, endDate } = getLast6Months();
       getMonthlyRegistrations(startDate, endDate).then((response) => {
-        console.log(response, 'getMonthlyRegistrations response');
         this.dataSrc = response.data.map(item => {
           return [item.yearMonth, item.count]
         });
-        console.log(this.dataSrc, 'this.dataSrc');
       });
     }
   },
