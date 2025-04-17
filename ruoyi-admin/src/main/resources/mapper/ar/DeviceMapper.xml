@@ -26,7 +26,7 @@
             <if test="status != null  and status != ''">and status = #{status}</if>
             <if test="qrCodeNumber != null">
                 <choose>
-                    <!-- 当传入 qrCodeNumber=0 时，查询 qr_code_id 为
+                    <!-- 当传入 qrCodeNumber=0 时，查询 qr_code_number 为
                    null 的记录 -->
                     <when test="qrCodeNumber == 0">
                         and qr_code_number is null
@@ -78,12 +78,12 @@
             </if>
             <if test="factoryNumber != null">factory_number = #{factoryNumber},</if>
             <choose>
-                <when test="qrCodeId == 0">
-                    qr_code_id = NULL,
+                <when test="qrCodeNumber == 0">
+                    qr_code_number = NULL,
                 </when>
-                <!-- 允许 qrCodeId 为 null 时也清空 -->
+                <!-- 允许 qrCodeNumber 为 null 时也清空 -->
                 <otherwise>
-                    qr_code_id = #{qrCodeId},
+                    qr_code_number = #{qrCodeNumber},
                 </otherwise>
             </choose>
         </trim>
