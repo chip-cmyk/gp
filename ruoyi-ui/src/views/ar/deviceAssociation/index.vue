@@ -10,7 +10,8 @@
     :exportName="exportName"
     :pageName="pageName"
     :usageStatusName="usageStatusName"
-    :hasDescription="true"
+    hasDescription
+    hasUsageStatus
     :subColumns="subColumns"
     :listMain="listMain"
     :getMainInfo="getMainInfo"
@@ -62,7 +63,7 @@ export default {
             component: "dict-tag",
             props: (row) => ({
               options: this.dict.type.use_status,
-              value: row.status,
+              value: row[this.usageStatusName],
             }),
           },
         },
@@ -81,7 +82,6 @@ export default {
       return listDevice(params);
     },
     updateSub(params) {
-      console.log(params, "params");
       return updateDevice(params);
     },
   },

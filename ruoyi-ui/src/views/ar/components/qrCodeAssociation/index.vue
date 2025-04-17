@@ -134,7 +134,12 @@
             prop="description"
             width="220"
           />
-          <el-table-column label="使用情况" :prop="usageStatusName" width="150">
+          <el-table-column
+            label="使用情况"
+            :prop="usageStatusName"
+            width="150"
+            v-if="hasUsageStatus"
+          >
             <template slot-scope="scope">
               <dict-tag
                 :options="dict.type.use_status"
@@ -280,6 +285,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    hasUsageStatus: {
+      type: Boolean,
+      default: false,
+    },
     subColumns: {
       type: Array,
       default: () => [],
@@ -408,10 +417,10 @@ export default {
       // 获取还未关联二维码的子表列表
       const mainId = row[this.mainId] || this.ids;
       Promise.all([
-        this.listSub({ [this.mainId]: 0 }),
+        this.listSub({ [this.subMainId]: 0 }),
         this.getMainInfo(mainId),
-      ]).then(([listMainRes, getMainInfoRes]) => {
-        this.noQrCodeSubList = listMainRes.rows;
+      ]).then(([listRemainedSubRes, getMainInfoRes]) => {
+        this.noQrCodeSubList = listRemainedSubRes.rows;
         this.form = getMainInfoRes.data;
         this.subList = getMainInfoRes.data[this.subListName];
         this.open = true;

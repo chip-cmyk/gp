@@ -9,7 +9,8 @@
     :subMainId="subMainId"
     :exportName="exportName"
     :pageName="pageName"
-    :hasCategory="true"
+    hasCategory
+    hasUsageStatus
     :subColumns="subColumns"
     :listMain="listMain"
     :getMainInfo="getMainInfo"

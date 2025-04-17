@@ -1,19 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.ar.mapper.SandboxZoneMapper">
-    
+
     <resultMap type="SandboxZone" id="SandboxZoneResult">
-        <result property="zoneId"    column="zone_id"    />
-        <result property="name"    column="name"    />
-        <result property="description"    column="description"    />
-        <result property="qrCodeId"    column="qr_code_id"    />
-        <result property="factoryId"    column="factory_id"    />
+        <result property="zoneId" column="zone_id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="qrCodeId" column="qr_code_id"/>
+        <result property="factoryId" column="factory_id"/>
+        <result property="factoryName" column="factory_name"/>
     </resultMap>
 
     <sql id="selectSandboxZoneVo">
-        select zone_id, name, description, qr_code_id, factory_id from sandbox_zone
+        select sz.zone_id,
+               sz.name,
+               sz.description,
+               sz.qr_code_id,
+               sz.factory_id,
+               f.name as factory_name
+        from sandbox_zone sz
+                 left join factory f on sz.factory_id = f.factory_id
     </sql>
 
     <select id="selectSandboxZoneList" parameterType="SandboxZone" resultMap="SandboxZoneResult">
@@ -37,7 +45,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="factoryId != null ">and factory_id = #{factoryId}</if>
         </where>
     </select>
-    
+
     <select id="selectSandboxZoneByZoneId" parameterType="Long" resultMap="SandboxZoneResult">
         <include refid="selectSandboxZoneVo"/>
         where zone_id = #{zoneId}
@@ -51,14 +59,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="description != null and description != ''">description,</if>
             <if test="qrCodeId != null">qr_code_id,</if>
             <if test="factoryId != null">factory_id,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="zoneId != null">#{zoneId},</if>
             <if test="name != null and name != ''">#{name},</if>
             <if test="description != null and description != ''">#{description},</if>
             <if test="qrCodeId != null">#{qrCodeId},</if>
             <if test="factoryId != null">#{factoryId},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateSandboxZone" parameterType="SandboxZone">
@@ -66,18 +74,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="name != null and name != ''">name = #{name},</if>
             <if test="description != null and description != ''">description = #{description},</if>
-            <if test="qrCodeId != null">qr_code_id = #{qrCodeId},</if>
             <if test="factoryId != null">factory_id = #{factoryId},</if>
+            <choose>
+                <when test="qrCodeId == 0">
+                    qr_code_id = NULL,
+                </when>
+                <!-- 允许 qrCodeId 为 null 时也清空 -->
+                <otherwise>
+                    qr_code_id = #{qrCodeId},
+                </otherwise>
+            </choose>
         </trim>
         where zone_id = #{zoneId}
     </update>
 
     <delete id="deleteSandboxZoneByZoneId" parameterType="Long">
-        delete from sandbox_zone where zone_id = #{zoneId}
+        delete
+        from sandbox_zone
+        where zone_id = #{zoneId}
     </delete>
 
     <delete id="deleteSandboxZoneByZoneIds" parameterType="String">
-        delete from sandbox_zone where zone_id in 
+        delete from sandbox_zone where zone_id in
         <foreach item="zoneId" collection="array" open="(" separator="," close=")">
             #{zoneId}
         </foreach>
